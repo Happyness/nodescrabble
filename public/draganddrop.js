@@ -12,13 +12,14 @@ function allowDrop(ev)
 function drag(ev)
 {
     ev.dataTransfer.effectAllowed = 'move';
-    ev.dataTransfer.setData('text/html', ev.target.innerHTML);
-    //ev.dataTransfer.setData('Text', ev.target.getAttribute('id'));
+    //ev.dataTransfer.setData('text/html', ev.target.outerHTML);
+    ev.dataTransfer.setData('Text', ev.target.getAttribute('id'));
     //ev.dataTransfer.setData("Text", ev.target.id);
 }
 
 function dragEnd(event)
 {
+    ev.preventDefault();
     if (event.dataTransfer.dropEffect == 'move') {
         // remove the dragged element
         event.target.parentNode.removeChild(event.target);
@@ -27,12 +28,13 @@ function dragEnd(event)
 
 function drop(ev)
 {
-    var data = ev.dataTransfer.getData('text/html');
-    console.log(data);
-    ev.target.innerHTML = data;
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData('Text');
+    //console.log(data);
+    //ev.target.appendChild(data);
     //ev.target.appendChild(data);
     //var data = ev.dataTransfer.getData('Text');
 
-    //ev.target.appendChild(document.getElementById(data));
-    ev.stopPropagation();
+    ev.target.appendChild(document.getElementById(data));
+    //ev.stopPropagation();
 }
