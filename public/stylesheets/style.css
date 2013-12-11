@@ -6,3 +6,64 @@ body {
 a {
   color: #00B7FF;
 }
+
+[draggable=true] {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+
+    /* Required to make elements draggable in old WebKit */
+    -khtml-user-drag: element;
+    -webkit-user-drag: element;
+}
+
+td input {
+    width: 20px;
+    height: 20px;
+}
+
+td {
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    border:2px solid black;
+    color:#ffffff;
+}
+
+td.type1 {
+    background-color: #1b8fa1;
+}
+
+td.type2 {
+    background-color: #9f4718;
+}
+
+td.type3 {
+    background-color: #76a86b;
+}
+
+td.type4 {
+    background-color: #cf8025;
+}
+
+td.center {
+    background-color:  #664466;
+}
+
+td.regular {
+    background-color: #595959;
+}
+
+table#gameTable {
+    background-color:#484e52;
+    color:#ffffff;
+    font-weight:bold;
+    border:2px solid black;
+}
+
+table#letterTable {
+    background-color:#484e52;
+    color:#ffffff;
+    font-weight:bold;
+    border:2px solid black;
+}
