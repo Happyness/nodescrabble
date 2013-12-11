@@ -12,9 +12,7 @@ function allowDrop(ev)
 function drag(ev)
 {
     ev.dataTransfer.effectAllowed = 'move';
-    //ev.dataTransfer.setData('text/html', ev.target.outerHTML);
     ev.dataTransfer.setData('Text', ev.target.getAttribute('id'));
-    //ev.dataTransfer.setData("Text", ev.target.id);
 }
 
 function dragEnd(event)
@@ -31,7 +29,7 @@ function drop(ev)
     ev.preventDefault();
     var data = ev.dataTransfer.getData('Text');
 
-    console.log(ev.target.innerHTML);
+    //console.log(ev.target.innerHTML);
 
     if (ev.target.getAttribute('id') == 'tiles') {
         ev.target.appendChild(document.getElementById(data));

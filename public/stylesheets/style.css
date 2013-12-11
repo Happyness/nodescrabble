@@ -7,6 +7,10 @@ a {
   color: #00B7FF;
 }
 
+[draggable=true]:hover {
+    cursor: pointer; cursor: hand;
+}
+
 [draggable=true] {
     -moz-user-select: none;
     -khtml-user-select: none;
