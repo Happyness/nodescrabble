@@ -39,14 +39,18 @@ app.get('/adduser', user.viewAddUser);
 app.post('/adduser', user.addUser);
 app.post('/', routes.indexPost);
 app.post('/move', response.move);
+app.get("/chat", function(req, res) {
+    res.render("chat");
+});
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
 socketio.listen(server).on('connection', function (socket) {
-    socket.on('move', function (msg) {
-        console.log('Move message Received: ', msg);
-        socket.broadcast.emit('move', msg);
+    socket.emit('message', { message: 'welcome to nodescrabble'});
+    socket.on('send', function (data) {
+        socket.emit('message', data);
+        socket.broadcast.emit('message', data);
     });
 });
