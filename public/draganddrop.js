@@ -30,10 +30,6 @@ function drop(ev)
 {
     ev.preventDefault();
     var data = ev.dataTransfer.getData('Text');
-    //console.log(data);
-    //ev.target.appendChild(data);
-    //ev.target.appendChild(data);
-    //var data = ev.dataTransfer.getData('Text');
 
     console.log(ev.target.innerHTML);
 
@@ -45,5 +41,5 @@ function drop(ev)
             ev.target.appendChild(document.getElementById(data));
         }
     }
-    //ev.stopPropagation();
+    ev.stopPropagation();
 }
