@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  div(id="response")= response
+
+  form(name="input", action="/adduser", method="post")
+      p
+        key username
+              input(type="text", name="username")
+
+      p
+        key password
+            input(type="password", name="password")
+
+      p
+        input(type="submit", value="Submit")

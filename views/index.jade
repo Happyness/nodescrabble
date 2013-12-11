@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  div(id="response")= response
+
+  form(name="input", action="/", method="post")
+      p
+        key URI
+              input(type="text", name="uri")
+
+      p
+        key Data
+            textarea(type="text", name="jsonData")
+      p
+        input(type="submit", value="Submit")

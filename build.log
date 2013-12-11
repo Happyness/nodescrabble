@@ -1,0 +1,121 @@
+2013-11-29 11:10:15,368 [1098198]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:10:28,374 [1111204]   INFO - s.impl.stores.FileBasedStorage - Document was not loaded for $PROJECT_CONFIG_DIR$/validation.xml file is null 
+2013-11-29 11:10:28,554 [1111384]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 16063 ms: 0 min 16sec 
+2013-11-29 11:10:29,427 [1112257]   INFO - s.impl.stores.FileBasedStorage - Document was not loaded for $APP_CONFIG$/consoleFolding.xml file is null 
+2013-11-29 11:10:30,484 [1113314]   INFO - ains.android.util.AndroidUtils - /home/joel/Android/sdk/tools/emulator -avd Nexus -netspeed full -netdelay none 
+2013-11-29 11:14:01,530 [1324360]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:14:06,872 [1329702]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:14:25,448 [1348278]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 23889 ms: 0 min 23sec 
+2013-11-29 11:14:25,994 [1348824]   INFO - ains.android.util.AndroidUtils - /home/joel/Android/sdk/tools/emulator -avd Nexus -netspeed full -netdelay none 
+2013-11-29 11:15:00,727 [1383557]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:15:07,486 [1390316]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:15:16,674 [1399504]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 15955 ms: 0 min 15sec 
+2013-11-29 11:15:17,105 [1399935]   INFO - ains.android.util.AndroidUtils - /home/joel/Android/sdk/tools/emulator -avd Nexus -netspeed full -netdelay none 
+2013-11-29 11:16:20,372 [1463202]   INFO - ment.AndroidPsiAugmentProvider - R_CLASS_AUGMENT: 8 classes added 
+2013-11-29 11:17:52,098 [1554928]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:17:54,220 [1557050]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:18:08,820 [1571650]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 16700 ms: 0 min 16sec 
+2013-11-29 11:18:09,145 [1571975]   INFO - ains.android.util.AndroidUtils - /home/joel/Android/sdk/tools/emulator -avd Nexus -netspeed full -netdelay none 
+2013-11-29 11:18:26,979 [1589809]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:18:36,114 [1598944]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:19:03,684 [1626514]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 36429 ms: 0 min 36sec 
+2013-11-29 11:19:04,208 [1627038]   INFO - ains.android.util.AndroidUtils - /home/joel/Android/sdk/tools/emulator -avd Nexus -netspeed full -netdelay none 
+2013-11-29 11:19:06,602 [1629432]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:19:12,206 [1635036]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:19:15,803 [1638633]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 9204 ms: 0 min 9sec 
+2013-11-29 11:19:16,032 [1638862]   INFO - ains.android.util.AndroidUtils - /home/joel/Android/sdk/tools/emulator -avd Nexus -netspeed full -netdelay none 
+2013-11-29 11:20:46,005 [1728835]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:20:49,210 [1732040]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:20:56,064 [1738894]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 10062 ms: 0 min 10sec 
+2013-11-29 11:20:56,432 [1739262]   INFO - ains.android.util.AndroidUtils - /home/joel/Android/sdk/tools/emulator -avd Nexus -netspeed full -netdelay none 
+2013-11-29 11:22:56,763 [1859593]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:23:08,340 [1871170]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:23:24,529 [1887359]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 27716 ms: 0 min 27sec 
+2013-11-29 11:25:39,244 [2022074]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:25:40,431 [2023261]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:25:57,057 [2039887]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 17817 ms: 0 min 17sec 
+2013-11-29 11:26:30,472 [2073302]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 11:26:34,174 [2077004]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 11:26:50,068 [2092898]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 19566 ms: 0 min 19sec 
+2013-11-29 15:19:04,837 [16027667]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:19:08,727 [16031557]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:19:20,388 [16043218]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 15534 ms: 0 min 15sec 
+2013-11-29 15:24:49,371 [16372201]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:24:49,813 [16372643]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:24:55,384 [16378214]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 6013 ms: 0 min 6sec 
+2013-11-29 15:26:00,308 [16443138]   INFO - ment.AndroidPsiAugmentProvider - R_CLASS_AUGMENT: 8 classes added 
+2013-11-29 15:27:26,490 [16529320]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:27:30,336 [16533166]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:27:43,512 [16546342]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 17007 ms: 0 min 17sec 
+2013-11-29 15:30:44,536 [16727366]   INFO - ment.AndroidPsiAugmentProvider - R_CLASS_AUGMENT: 8 classes added 
+2013-11-29 15:31:05,010 [16747840]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:31:06,965 [16749795]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:31:16,700 [16759530]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 11667 ms: 0 min 11sec 
+2013-11-29 15:31:58,669 [16801499]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:31:59,121 [16801951]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:32:04,192 [16807022]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 5514 ms: 0 min 5sec 
+2013-11-29 15:34:22,764 [16945594]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:34:23,796 [16946626]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:34:29,993 [16952823]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 7205 ms: 0 min 7sec 
+2013-11-29 15:35:20,280 [17003110]   INFO - ment.AndroidPsiAugmentProvider - R_CLASS_AUGMENT: 8 classes added 
+2013-11-29 15:36:29,020 [17071850]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:36:29,578 [17072408]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:36:34,501 [17077331]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 5473 ms: 0 min 5sec 
+2013-11-29 15:37:50,515 [17153345]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:37:50,921 [17153751]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:37:53,468 [17156298]   INFO - ment.AndroidPsiAugmentProvider - R_CLASS_AUGMENT: 8 classes added 
+2013-11-29 15:37:56,811 [17159641]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 6231 ms: 0 min 6sec 
+2013-11-29 15:38:04,915 [17167745]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:38:05,383 [17168213]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:38:11,147 [17173977]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 6121 ms: 0 min 6sec 
+2013-11-29 15:38:49,286 [17212116]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:38:49,746 [17212576]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:38:54,642 [17217472]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 5337 ms: 0 min 5sec 
+2013-11-29 15:42:55,900 [17458730]   INFO - ment.AndroidPsiAugmentProvider - R_CLASS_AUGMENT: 8 classes added 
+2013-11-29 15:44:15,748 [17538578]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:44:17,136 [17539966]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:44:26,496 [17549326]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 7458 ms: 0 min 7sec 
+2013-11-29 15:48:22,347 [17785177]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:48:23,108 [17785938]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:48:32,138 [17794968]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 9756 ms: 0 min 9sec 
+2013-11-29 15:49:27,548 [17850378]   INFO - ij.compiler.impl.CompileDriver - COMPILATION STARTED (BUILD PROCESS) 
+2013-11-29 15:49:28,163 [17850993]   INFO - j.compiler.server.BuildManager - BUILDER_PROCESS [stdout]: Build process started. Classpath: /home/joel/idea-IU-129.1359/lib/jps-launcher.jar:/home/joel/Android/sdk/lib/tools.jar:/home/joel/idea-IU-129.1359/lib/optimizedFileManager.jar:/home/joel/idea-IU-129.1359/lib/ecj-4.2.1.jar 
+2013-11-29 15:49:33,468 [17856298]   INFO - lij.compiler.impl.CompilerUtil - 	COMPILATION FINISHED (BUILD PROCESS); Errors: 0; warnings: 0 took 5902 ms: 0 min 5sec 
+2013-11-29 15:50:10,929 [17893759]   INFO - duler$ExecutionTimeCheckedTask - 50 ms execution limit failed for:com.intellij.util.Alarm$Request@73c58b36null,104 
+2013-11-29 16:35:11,352 [20594182]   INFO - duler$ExecutionTimeCheckedTask - 50 ms execution limit failed for:com.intellij.util.Alarm$Request@a33ee2com.intellij.diagnostic.logging.LogConsoleBase$ReaderThread$1@5d7567c1,86 
+2013-11-29 16:35:23,737 [20606567]   INFO - duler$ExecutionTimeCheckedTask - 50 ms execution limit failed for:com.intellij.openapi.wm.impl.status.MemoryUsagePanel$2@58e18555,137 
+2013-11-29 16:35:28,135 [20610965]   INFO - duler$ExecutionTimeCheckedTask - 50 ms execution limit failed for:com.intellij.util.Alarm$Request@1542b9a8com.intellij.diagnostic.logging.LogConsoleBase$ReaderThread$1@5d7567c1,87 
+2013-11-29 16:35:28,940 [20611770]   INFO - duler$ExecutionTimeCheckedTask - 50 ms execution limit failed for:com.intellij.openapi.wm.impl.status.MemoryUsagePanel$2@58e18555,343 
+2013-11-29 16:39:42,516 [20865346]   INFO - android.run.AndroidDebugRunner - Förbindelse vägras 
+java.net.ConnectException: Förbindelse vägras
+	at sun.nio.ch.Net.connect0(Native Method)
+	at sun.nio.ch.Net.connect(Net.java:465)
+	at sun.nio.ch.Net.connect(Net.java:457)
+	at sun.nio.ch.SocketChannelImpl.connect(SocketChannelImpl.java:666)
+	at java.nio.channels.SocketChannel.open(SocketChannel.java:184)
+	at com.android.ddmlib.AdbHelper.executeRemoteCommand(AdbHelper.java:390)
+	at com.android.ddmlib.AdbHelper.executeRemoteCommand(AdbHelper.java:347)
+	at com.android.ddmlib.Device.executeShellCommand(Device.java:444)
+	at org.jetbrains.android.util.AndroidUtils.executeCommandOnDevice(AndroidUtils.java:285)
+	at org.jetbrains.android.logcat.AndroidLogcatUtil.startLogging(AndroidLogcatUtil.java:67)
+	at org.jetbrains.android.logcat.AndroidLogcatUtil.access$100(AndroidLogcatUtil.java:46)
+	at org.jetbrains.android.logcat.AndroidLogcatUtil$4$1.run(AndroidLogcatUtil.java:131)
+	at com.intellij.openapi.application.impl.ApplicationImpl$8.run(ApplicationImpl.java:454)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:471)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+	at com.intellij.openapi.application.impl.ApplicationImpl$1$1.run(ApplicationImpl.java:152)
+2013-11-29 16:39:42,810 [20865640]   INFO - ins.communicator.p2p.P2PServer - IDEtalk WebServer shut down 
+2013-11-29 16:39:42,808 [20865638]   INFO -        #com.intellij.idea.Main - ------------------------------------------------------ IDE SHUTDOWN ------------------------------------------------------ 
+2013-11-29 16:39:42,787 [20865617]   WARN - api.vfs.impl.local.FileWatcher - Watcher terminated. 
+2013-11-29 16:39:42,797 [20865627]   INFO - ins.android.sdk.AndroidSdkData - Restart debug bridge: disconnected 
+2013-11-29 16:39:45,169 [20867999]   INFO - il.indexing.FileBasedIndexImpl - START INDEX SHUTDOWN 
+2013-11-29 16:39:47,896 [20870726]   INFO - il.indexing.FileBasedIndexImpl - END INDEX SHUTDOWN 
+2013-11-29 16:39:47,896 [20870726]   INFO - stubs.SerializationManagerImpl - START StubSerializationManager SHUTDOWN 
+2013-11-29 16:39:47,896 [20870726]   INFO - stubs.SerializationManagerImpl - END StubSerializationManager SHUTDOWN 
+2013-11-29 16:39:47,897 [20870727]   INFO - .history.utils.LocalHistoryLog - Purging local history... 
+2013-11-29 16:39:50,737 [20873567]   INFO - .history.utils.LocalHistoryLog - Local history storage successfully closed. 
+2013-11-29 16:39:50,737 [20873567]   INFO - newvfs.persistent.PersistentFS - VFS dispose started 
+2013-11-29 16:39:50,987 [20873817]   INFO - newvfs.persistent.PersistentFS - VFS dispose completed 
