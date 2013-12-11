@@ -35,6 +35,15 @@ function drop(ev)
     //ev.target.appendChild(data);
     //var data = ev.dataTransfer.getData('Text');
 
-    ev.target.appendChild(document.getElementById(data));
+    console.log(ev.target.innerHTML);
+
+    if (ev.target.getAttribute('id') == 'tiles') {
+        ev.target.appendChild(document.getElementById(data));
+    } else {
+        if (document.getElementById(data).getAttribute('id') != ev.target.getAttribute('id')
+            && ev.target.innerHTML == "") {
+            ev.target.appendChild(document.getElementById(data));
+        }
+    }
     //ev.stopPropagation();
 }

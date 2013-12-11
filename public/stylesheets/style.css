@@ -56,10 +56,25 @@ table#gameTable {
     border:2px solid black;
 }
 
-table#letterTable {
+#tiles {
     background-color:#484e52;
     color:#ffffff;
     font-weight:bold;
     border:2px solid black;
-    width: 160px;
+    height: 20px;
+    width: 180px;
+}
+
+td .tile {
+    margin: 0 !important;
+}
+
+.tile {
+    float: left;
+    width: 17px;
+    height: 17px;
+    background-color: #FFF;
+    margin-right: 1px;
+    color: #000;
+    text-align: center;
 }

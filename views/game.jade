@@ -16,65 +16,58 @@ html(lang="en")
                     - for(var j=1; j <= 15; j++)
                         - if (((i == 1 || i == 15) && (j == 1 || j == 15)))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
-                                //input(id=i maxlength=1)
                         - else if (((i == 2 || i == 14) && (j == 6 || j == 10)))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
-                                //input(id=i maxlength=1)
+
                         - else if (((i == 4 || i == 12) && (j == 4 || j == 12)))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
-                                //input(id=i maxlength=1)
+
                         - else if (((i == 6 || i == 10) && (j == 2 || j == 6 || j == 10 || j == 14)))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
-                                //input(id=i maxlength=1)
+
                         - else if (((i == 1 || i == 15) && (j == 5 || j == 11)))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type2")
-                                //input(id=i maxlength=1)
+
                         - else if (((i == 5 || i == 11) && (j == 1 || j == 15)))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type2")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 1 || i == 15) && j == 8)
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 2 || i == 14) && (j == 2 || j == 14))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 3 || i == 5 || i == 11 || i == 13) && (j == 7 || j == 9))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 7 || i == 9) && (j == 3 || j == 5 || j == 11 || j == 13))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 8) && (j == 1 || j == 15))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 3 || i == 13) && (j == 3 || j == 13))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 4 || i == 12) && (j == 8))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 5 || i == 11) && (j == 5 || j == 11))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 8) && (j == 4 || j == 12))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
-                                //input(id=i maxlength=1)
+
                         - else if ((i == 8) && (j == 4 || j == 12))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
-                                //input(id=i maxlength=1)
                         - else if ((i == 8) && (j == 8))
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="center")
-                                //input(id=i maxlength=1)
                         - else
                             td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="regular")
-                                //input(id=i maxlength=1)
         br
-        #letters
-            table(id="letterTable")
-                tbody
-                    tr(ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)")
-                    - for(var j=50; j <= 58; j++)
-                        td(id=j draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)") T
+        div(id="tiles" ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)")
+            - for(var j=50; j <= 58; j++)
+                div(id=j class="tile" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)") T
 
         br
         .controls
