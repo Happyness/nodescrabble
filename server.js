@@ -39,8 +39,11 @@ app.get('/adduser', user.viewAddUser);
 app.post('/adduser', user.addUser);
 app.post('/', routes.indexPost);
 app.post('/move', response.move);
-app.get("/chat", function(req, res) {
+app.get("/chat", function(req, res){
     res.render("chat");
+});
+app.get("/game", function(req, res){
+    res.render("game");
 });
 
 var server = http.createServer(app).listen(app.get('port'), function(){

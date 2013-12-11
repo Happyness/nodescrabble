@@ -1,7 +1,7 @@
 window.onload = function() {
     var messages = [];
-    var socket = io.connect('http://nodescrabbler.herokuapp.com');
-    var field = document.getElementById("field");
+    var socket = io.connect('http://localhost:3000');
+    var gameTable = document.getElementById("gameTable");
     var sendButton = document.getElementById("sendButton");
     var content = document.getElementById("content");
 

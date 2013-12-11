@@ -1,0 +1,80 @@
+!!!
+html(lang="en")
+    head
+        title= "NodeScrabble"
+        script(src='/game.js')
+        script(src='/socket.io/socket.io.js')
+    body
+        h1
+            NodeScrabble
+        #board
+            table(id="gameTable" style='background-color:#484e52; color:#ffffff; font-weight:bold; border:2px solid black;')
+                tbody
+                - for(var i=1; i <= 15; i++)
+                    tr(id=i)
+                    - for(var j=1; j <= 15; j++)
+                        - if (((i == 1 || i == 15) && (j == 1 || j == 15)))
+                            td(id=j align="center")
+                                input(id=i maxlength=1 style='width: 20px; height: 20px;border:2px solid black; background-color: #1b8fa1; color:#ffffff;')
+                        - else if (((i == 2 || i == 14) && (j == 6 || j == 10)))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px;border:2px solid black; background-color: #1b8fa1; color:#ffffff;')
+                        - else if (((i == 4 || i == 12) && (j == 4 || j == 12)))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #1b8fa1; color:#ffffff;')
+                        - else if (((i == 6 || i == 10) && (j == 2 || j == 6 || j == 10 || j == 14)))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #1b8fa1; color:#ffffff;')
+                        - else if (((i == 1 || i == 15) && (j == 5 || j == 11)))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #9f4718; color:#ffffff;')
+                        - else if (((i == 5 || i == 11) && (j == 1 || j == 15)))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #9f4718; color:#ffffff;')
+                        - else if ((i == 1 || i == 15) && j == 8)
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #76a86b; color:#ffffff;')
+                        - else if ((i == 2 || i == 14) && (j == 2 || j == 14))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #76a86b; color:#ffffff;')
+                        - else if ((i == 3 || i == 5 || i == 11 || i == 13) && (j == 7 || j == 9))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #76a86b; color:#ffffff;')
+                        - else if ((i == 7 || i == 9) && (j == 3 || j == 5 || j == 11 || j == 13))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #76a86b; color:#ffffff;')
+                        - else if ((i == 8) && (j == 1 || j == 15))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #76a86b; color:#ffffff;')
+                        - else if ((i == 3 || i == 13) && (j == 3 || j == 13))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #cf8025; color:#ffffff;')
+                        - else if ((i == 4 || i == 12) && (j == 8))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #cf8025; color:#ffffff;')
+                        - else if ((i == 5 || i == 11) && (j == 5 || j == 11))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #cf8025; color:#ffffff;')
+                        - else if ((i == 8) && (j == 4 || j == 12))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #cf8025; color:#ffffff;')
+                        - else if ((i == 8) && (j == 4 || j == 12))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #cf8025; color:#ffffff;')
+                        - else if ((i == 8) && (j == 8))
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #664466; color:#ffffff;')
+                        - else
+                            td(id=j)
+                                input(id=i maxlength=1 style='width: 20px; height: 20px; border:2px solid black; background-color: #595959; color:#ffffff;')
+        br
+        #letters
+            table(id="letterTable" style='background-color:#484e52; color:#ffffff; font-weight:bold; border:2px solid black;')
+                tbody
+                    tr
+                    - for(var j=1; j <= 8; j++)
+                        td(id=j style='border:2px solid black;') T
+
+        br
+        .controls
+            input.sendButton(type='button', value='Play', id='sendButton')
