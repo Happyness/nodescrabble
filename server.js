@@ -11,6 +11,8 @@ var http = require('http');
 var path = require('path');
 var db = require('./model/db');
 var socketio = require('socket.io');
+var Stately = require('stately.js');
+var clientstate = require('./public/clientstate.js');
 
 var app = express();
 

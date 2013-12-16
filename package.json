@@ -17,6 +17,7 @@
     "socket.io": "*",
     "socket.io-client": "*",
     "node-state": "*",
-    "coffee-script": "*"
+    "coffee-script": "*",
+    "stately.js": "*"
   }
 }
