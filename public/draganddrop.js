@@ -34,12 +34,12 @@ function drop(ev)
 
     if (ev.target.getAttribute('id') == 'tiles') {
         ev.target.appendChild(document.getElementById(data));
-        //document.getElementById(data).className = "tile";
+        document.getElementById(data).className = "tile";
     } else {
         if (document.getElementById(data).getAttribute('id') != ev.target.getAttribute('id')
             && ev.target.innerHTML == "") {
             ev.target.appendChild(document.getElementById(data));
-            //document.getElementById(data).className = "move-tile";
+            document.getElementById(data).className = "move-tile";
         }
     }
     ev.stopPropagation();
