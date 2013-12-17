@@ -289,3 +289,8 @@ window.onload = function() {
     });
 
     sendButton.onclick = function(){
+        var text = field.value;
+        socket.emit('send', { message: text});
+    };
+};
+*/

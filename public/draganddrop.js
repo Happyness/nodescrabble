@@ -15,12 +15,13 @@ function drag(ev)
     ev.dataTransfer.setData('Text', ev.target.getAttribute('id'));
 }
 
-function dragEnd(event)
+function dragEnd(ev)
 {
     event.preventDefault();
-    if (event.dataTransfer.dropEffect == 'move') {
+
+    if (ev.dataTransfer.dropEffect == 'move') {
         // remove the dragged element
-        event.target.parentNode.removeChild(event.target);
+        ev.target.parentNode.removeChild(ev.target);
     }
 }
 
@@ -33,12 +34,12 @@ function drop(ev)
 
     if (ev.target.getAttribute('id') == 'tiles') {
         ev.target.appendChild(document.getElementById(data));
-        document.getElementById(data).className = "tile";
+        //document.getElementById(data).className = "tile";
     } else {
         if (document.getElementById(data).getAttribute('id') != ev.target.getAttribute('id')
             && ev.target.innerHTML == "") {
             ev.target.appendChild(document.getElementById(data));
-            document.getElementById(data).className = "move-tile";
+            //document.getElementById(data).className = "move-tile";
         }
     }
     ev.stopPropagation();
