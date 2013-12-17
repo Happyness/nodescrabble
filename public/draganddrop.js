@@ -17,7 +17,7 @@ function drag(ev)
 
 function dragEnd(event)
 {
-    ev.preventDefault();
+    event.preventDefault();
     if (event.dataTransfer.dropEffect == 'move') {
         // remove the dragged element
         event.target.parentNode.removeChild(event.target);

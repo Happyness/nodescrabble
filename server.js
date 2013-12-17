@@ -6,12 +6,13 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var socketRoute = require('./routes/socket');
 var response = require('./routes/response');
 var http = require('http');
 var path = require('path');
+var db = require('./model/db');
 var socketio = require('socket.io');
 var Stately = require('stately.js');
-
 var app = express();
 
 // all environments
@@ -43,7 +44,7 @@ app.get("/chat", function(req, res){
     res.render("chat");
 });
 
-req.session.clientstate = Stately.machine({
+var clientstate = Stately.machine({
     'CONNECTED': {
         'creategame': 'WAITING',
         'joingame': 'INGAME'
@@ -60,24 +61,57 @@ req.session.clientstate = Stately.machine({
     },
     'WAITMOVE': {
         'play': 'INGAME'
-    },
-    '*': {
-        'disconnected': 'WAITING'
     }
 });
 
 app.get("/game", function(req, res) {
-    res.render("game", {'clientstate': req.session.clientstate});
+    //req.session.clientstate = clientstate;
+    res.render("game");
 });
+
+app.get("/socket", socketRoute.socketindex);
+app.post("/socket", socketRoute.socketPost);
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-socketio.listen(server).on('connection', function (socket) {
-    socket.emit('message', { message: 'welcome to nodescrabble'});
-    socket.on('send', function (data) {
-        socket.emit('message', data);
-        socket.broadcast.emit('message', data);
+var io = socketio.listen(server);
+
+io.configure(function() {
+    // Only use WebSockets
+    io.set("transports", ["websocket"]);
+    // Restrict log output
+    io.set("log level", 2);
+});
+
+ServerController = require('./ServerController').ServerController;
+var controller = new ServerController();
+
+io.sockets.on('connection', function (client) {
+    console.log("Got connection from client");
+    var sessionid;
+
+    client.on('quit', function (data) {
+        controller.quitGame(data);
     });
+
+    client.on('initgame', function(data) {
+        console.log('Try to init game');
+        controller.initGame(client, data);
+    });
+    client.on('joingame', function(data) {
+        console.log('Try to join game');
+        var session = controller.joinGame(client, data);
+
+        if (session != false) {
+            session.state.onINGAME = function (event, oldState, newState) {
+                client.on('playmove', function(data) {
+                    controller.makeMove(client, data);
+                });
+            }
+        }
+    });
+
+    client.emit('message', { message: 'welcome to nodescrabble'});
 });
