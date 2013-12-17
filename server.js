@@ -105,7 +105,7 @@ io.sockets.on('connection', function (client) {
         var session = controller.joinGame(client, data);
 
         if (session != false) {
-            session.state.onINGAME = function (event, oldState, newState) {
+            session.getState().onINGAME = function (event, oldState, newState) {
                 client.on('playmove', function(data) {
                     controller.makeMove(client, data);
                 });

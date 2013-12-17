@@ -14,10 +14,6 @@ var RemotePlayer = function() {
         return client;
     };
 
-    var getSession = function() {
-        return session;
-    };
-
     var getLetters = function() {
         return letters;
     };
@@ -32,10 +28,6 @@ var RemotePlayer = function() {
 
     var setId = function(newId) {
         id = newId;
-    };
-
-    var setSession = function(newSession) {
-        session = newSession;
     };
 
     var setLetters = function(newLetters) {
@@ -53,11 +45,9 @@ var RemotePlayer = function() {
     return {
         getClient: getClient,
         getId: getId,
-        getSession: getSession,
         getLetters: getLetters,
         getPlayedTiles: getPlayedTiles,
         setId: setId,
-        setSession: setSession,
         setLetters: setLetters,
         setPlayedTiles: setPlayedTiles
     }

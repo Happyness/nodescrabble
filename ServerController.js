@@ -11,7 +11,7 @@ var ServerController = function()
         Stately = require('stately.js');
         gamesession = require('./public/gamesession').gamesession;
         var session = new gamesession();
-        session.id = 10 + sessions.length * 55;
+        session.setId(10 + sessions.length * 55);
         session.setState(Stately.machine({
             'INGAME': {
                 'endgame': 'WAITING'
@@ -40,9 +40,7 @@ var ServerController = function()
         } else if (sessions.length <= 3) {
             var session = createGameSession(client, data);
             sessions.push(session);
-            message = createResponseMessage({
-                                              "sessionid": session.getId(),
-                                              "userid": session.getPlayer(1)});
+            message = createResponseMessage({"sessionid": "" + session.getId(), "userid": session.getPlayer(0)});
         } else {
             message = createResponseMessage("No more game sessions allowed at the moment", true);
         }
@@ -54,21 +52,21 @@ var ServerController = function()
     {
         if (error) return {"result": "error", "message": message};
 
-        return {"result": "SUCCESS", "message": message};
+        return {"result": "success", "message": message};
     };
 
     var getBoardMessage = function getBoardMessage(session)
     {
         return createResponseMessage({
-            "tiles": session.getUnplayedTiles,
-            "players": session.getPlayers
+            "tiles": session.getUnplayedTiles(),
+            "players": session.getPlayers()
         });
     };
 
     var getSession = function getSession(id)
     {
         for (i = 0; i < sessions.length; i++) {
-            if (sessions[i].id == id) return sessions[i];
+            if (sessions[i].getId() == id) return sessions[i];
         }
 
         return false;
@@ -76,15 +74,19 @@ var ServerController = function()
 
     var joinGame = function joinGame(client, data)
     {
-        var message, session;
+        var message, session = false, data = JSON.parse(data);
 
         if (data.sessionid == null) {
             message = createResponseMessage("Game session id is required for joining", true);
         } else {
             session = getSession(data.sessionid);
 
+            console.log(JSON.stringify(session));
+
             if (session != false) {
                 var player = session.addPlayer(client);
+
+                console.log(player);
 
                 if (player == false) {
                     message = createResponseMessage("Game has two players already", true);
@@ -101,7 +103,10 @@ var ServerController = function()
         }
 
         client.emit('joingame-response', message);
-        client.broadcast.emit("joingame-response", getBoardMessage(session));
+
+        if (session != false) {
+            client.broadcast.emit("joingame-response", getBoardMessage(session));
+        }
 
         return session;
     };

@@ -25,13 +25,13 @@ var gamesession = function() {
 
     var addPlayer = function(client)
     {
-        if (players.length > 1) {
-            return false;
-        }
+        //if (players.length > 10) {
+        //    return false;
+        //}
 
         var player = new RemotePlayer();
         player.id = players.length;
-        player.client = client;
+        //player.client = client;
 
         players.push(player);
 
