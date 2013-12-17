@@ -4,70 +4,75 @@ html(lang="en")
         title= "NodeScrabble"
         script(src='/draganddrop.js')
         script(src='/game.js')
+        script(src='/Player.js')
+        script(src='/Board.js')
         script(src='/socket.io/socket.io.js')
+        script init();
         link(rel='stylesheet', href='/stylesheets/style.css')
     body
         h1 NodeScrabble
         #board
             table(id="gameTable")
                 tbody
+                -var counter = 0
                 - for(var i=1; i <= 15; i++)
-                    tr(id=i)
+                    tr()
                     - for(var j=1; j <= 15; j++)
+                        -counter++
                         - if (((i == 1 || i == 15) && (j == 1 || j == 15)))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
                         - else if (((i == 2 || i == 14) && (j == 6 || j == 10)))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
 
                         - else if (((i == 4 || i == 12) && (j == 4 || j == 12)))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
 
                         - else if (((i == 6 || i == 10) && (j == 2 || j == 6 || j == 10 || j == 14)))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type1")
 
                         - else if (((i == 1 || i == 15) && (j == 5 || j == 11)))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type2")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type2")
 
                         - else if (((i == 5 || i == 11) && (j == 1 || j == 15)))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type2")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type2")
 
                         - else if ((i == 1 || i == 15) && j == 8)
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
 
                         - else if ((i == 2 || i == 14) && (j == 2 || j == 14))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
 
                         - else if ((i == 3 || i == 5 || i == 11 || i == 13) && (j == 7 || j == 9))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
 
                         - else if ((i == 7 || i == 9) && (j == 3 || j == 5 || j == 11 || j == 13))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
 
                         - else if ((i == 8) && (j == 1 || j == 15))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type3")
 
                         - else if ((i == 3 || i == 13) && (j == 3 || j == 13))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
 
                         - else if ((i == 4 || i == 12) && (j == 8))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
 
                         - else if ((i == 5 || i == 11) && (j == 5 || j == 11))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
 
                         - else if ((i == 8) && (j == 4 || j == 12))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
 
                         - else if ((i == 8) && (j == 4 || j == 12))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="type4")
                         - else if ((i == 8) && (j == 8))
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="center")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="center")
                         - else
-                            td(id=j ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="regular")
+                            td(id=counter ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)" class="regular")
         br
         div(id="tiles" ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)")
-            - for(var j=50; j <= 58; j++)
-                div(id=j class="tile" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)") T
+            - for(var j=1; j <= 8; j++)
+                div(id="tile"+j class="tile" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)") T
 
         br
         .controls
