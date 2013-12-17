@@ -1,29 +1,9 @@
-var client = require('clientstate');
-
 window.onload = function() {
     var messages = [];
     var socket = io.connect('http://localhost:3000');
     var gameTable = document.getElementById("gameTable");
     var sendButton = document.getElementById("sendButton");
     var content = document.getElementById("content");
-
-    client.onleaveSTOPPED = function (event, oldState, newState) {
-        // ...
-    };
-
-    client.onenterSTOPPED = function (event, oldState, newState) {
-        // ...
-    };
-
-    client.onPLAYING = function (event, oldState, newState) {
-        console.log("now playing radio");
-    };
-
-    client.onPAUSED = function (event, oldState, newState) {
-        // ...
-    };
-
-    client.play();
 
     socket.on('message', function(data){
         if(data.message) {

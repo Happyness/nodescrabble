@@ -2,12 +2,14 @@
 html(lang="en")
     head
         title= "NodeScrabble"
-        script(src='https://raw.github.com/fschaefer/Stately.js/master/Stately.js')
         script(src='/draganddrop.js')
         script(src='/game.js')
         script(src='/socket.io/socket.io.js')
         link(rel='stylesheet', href='/stylesheets/style.css')
     body
+        var state = #{clientstate}
+        state.play();
+
         h1 NodeScrabble
         #board
             table(id="gameTable")

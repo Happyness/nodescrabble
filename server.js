@@ -9,10 +9,8 @@ var user = require('./routes/user');
 var response = require('./routes/response');
 var http = require('http');
 var path = require('path');
-var db = require('./model/db');
 var socketio = require('socket.io');
 var Stately = require('stately.js');
-var clientstate = require('./public/clientstate.js');
 
 var app = express();
 
@@ -44,8 +42,32 @@ app.post('/move', response.move);
 app.get("/chat", function(req, res){
     res.render("chat");
 });
-app.get("/game", function(req, res){
-    res.render("game");
+
+req.session.clientstate = Stately.machine({
+    'CONNECTED': {
+        'creategame': 'WAITING',
+        'joingame': 'INGAME'
+    },
+    'WAITING': {
+        'playerjoined': 'INGAME'
+    },
+    'INGAME': {
+        'yourturn': 'WAITMOVE',
+        'gameended': 'ENDGAME'
+    },
+    'ENDGAME': {
+        'playerquit': 'CONNECTED'
+    },
+    'WAITMOVE': {
+        'play': 'INGAME'
+    },
+    '*': {
+        'disconnected': 'WAITING'
+    }
+});
+
+app.get("/game", function(req, res) {
+    res.render("game", {'clientstate': req.session.clientstate});
 });
 
 var server = http.createServer(app).listen(app.get('port'), function(){
