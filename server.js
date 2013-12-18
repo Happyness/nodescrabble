@@ -91,6 +91,7 @@ var controller = new ServerController();
 io.sockets.on('connection', function (client) {
     console.log("Got connection from client");
 
+    client.emit('message', { message: 'welcome to nodescrabble'});
     client.broadcast.emit("update", {"type": "gamelist", "games": controller.getAllSessions()});
 
     client.on('quit', function (data) {
@@ -110,13 +111,12 @@ io.sockets.on('connection', function (client) {
         var session = controller.joinGame(client, data);
 
         if (session != false) {
-            session.getState().onINGAME = function (event, oldState, newState) {
+            var state = session.getState();
+            state.onINGAME = function (event, oldState, newState) {
                 client.on('playmove', function(data) {
                     controller.makeMove(client, data);
                 });
             }
         }
     });
-
-    client.emit('message', { message: 'welcome to nodescrabble'});
 });

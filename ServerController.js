@@ -92,8 +92,6 @@ var ServerController = function()
             if (session != false) {
                 var player = session.addPlayer(client);
 
-                console.log(player);
-
                 if (player == false) {
                     message = createResponseMessage("Game has two players already", true);
                 } else {
@@ -127,7 +125,6 @@ var ServerController = function()
     var makeMove = function makeMove(client, data)
     {
         var response;
-        var state = session.getState();
 
         if (isArray(data.move)) {
             response = createResponseMessage(calculateMove(data));
