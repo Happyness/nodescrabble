@@ -1,10 +1,15 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+sub {
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+    vertical-align:text-bottom; font-size:50%;
 }
 
 [draggable=true]:hover {
@@ -23,8 +28,8 @@ a {
 
 td {
     text-align: center;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     border:2px solid black;
     color:#ffffff;
 }
@@ -65,18 +70,18 @@ table#gameTable {
     color:#ffffff;
     font-weight:bold;
     border:2px solid black;
-    height: 20px;
-    width: 180px;
+    height: 30px;
+    width: 240px;
 }
 
 td .tile {
     margin: 0 !important;
 }
 
-.tile {
+.tile, .move-tile, .played-tile {
     float: left;
-    width: 17px;
-    height: 17px;
+    width: 27px;
+    height: 27px;
     background-color: #FFF;
     margin-right: 1px;
     color: #000;

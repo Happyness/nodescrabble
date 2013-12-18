@@ -92,10 +92,16 @@ io.sockets.on('connection', function (client) {
     console.log("Got connection from client");
 
     client.emit('message', { message: 'welcome to nodescrabble'});
+    client.emit("update", {"type": "gamelist", "games": controller.getAllSessions()});
     client.broadcast.emit("update", {"type": "gamelist", "games": controller.getAllSessions()});
 
     client.on('quit', function (data) {
         controller.quitGame(data);
+    });
+
+    client.on('startgame', function (data) {
+        console.log('Try to start game');
+        controller.startGame(client, data);
     });
 
     client.on('games', function (data) {

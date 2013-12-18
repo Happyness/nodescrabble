@@ -31,7 +31,7 @@ function init() {
     board = [];
 
     // Connect to server
-    socket = io.connect('http://nodescrabbler.herokuapp.com/');
+    socket = io.connect('http://localhost:3000');
 
     setEventHandlers();
 }
@@ -42,6 +42,9 @@ function init() {
 var setEventHandlers = function() {
 
     console.log("setEventHandlers");
+
+    // Update from server
+    socket.on("update", onUpdate);
 
     // Socket connection successful
     socket.on("connect", onSocketConnected);
@@ -81,9 +84,6 @@ var setEventHandlers = function() {
 
     // Server message
     socket.on("message", onServerMessage);
-
-    // Update from server
-    socket.on("update", onUpdate);
 
 }
 
@@ -151,8 +151,11 @@ function onInitGameResponse(data) {
 
         console.log("Player id: " + player.getId());
         console.log("Session id: " + player.getSession());
+
+        sendReady();
     }
     else {
+        console.log(data);
         alert(data.message);
     }
 }
@@ -161,9 +164,9 @@ function onInitGameResponse(data) {
 function onJoinGameResponse(data) {
     console.log("Joined game response");
 
-    if(data.result == "success") {
-        player.setId(data.id);
-        player.setSession(data.sessionid);
+    if (data.result == "success") {
+        console.log(JSON.stringify(data));
+        player.setId(data.playerid);
 
         var header = document.getElementById('header');
         var controls = document.getElementById('controls');
@@ -182,7 +185,7 @@ function onJoinGameResponse(data) {
         console.log("Player id: " + player.getId());
         console.log("Session id: " + player.getSession());
 
-        // TODO: tell server we're ready for game?
+        sendReady();
     }
     else {
         alert(data.message);
@@ -215,21 +218,40 @@ function onGetTileResponse(data) {
 
 // On error
 function onErrorMessage(data) {
-    console.log("Error message")
+    console.log("Error message" + data);
 
     alert(data.message);
+}
+
+function updateTiles()
+{
+    console.log("Updating tiles ...");
+    var tiles = player.letters;
+    var moveTiles = document.querySelectorAll('.tile');
+    console.log(moveTiles);
+
+        for (var i = 0; i < moveTiles.length; i++) {
+            if (typeof tiles[i] != 'undefined' && tiles[i] != null) {
+                moveTiles[i].innerHTML = tiles[i] + "<sub>3</sub>";
+            }
+        }
 }
 
 // Game started
 function onGameStarted(data) {
     console.log("Games started");
 
+    console.log(JSON.stringify(data));
+
     player.turn = data.turn;
-    player.letters = data.letters;
+    player.letters = data.tiles;
     board = data.board;
 
-    window.location = "/game";
+    turn = (player.getId() == player.turn) ? "your turn" : "opponent turn";
 
+    header.innerHTML = "Game is now started, it is " + turn;
+
+    updateTiles();
 }
 
 // On move response
@@ -288,10 +310,19 @@ function onServerMessage(data) {
     //TODO: show server message
 };
 
+function sendReady()
+{
+    console.log("send Ready message to server");
+    socket.emit('startgame', {
+        "playerid": player.getId(),
+        "sessionid": player.getSession()
+    });
+}
+
 // Make a move
 function play() {
     console.log("play()");
-    if (true) {
+
         sendButton.onClick = function() {
             // TODO: Send move to server
             console.log("sendButton.onClick")
@@ -304,26 +335,25 @@ function play() {
         swapButton.onClick = function() {
             // TODO: Send swap to server
         }
-    }
 }
 
 function joinGame() {
     console.log("joinButton");
     var gamesSelect = document.getElementById('gamesSelect');
     var sessionid = gamesSelect.options[gamesSelect.selectedIndex].value;
+    player.setSession(sessionid);
     socket.emit('joingame', {sessionid: sessionid});
-    console.log(sessionid);
 }
 
 function createGame() {
     console.log("createGame");
-    socket.emit('initgame', {language: "swe", dictionary: "default"});
+    socket.emit('initgame', {language: "sv", dictionary: "default"});
 }
 
 function moveToJson() {
     console.log("moveToJson()");
     tempMove = [];
-    var moveTiles = document.querySelector('.move-tile');
+    var moveTiles = document.querySelectorAll('.move-tile');
     for (var i = 0; i < moveTiles.length; i++) {
         var pos = moveTiles[i].parentNode.cellIndex;
         var value = moveTiles[i].innerHTML;
@@ -334,33 +364,7 @@ function moveToJson() {
     return tempMove;
 }
 
-
-
-
-/*
 window.onload = function() {
-    var messages = [];
-    var socket = io.connect('http://localhost:3000');
-    var gameTable = document.getElementById("gameTable");
-    var sendButton = document.getElementById("sendButton");
-    var jsonBoard;
-
-    socket.on('message', function(data){
-        if(data.message) {
-            messages.push(data.message);
-            var html = '';
-            for (var i= 0; i < messages.length; i++) {
-                html += messages[i] + '<br />';
-            }
-            content.innerHTML = html;
-        } else {
-            console.log("There is a problem:", data);
-        }
-    });
-
-    sendButton.onclick = function(){
-        var text = field.value;
-        socket.emit('send', { message: text});
-    };
+    init();
+    play();
 };
-*/

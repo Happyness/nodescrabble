@@ -4,7 +4,7 @@ Dictionary = require('./Dictionary').Dictionary;
 
 var gamesession = function(i, dict, lang, c) {
     var id = i;
-    var players = [];
+    var players = new Array();
     var unplayedTiles = [];
     var playedTiles = [];
     var board = [[]];
@@ -22,9 +22,27 @@ var gamesession = function(i, dict, lang, c) {
         board = new Board(language);
     }
 
+    var createTiles = function(language)
+    {
+        var charCodeRange = {
+            start: 65,
+            end: 90
+        }
+        // Loop through alphabet
+        for (var cc = charCodeRange.start; cc <= charCodeRange.end; cc++) {
+            for (var i = 0; i < 3; i++) {
+                unplayedTiles.push(String.fromCharCode(cc));
+            }
+        }
+
+        // Shuffle tiles
+        unplayedTiles = Util.shuffle(unplayedTiles);
+    }
+
     // Constructor methods
     createDictionary(dict);
     createBoard(lang);
+    createTiles(lang);
 
     var switchTurn = function(data)
     {
@@ -46,7 +64,7 @@ var gamesession = function(i, dict, lang, c) {
         }
 
         var player = new RemotePlayer(players.length + 1);
-        //player.client = client;
+        player.setClient(client);
 
         players.push(player);
 
@@ -85,10 +103,6 @@ var gamesession = function(i, dict, lang, c) {
         return session;
     };
 
-    var getSocket = function() {
-        return socket;
-    };
-
     var getUnplayedTiles = function(amount) {
         var randoms = [];
         for (var i = 0, index; i < amount; ++i) {
@@ -120,14 +134,16 @@ var gamesession = function(i, dict, lang, c) {
     var setTurn = function(newTurn) {
         turn = newTurn;
     };
-    var setSocket = function(s) {
-        socket = s;
-    };
+
     var setState = function(s) {
         state = s;
     };
+    var getBoard = function()
+    {
+        return board;
+    }
 
-    addPlayer(c);
+    turn = addPlayer(c);
 
     return {
         addPlayer: addPlayer,
@@ -143,7 +159,8 @@ var gamesession = function(i, dict, lang, c) {
         switchTurn: switchTurn,
         setId: setId,
         setTurn: setTurn,
-        setState: setState
+        setState: setState,
+        getBoard: getBoard
     }
 };
 

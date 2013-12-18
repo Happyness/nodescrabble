@@ -63,6 +63,34 @@ var ServerController = function()
         return Util.merge({"result": "success"}, message);
     };
 
+    var getGameMessage = function(session, noTiles)
+    {
+        return {"tiles": session.getUnplayedTiles(noTiles), "board": session.getBoard().getTiles(), "turn": session.getTurn().getId()}
+    }
+
+    var startGame = function(client, data)
+    {
+        if (data.playerid && data.sessionid) {
+            var session = getSession(data.sessionid);
+
+            if (session != false)
+                client.emit('game-started', getGameMessage(session, 7));
+        } else {
+            console.log("Cannot start game without session id and player id");
+            console.log(data);
+        }
+
+        /*
+        console.log("game starting now on server");
+        var players = session.getPlayers(), client;
+
+        for (var i = 0; i < players.length; i++) {
+            //console.log(players[i].getClient());
+            client = players[i].getClient();
+            client.emit(');
+        }*/
+    }
+
     var getBoardMessage = function(session)
     {
         return createResponseMessage({
@@ -107,7 +135,6 @@ var ServerController = function()
         }
 
         client.emit('joingame-response', message);
-        client.broadcast.emit("update", {"type": "gamelist", "games": getAllSessions()});
 
         return session;
     };
@@ -157,7 +184,8 @@ var ServerController = function()
         getResponseMessage: createResponseMessage,
         createGameSession: createGameSession,
         getAllSessions: getAllSessions,
-        getGames: getGames
+        getGames: getGames,
+        startGame: startGame
     }
 };
 

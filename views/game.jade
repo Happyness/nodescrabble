@@ -3,14 +3,22 @@ html(lang="en")
     head
         title= "NodeScrabble"
         script(src='/draganddrop.js')
+        script(src='../Util.js')
         script(src='/game.js')
         script(src='/Player.js')
         script(src='/Board.js')
         script(src='/socket.io/socket.io.js')
-        script play();
+
         link(rel='stylesheet', href='/stylesheets/style.css')
     body
-        h1 NodeScrabble
+        h1(id='header') NodeScrabble
+        .select(id='select')
+            select(id="gamesSelect")
+        br
+        .controls(id='controls')
+            input.joinButton(type='button', value='Join Game', id='joinButton', onclick='joinGame()')
+            input.createGameButton(type='button', value='Create Game', id='createGameButton' onClick='createGame()')
+        br
         #board
             table(id="gameTable")
                 tbody

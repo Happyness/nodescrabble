@@ -15,7 +15,7 @@ var RemotePlayer = function(i) {
     };
 
     var getLetters = function() {
-        return letters;
+       return letters;
     };
 
     var getPlayedTiles = function() {
@@ -42,6 +42,11 @@ var RemotePlayer = function(i) {
         turn = newTurn;
     };
 
+   var setClient = function(c)
+   {
+       client = c;
+   }
+
     return {
         getClient: getClient,
         getId: getId,
@@ -49,7 +54,8 @@ var RemotePlayer = function(i) {
         getPlayedTiles: getPlayedTiles,
         setId: setId,
         setLetters: setLetters,
-        setPlayedTiles: setPlayedTiles
+        setPlayedTiles: setPlayedTiles,
+        setClient: setClient
     }
 };
 
