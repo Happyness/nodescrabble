@@ -31,7 +31,7 @@ function init() {
     board = [];
 
     // Connect to server
-    socket = io.connect('http://localhost:3000');
+    socket = io.connect('http://nodescrabbler.herokuapp.com/');
 
     setEventHandlers();
 }
