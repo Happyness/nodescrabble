@@ -28,10 +28,22 @@ var ServerController = function()
         return session;
     };
 
+    var merge = function (to, from) {
+        for (n in from) {
+            if (typeof to[n] != 'object') {
+                to[n] = from[n];
+            } else if (typeof from[n] == 'object') {
+                to[n] = realMerge(to[n], from[n]);
+            }
+        }
+
+        return to;
+    };
+
 
     var initGame = function initGame(client, data)
     {
-        var message, data = JSON.parse(data);
+        var message;
 
         if (data.language == null || data.dictionary == null) {
             console.log(data.language);
@@ -52,7 +64,7 @@ var ServerController = function()
     {
         if (error) return {"result": "error", "message": message};
 
-        return {"result": "success", "message": message};
+        return merge({"result": "success"}, message);
     };
 
     var getBoardMessage = function getBoardMessage(session)
@@ -74,14 +86,12 @@ var ServerController = function()
 
     var joinGame = function joinGame(client, data)
     {
-        var message, session = false, data = JSON.parse(data);
+        var message, session = false;
 
         if (data.sessionid == null) {
             message = createResponseMessage("Game session id is required for joining", true);
         } else {
             session = getSession(data.sessionid);
-
-            console.log(JSON.stringify(session));
 
             if (session != false) {
                 var player = session.addPlayer(client);
