@@ -237,11 +237,26 @@ function updateTiles()
         }
 }
 
+function playMove()
+{
+        // TODO: Send move to server
+        console.log("sendButton.onClick")
+        var board = moveToJson();
+        console.log(JSON.stringify(board));
+}
+
 // Game started
 function onGameStarted(data) {
     console.log("Games started");
 
     console.log(JSON.stringify(data));
+    /*
+    passButton.onClick = function() {
+        // TODO: Send pass to server
+    }
+    swapButton.onClick = function() {
+        // TODO: Send swap to server
+    }*/
 
     player.turn = data.turn;
     player.letters = data.tiles;
@@ -319,24 +334,6 @@ function sendReady()
     });
 }
 
-// Make a move
-function play() {
-    console.log("play()");
-
-        sendButton.onClick = function() {
-            // TODO: Send move to server
-            console.log("sendButton.onClick")
-            var board = moveToJson;
-            console.log(JSON.stringify(board));
-        }
-        passButton.onClick = function() {
-            // TODO: Send pass to server
-        }
-        swapButton.onClick = function() {
-            // TODO: Send swap to server
-        }
-}
-
 function joinGame() {
     console.log("joinButton");
     var gamesSelect = document.getElementById('gamesSelect');
@@ -366,5 +363,4 @@ function moveToJson() {
 
 window.onload = function() {
     init();
-    play();
 };
