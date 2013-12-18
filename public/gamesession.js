@@ -1,18 +1,34 @@
 RemotePlayer = require('./RemotePlayer').RemotePlayer;
+Board = require('./Board').Board;
+Dictionary = require('./Dictionary').Dictionary;
 
-var gamesession = function() {
-    var id;
+var gamesession = function(i, dict, lang, c) {
+    var id = i;
     var players = [];
     var unplayedTiles = [];
     var playedTiles = [];
+    var board = [[]];
     var turn;
-    var socket;
     var state;
-    var language;
-    var dictionary;
+    var activeDictionary;
+
+    var createDictionary = function(dictionary)
+    {
+        activeDictionary = new Dictionary(dictionary);
+    }
+
+    var createBoard = function(language)
+    {
+        board = new Board(language);
+    }
+
+    // Constructor methods
+    createDictionary(dict);
+    createBoard(lang);
 
     var switchTurn = function(data)
     {
+        var i;
         if (typeof data.userid != 'undefined' && data.userid > 0) {
             for (i = 0; i < players.length; i++) {
                 if (players[i].id != data.userid) {
@@ -25,9 +41,9 @@ var gamesession = function() {
 
     var addPlayer = function(client)
     {
-        //if (players.length > 10) {
-        //    return false;
-        //}
+        if (players.length > 10) {
+            return false;
+        }
 
         var player = new RemotePlayer();
         player.id = players.length;
@@ -43,10 +59,20 @@ var gamesession = function() {
         return players;
     }
 
-    var getPlayer = function getPlayer(id)
+    var getPlayerById = function getPlayerById(id)
     {
+        var i;
         for (i = 0; i < players.length; i++) {
             if (players[i].id == id) return players[i];
+        }
+
+        return false;
+    };
+
+    var getPlayer = function getPlayer(key)
+    {
+        if (key <= players.length) {
+            return players[key - 1];
         }
 
         return false;
@@ -102,9 +128,12 @@ var gamesession = function() {
         state = s;
     };
 
+    addPlayer(c);
+
     return {
         addPlayer: addPlayer,
         getPlayer: getPlayer,
+        getPlayerById: getPlayerById,
         getId: getId,
         getState: getState,
         getSession: getSession,
@@ -112,11 +141,9 @@ var gamesession = function() {
         getPlayedTiles: getPlayedTiles,
         getPlayers: getPlayers,
         getTurn: getTurn,
-        getSocket: getSocket,
         switchTurn: switchTurn,
         setId: setId,
         setTurn: setTurn,
-        setSocket: setSocket,
         setState: setState
     }
 };

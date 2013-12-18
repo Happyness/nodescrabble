@@ -1,17 +1,24 @@
-/**
- * Created by joel on 2013-12-17.
- */
+Util = require('./Util').Util
 
 var ServerController = function()
 {
     var sessions = new Array();
 
-    var createGameSession = function createGameSession(client, data)
+    var getAllSessions = function()
+    {
+        var list = new Array();
+        for (i = 0; i < sessions.length; i++) {
+            list.push(sessions[i].getId());
+        }
+        return JSON.stringify(list);
+    }
+
+    var createGameSession = function(client, data)
     {
         Stately = require('stately.js');
         gamesession = require('./public/gamesession').gamesession;
-        var session = new gamesession();
-        session.setId(10 + sessions.length * 55);
+        var id = 10 + sessions.length * 55;
+        var session = new gamesession(id, data.dictionary, data.language, client);
         session.setState(Stately.machine({
             'INGAME': {
                 'endgame': 'WAITING'
@@ -20,28 +27,11 @@ var ServerController = function()
                 'completeSession': 'INGAME'
             }
         }));
-        session.setSocket(client);
-        session.addPlayer(client);
-        session.language = data.language;
-        session.dictionary = data.dictionary;
 
         return session;
     };
 
-    var merge = function (to, from) {
-        for (n in from) {
-            if (typeof to[n] != 'object') {
-                to[n] = from[n];
-            } else if (typeof from[n] == 'object') {
-                to[n] = realMerge(to[n], from[n]);
-            }
-        }
-
-        return to;
-    };
-
-
-    var initGame = function initGame(client, data)
+    var initGame = function(client, data)
     {
         var message;
 
@@ -52,22 +42,30 @@ var ServerController = function()
         } else if (sessions.length <= 3) {
             var session = createGameSession(client, data);
             sessions.push(session);
-            message = createResponseMessage({"sessionid": "" + session.getId(), "userid": session.getPlayer(0)});
+
+            console.log(session.getPlayer(1));
+            console.log(session.getPlayer(1).getId());
+
+            message = createResponseMessage({
+                "sessionid": session.getId(),
+                "playerid": session.getPlayer(1).getId()
+            });
         } else {
             message = createResponseMessage("No more game sessions allowed at the moment", true);
         }
 
         client.emit('initgame-response', message);
+        client.broadcast.emit("update", {"type": "gamelist", "games": getAllSessions()});
     };
 
-    var createResponseMessage = function createResponseMessage(message, error)
+    var createResponseMessage = function(message, error)
     {
         if (error) return {"result": "error", "message": message};
 
-        return merge({"result": "success"}, message);
+        return Util.merge({"result": "success"}, message);
     };
 
-    var getBoardMessage = function getBoardMessage(session)
+    var getBoardMessage = function(session)
     {
         return createResponseMessage({
             "tiles": session.getUnplayedTiles(),
@@ -75,7 +73,7 @@ var ServerController = function()
         });
     };
 
-    var getSession = function getSession(id)
+    var getSession = function(id)
     {
         for (i = 0; i < sessions.length; i++) {
             if (sessions[i].getId() == id) return sessions[i];
@@ -104,7 +102,7 @@ var ServerController = function()
                     message = createResponseMessage({
                         "language": session.language,
                         "dictionary": session.dictionary,
-                        "userid": player.id
+                        "playerid": player.getId()
                     });
                 }
             } else {
@@ -121,13 +119,18 @@ var ServerController = function()
         return session;
     };
 
+    var calculateMove = function calculateMove()
+    {
+
+    }
+
     var makeMove = function makeMove(client, data)
     {
         var response;
         var state = session.getState();
 
         if (isArray(data.move)) {
-            response = createResponseMessage(calculateMove());
+            response = createResponseMessage(calculateMove(data));
         } else {
             switch (data.move) {
                 case 'pass':
@@ -135,7 +138,7 @@ var ServerController = function()
                     response = createResponseMessage("");
                     break;
                 case 'swap' :
-                    response = createResponseMessage(swapTiles());
+                    response = createResponseMessage(swapTiles(data));
                     session.switchTurn(data);
                     break;
                 default :
@@ -155,7 +158,8 @@ var ServerController = function()
         getSession: getSession,
         getBoardMessage: getBoardMessage,
         getResponseMessage: createResponseMessage,
-        createGameSession: createGameSession
+        createGameSession: createGameSession,
+        getAllSessions: getAllSessions
     }
 };
 

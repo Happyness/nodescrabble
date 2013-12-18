@@ -90,7 +90,8 @@ var controller = new ServerController();
 
 io.sockets.on('connection', function (client) {
     console.log("Got connection from client");
-    var sessionid;
+
+    client.broadcast.emit("update", {"type": "gamelist", "games": controller.getAllSessions()});
 
     client.on('quit', function (data) {
         controller.quitGame(data);
