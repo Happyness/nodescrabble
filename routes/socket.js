@@ -25,5 +25,8 @@ exports.socketPost = function(req, res) {
                 res.render('sockettest', { title: 'Express', response: JSON.stringify(data)});
             });
             console.log(req.body.jsonData);
-            socket.emit(req.body.message, JSON.parse(req.body.jsonData));
+
+            if (req.body.jsonData != "") {
+                socket.emit(req.body.message, JSON.parse(req.body.jsonData));
+            }
 };

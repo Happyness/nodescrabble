@@ -8,7 +8,7 @@ var ServerController = function()
     {
         var list = new Array();
         for (i = 0; i < sessions.length; i++) {
-            list.push(sessions[i].getId());
+            list.push({"sessionid": sessions[i].getId()});
         }
         return JSON.stringify(list);
     }
@@ -42,9 +42,6 @@ var ServerController = function()
         } else if (sessions.length <= 3) {
             var session = createGameSession(client, data);
             sessions.push(session);
-
-            console.log(session.getPlayer(1));
-            console.log(session.getPlayer(1).getId());
 
             message = createResponseMessage({
                 "sessionid": session.getId(),
@@ -111,10 +108,7 @@ var ServerController = function()
         }
 
         client.emit('joingame-response', message);
-
-        if (session != false) {
-            client.broadcast.emit("joingame-response", getBoardMessage(session));
-        }
+        client.broadcast.emit("update", {"type": "gamelist", "games": getAllSessions()});
 
         return session;
     };
@@ -122,6 +116,11 @@ var ServerController = function()
     var calculateMove = function calculateMove()
     {
 
+    }
+
+    var getGames = function(client, data)
+    {
+        client.emit('games-response', createResponseMessage({"games": getAllSessions()}));
     }
 
     var makeMove = function makeMove(client, data)
@@ -159,7 +158,8 @@ var ServerController = function()
         getBoardMessage: getBoardMessage,
         getResponseMessage: createResponseMessage,
         createGameSession: createGameSession,
-        getAllSessions: getAllSessions
+        getAllSessions: getAllSessions,
+        getGames: getGames
     }
 };
 

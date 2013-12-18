@@ -97,6 +97,10 @@ io.sockets.on('connection', function (client) {
         controller.quitGame(data);
     });
 
+    client.on('games', function (data) {
+        controller.getGames(client, data);
+    });
+
     client.on('initgame', function(data) {
         console.log('Try to init game');
         controller.initGame(client, data);

@@ -45,8 +45,7 @@ var gamesession = function(i, dict, lang, c) {
             return false;
         }
 
-        var player = new RemotePlayer();
-        player.id = players.length;
+        var player = new RemotePlayer(players.length + 1);
         //player.client = client;
 
         players.push(player);

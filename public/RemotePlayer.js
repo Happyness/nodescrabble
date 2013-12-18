@@ -1,5 +1,5 @@
-var RemotePlayer = function() {
-    var id;
+var RemotePlayer = function(i) {
+    var id = i;
     var session;
     var letters = [];
     var playedTiles = [];
