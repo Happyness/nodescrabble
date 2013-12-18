@@ -21,7 +21,8 @@ function init() {
     // sendButton = document.getElementById("sendButton");
     // passButton = document.getElementById("passButton");
     // swapButton = document.getElementById("swapButton");
-
+    // joinButton = document.getElementById("joinButton");
+    // createGameButton = document.getElementById("createGameButton");
 
     // Keep track of tiles, letters, session and id
     player = new Player();
@@ -49,13 +50,10 @@ var setEventHandlers = function() {
     socket.on("initgame-response", onInitGameResponse);
 
     // On game joined
-    socket.on("joingame-response", onJoinedGameResponse);
+    socket.on("joingame-response", onJoinGameResponse);
 
     // Socket disconnection
     socket.on("disconnect", onSocketDisconnect);
-
-    // On get games response
-    socket.on("games-response", onGetGamesResponse);
 
     // On get scores
     socket.on("scores-response", onGetScoresResponse);
@@ -83,14 +81,46 @@ var setEventHandlers = function() {
 
     // Server message
     socket.on("message", onServerMessage);
+
+    // Update from server
+    socket.on("update", onUpdate);
+
 }
 
-function onClickSendButton() {
-    // TODO: Send move to server
-    console.log("sendButton.onClick")
-    var board = moveToJson;
-    console.log(JSON.stringify(board));
+/**************************************************
+ ** UPDATES FROM SERVER
+ **************************************************/
+function onUpdate(data) {
+    console.log("On Update");
+
+    // TODO: check for type of update and calculate next move
+    switch(data.type) {
+        case 'gamelist':
+            updateGameList(data);
+            break;
+        default :
+            break;
+    }
+};
+
+function updateGameList(data) {
+    console.log("updateGameList()")
+    var gamesSelect = document.getElementById("gamesSelect");
+    gamesSelect.options.length = 0;
+    var games = JSON.parse(data.games);
+    for (var i = 0; i < games.length; i++) {
+        var value = games[i].sessionid;
+        gamesSelect.options.add(new Option(value, value))
+    }
 }
+
+
+
+
+
+/**************************************************
+ ** ON SOCKET EVENTS
+ **************************************************/
 
 // Socket connection successful
 function onSocketConnected() {
@@ -101,9 +131,26 @@ function onSocketConnected() {
 function onInitGameResponse(data) {
     console.log("Init game response");
 
-    if(data.result == "SUCCESS") {
-        player.setId(data.userid);
+    if(data.result == "success") {
+        player.setId(data.playerid);
         player.setSession(data.sessionid);
+
+        var header = document.getElementById('header');
+        var controls = document.getElementById('controls');
+        var select = document.getElementById('select');
+        var joinButton = document.getElementById('joinButton');
+        var createGameButton = document.getElementById('createGameButton');
+        var gamesSelect = document.getElementById('gamesSelect');
+
+        header.innerHTML = "Waiting for player...";
+
+        select.removeChild(gamesSelect);
+        controls.removeChild(joinButton);
+        controls.removeChild(createGameButton);
+
+
+        console.log("Player id: " + player.getId());
+        console.log("Session id: " + player.getSession());
     }
     else {
         alert(data.message);
@@ -111,12 +158,29 @@ function onInitGameResponse(data) {
 }
 
 // On game joined
-function onJoinedGameResponse(data) {
+function onJoinGameResponse(data) {
     console.log("Joined game response");
 
-    if(data.result == "SUCCESS") {
+    if(data.result == "success") {
         player.setId(data.id);
         player.setSession(data.sessionid);
+
+        var header = document.getElementById('header');
+        var controls = document.getElementById('controls');
+        var select = document.getElementById('select');
+        var joinButton = document.getElementById('joinButton');
+        var createGameButton = document.getElementById('createGameButton');
+        var gamesSelect = document.getElementById('gamesSelect');
+
+        header.innerHTML = "Joined game, waiting for server to start game...";
+
+        select.removeChild(gamesSelect);
+        controls.removeChild(joinButton);
+        controls.removeChild(createGameButton);
+
+
+        console.log("Player id: " + player.getId());
+        console.log("Session id: " + player.getSession());
 
         // TODO: tell server we're ready for game?
     }
@@ -128,13 +192,6 @@ function onJoinedGameResponse(data) {
 // Socket disconnection
 function onSocketDisconnect() {
     console.log("Socket disconnect");
-}
-
-// On get games response
-function onGetGamesResponse(data) {
-    console.log("Get game list response");
-
-    // TODO: show list of games
 }
 
 // On get scores
@@ -170,6 +227,9 @@ function onGameStarted(data) {
     player.turn = data.turn;
     player.letters = data.letters;
     board = data.board;
+
+    window.location = "/game";
+
 }
 
 // On move response
@@ -177,7 +237,7 @@ function onMoveResponse(data) {
     console.log("Move response");
 
     tileUpdates = data.tileUpdate;
-    if (data.result == "SUCCESS") {
+    if (data.result == "success") {
         // TODO: change turn, update board
         for (var i = 0; i < tileUpdates.length; i++) {
             board.push( {letter: tileUpdates[i].letter, pos: tileUpdate[i].pos} );
@@ -211,7 +271,6 @@ function onUpdateBoard(data) {
             console.log("tile already set");
         }
     }
-    board;
     console.log(JSON.stringify(board));
 };
 
@@ -223,8 +282,8 @@ function onGameEnded(data) {
 }
 
 // Server message
-function onServerMessage() {
-    console.log("Server message");
+function onServerMessage(data) {
+    console.log(data.message);
 
     //TODO: show server message
 };
@@ -248,7 +307,18 @@ function play() {
     }
 }
 
+function joinGame() {
+    console.log("joinButton");
+    var gamesSelect = document.getElementById('gamesSelect');
+    var sessionid = gamesSelect.options[gamesSelect.selectedIndex].value;
+    socket.emit('joingame', {sessionid: sessionid});
+    console.log(sessionid);
+}
 
+function createGame() {
+    console.log("createGame");
+    socket.emit('initgame', {language: "swe", dictionary: "default"});
+}
 
 function moveToJson() {
     console.log("moveToJson()");
