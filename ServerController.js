@@ -10,6 +10,7 @@ var ServerController = function()
         for (i = 0; i < sessions.length; i++) {
             list.push({"sessionid": sessions[i].getId()});
         }
+
         return JSON.stringify(list);
     }
 
