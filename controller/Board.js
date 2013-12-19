@@ -38,13 +38,48 @@ var Board = function(language, dictionary) {
         return (x > 0 && x <= size.cols && y > 0 && y <= size.rows);
     }
 
-    var getWordMultiplyer = function(x, y)
+    var getWordMultiplyer = function(i, j)
     {
-
+        if (((i == 1 || i == 15) && (j == 5 || j == 11)))
+            return 3;
+        else if (((i == 5 || i == 11) && (j == 1 || j == 15)))
+            return 3;
+        else if ((i == 3 || i == 13) && (j == 3 || j == 13))
+            return 2;
+        else if ((i == 4 || i == 12) && (j == 8))
+            return 2;
+        else if ((i == 5 || i == 11) && (j == 5 || j == 11))
+            return 2;
+        else if ((i == 8) && (j == 4 || j == 12))
+            return 2;
+        else if ((i == 8) && (j == 4 || j == 12))
+            return 2;
+        else
+            return 1;
     }
 
-    var getLetterMultiplyer = function(x, y)
+    var getLetterMultiplyer = function(i, j)
     {
+        if (((i == 1 || i == 15) && (j == 1 || j == 15)))
+            return 3;
+        else if (((i == 2 || i == 14) && (j == 6 || j == 10)))
+            return 3
+        else if (((i == 4 || i == 12) && (j == 4 || j == 12)))
+            return 3;
+        else if (((i == 6 || i == 10) && (j == 2 || j == 6 || j == 10 || j == 14)))
+            return 3
+        else if ((i == 1 || i == 15) && j == 8)
+            return 2;
+        else if ((i == 2 || i == 14) && (j == 2 || j == 14))
+            return 2;
+        else if ((i == 3 || i == 5 || i == 11 || i == 13) && (j == 7 || j == 9))
+            return 2;
+        else if ((i == 7 || i == 9) && (j == 3 || j == 5 || j == 11 || j == 13))
+            return 2;
+        else if ((i == 8) && (j == 1 || j == 15))
+            return 2;
+
+        else return 1;
 
     }
 

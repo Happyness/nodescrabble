@@ -17,7 +17,7 @@ var ServerController = function()
     var createGameSession = function(client, data)
     {
         Stately = require('stately.js');
-        gamesession = require('./public/gamesession').gamesession;
+        gamesession = require('./controller/gamesession').gamesession;
         var id = 10 + sessions.length * 55;
         var session = new gamesession(id, data.dictionary, data.language, client);
         session.setState(Stately.machine({
