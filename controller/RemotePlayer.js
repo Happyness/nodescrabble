@@ -1,10 +1,14 @@
 var RemotePlayer = function(i) {
     var id = i;
-    var session;
     var letters = [];
     var playedTiles = [];
     var turn;
     var client;
+    var score = 0;
+
+    var getScore = function() {
+        return score;
+    };
 
     var getId = function() {
         return id;
@@ -38,8 +42,8 @@ var RemotePlayer = function(i) {
         playedTiles = newPlayedTiles;
     };
 
-    var setTurn = function(newTurn) {
-        turn = newTurn;
+    var addScore = function(value) {
+        score += value;
     };
 
    var setClient = function(c)
@@ -48,6 +52,7 @@ var RemotePlayer = function(i) {
    }
 
     return {
+        getScore: getScore,
         getClient: getClient,
         getId: getId,
         getLetters: getLetters,
@@ -55,7 +60,8 @@ var RemotePlayer = function(i) {
         setId: setId,
         setLetters: setLetters,
         setPlayedTiles: setPlayedTiles,
-        setClient: setClient
+        setClient: setClient,
+        addScore: addScore
     }
 };
 

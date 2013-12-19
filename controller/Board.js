@@ -96,7 +96,7 @@ var Board = function(language, dictionary) {
         return 1 * tile.multiply; // Fallback if not found in any group
     }
 
-    var getScore = function(multiplyer, letters)
+    var getValidData = function(multiplyer, letters)
     {
         var word = "", score = 0;
         for (var i = 0; i < letters.length; i++) {
@@ -113,11 +113,12 @@ var Board = function(language, dictionary) {
 
     var calculateScores = function(tile)
     {
-        var score = 0, result;
+        var result;
+        var valid = new Array();
         result = validWord(tile.letter, tile.x, tile.y, true) // Horisontal check
 
         if (result != false) {
-            score += result;
+            valid.push(result);
         } else {
             return false;
         }
@@ -125,12 +126,12 @@ var Board = function(language, dictionary) {
         result = validWord(tile.letter, tile.x, tile.y, false); // Vertical check
 
         if (result != false) {
-            score += result;
+            valid.push(result);
         } else {
             return false;
         }
 
-        return score;
+        return valid;
     }
 
     var validWord = function(letter, x, y, horisontal)
@@ -174,12 +175,12 @@ var Board = function(language, dictionary) {
             }
         }
 
-        return getScore(multiplyer, word);
+        return getValidData(multiplyer, word);
     }
 
     var putTiles = function(tiles)
     {
-        var x, y, valid = true, score = 0;
+        var x, y, valid = true, values;
 
         for (var i = 0; i < tiles.length; i++) {
             x = tiles[i].x;
@@ -189,9 +190,9 @@ var Board = function(language, dictionary) {
                 return false;
             }
 
-            var value = calculateScores(tiles[i]);
-            if (value != false) {
-                score += value;
+            var data = calculateScores(tiles[i]);
+            if (Array.isArray(data)) {
+                values = data;
             } else {
                 return false;
             }
@@ -204,7 +205,7 @@ var Board = function(language, dictionary) {
             board[x][y] = tiles[i].letter;
         }
 
-        return score;
+        return values;
     }
 
     var createBoard = function(lang)

@@ -147,9 +147,16 @@ var ServerController = function()
             return createResponseMessage("Session does not exist", true);
         } else {
             var board = session.getBoard();
-            var score = board.putTiles(data.move);
+            var data = board.putTiles(data.move);
 
-            if (score != false) {
+            if (data != false) {
+                var score = 0;
+                var words = new Array();
+
+                for (var i = 0; i < data.length; i++) {
+                    score += data[i].score;
+                    words.push(data[i].word);
+                }
                 var player = session.getPlayerById(data.playerid);
 
                 if (!player) {
@@ -160,6 +167,7 @@ var ServerController = function()
                         "playerid": player.getId(),
                         "score": score,
                         "tiles": data.move,
+                        "words": words,
                         "totalscore": player.getScore()
                     });
                 }
