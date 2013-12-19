@@ -274,7 +274,8 @@ function playMove(){
 
             moveList.push({letter: value, x: moveTiles[i].parentNode.id, y: moveTiles[i].parentNode.parentNode.id});
         }
-        socket.emit('playmove', {"move": moveList, "sessionid": player.getSession(), "playerid": player.getId()});
+        
+        socket.emit('playmove',{playerid: player.getId(), sessionid: player.getSession(), move: moveList});
         console.log({move: moveList});
     }
     else {
@@ -315,13 +316,11 @@ function onGameStarted(data) {
 function onMoveResponse(data) {
     console.log("Move response");
 
-    tileUpdates = data.tileUpdate;
     if (data.result == "success") {
-        // TODO: change turn, update board
         console.log(JSON.stringify(data));
     }
     else {
-        // TODO: make a new move
+        console.log(JSON.stringify(data));
     }
 }
 
