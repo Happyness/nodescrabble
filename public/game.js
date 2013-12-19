@@ -273,7 +273,7 @@ function playMove()
             var noHtmlString = moveTiles[i].innerHTML.replace(/<(?:.|\n)*?>/gm, '');
             var value = noHtmlString.replace(/[0-9]/g, '');
 
-            moveList.push({letter: value, x: moveTiles[i].parentNode.cellIndex, y: moveTiles[i].parentNode.parentNode.rowIndex});
+            moveList.push({letter: value, x: moveTiles[i].parentNode.id, y: moveTiles[i].parentNode.parentNode.id});
         }
         socket.emit("playmove", moveList);
         console.log(moveList);
