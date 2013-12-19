@@ -274,7 +274,7 @@ function playMove(){
 
             moveList.push({letter: value, x: moveTiles[i].parentNode.id, y: moveTiles[i].parentNode.parentNode.id});
         }
-        
+
         socket.emit('playmove',{playerid: player.getId(), sessionid: player.getSession(), move: moveList});
         console.log({move: moveList});
     }

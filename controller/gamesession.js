@@ -90,10 +90,10 @@ var gamesession = function(i, dict, lang, c) {
     var switchTurn = function(data)
     {
         var i;
-        if (typeof data.userid != 'undefined' && data.userid > 0) {
+        if (typeof data.playerid != 'undefined' && data.playerid > 0) {
             for (i = 0; i < players.length; i++) {
-                if (players[i].id != data.userid) {
-                   turn = data.userid;
+                if (players[i].id != data.playerid) {
+                   turn = data.playerid;
                    return;
                 }
             }

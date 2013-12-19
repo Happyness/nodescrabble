@@ -88,7 +88,7 @@ var Board = function(language, dictionary) {
         var score = 0;
 
         for (var i = 0; i < letterScores.length; i++) {
-            if (letterScores[i].letters.contains(tile.letter)) {
+            if (Util.contains(letterScores[i].letters, tile.letter)) {
                 return letterScores[i].score * tile.multiply;
             }
         }

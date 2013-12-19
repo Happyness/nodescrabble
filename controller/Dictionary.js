@@ -12,7 +12,7 @@ var Dictionary = function(l)
     {
         switch (layout) {
             case 'default' :
-                words = ["is", "jag", "test", "lol", "sa"];
+                words = ["is", "jag", "test", "lol", "sa", "dö", "ja", "mig", "ta", "le"];
                 break;
             default :
             // Invalid list, @TODO
@@ -22,7 +22,7 @@ var Dictionary = function(l)
     var valid = function(word)
     {
         for (var i = 0; i < words.length; i++) {
-            if (word == words[i]) {
+            if (word.toLowerCase() == words[i]) {
                 return true;
             }
         }
