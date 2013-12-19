@@ -3,18 +3,18 @@
  **************************************************/
 var Board = function(language, dictionary) {
     var lang = language;
-    var tiles = [[]];
+    var board = [[]];
     var dict = dictionary;
     var letterScores;
 
     var getTiles = function()
     {
-        return tiles;
+        return board;
     };
 
     var setTiles = function(newBoard)
     {
-        tiles = newBoard;
+        board = newBoard;
     };
 
     var getBoardSize = function()
@@ -143,7 +143,7 @@ var Board = function(language, dictionary) {
         word.push(letter);
 
         tile = board[posx][posy];
-        while (isOnBoard(pos, y) && tile && run) {
+        while (isOnBoard(posx, posy) && tile && run) {
             multiplyer *= getWordMultiplyer(posx, posy);
 
             if (forward) {
@@ -239,8 +239,8 @@ var Board = function(language, dictionary) {
 
         for (i = 0; i < size.rows; i++) {
             for (j = 0; j < size.cols; j++) {
-                tiles[i] = [];
-                tiles[i][j] = "";
+                board[i] = [];
+                board[i][j] = "";
             }
         }
     }
