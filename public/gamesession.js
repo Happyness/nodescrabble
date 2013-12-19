@@ -19,19 +19,62 @@ var gamesession = function(i, dict, lang, c) {
 
     var createBoard = function(language)
     {
-        board = new Board(language);
+        board = new Board(language, activeDictionary);
+    }
+
+    var getCharCounter = function(lang, letter)
+    {
+        var howMany;
+
+        switch (lang) {
+            case 'sv':
+            /* Swedish board:
+             1 point: A ×8, R ×8, S ×8, T ×8, E ×7, N ×6, D ×5, I ×5, L ×5
+             2 points: O ×5, G ×3, K ×3, M ×3, H ×2
+             3 points: Ä ×2, F ×2, V ×2
+             4 points: U ×3, B ×2, Ö ×2, P ×2, Å ×2
+             7 points: J ×1, Y ×1
+             8 points: C ×1, X ×1
+             10 points: Z ×1 */
+            default:
+                howMany = [
+                    {"letters": ['A', 'R', 'S', 'T'], "score": 8},
+                    {"letters": ['E'], "score": 7},
+                    {"letters": ['N'], "score": 6},
+                    {"letters": ['D', 'I', 'L', 'O'], "score": 5},
+                    {"letters": ['G', 'K', 'M', 'U'], "score": 3},
+                    {"letters": ['H', 'Ä', 'F', 'V', 'B', 'Ö', 'P', 'Å'], "score": 2},
+                    {"letters": ['J', 'Y', 'C', 'X', 'Z'], "score": 1}
+                ];
+                break;
+        }
+
+        for (var i = 0; i < howMany.length; i++) {
+            if (howMany[i].letters.contains(letter)) {
+                return howMany[i].score;
+            }
+        }
     }
 
     var createTiles = function(language)
     {
         var charCodeRange = {
             start: 65,
-            end: 90
-        }
+            end: 93
+            }, char;
         // Loop through alphabet
         for (var cc = charCodeRange.start; cc <= charCodeRange.end; cc++) {
-            for (var i = 0; i < 3; i++) {
-                unplayedTiles.push(String.fromCharCode(cc));
+            if (cc > 90 && language == 'sv') {
+                switch (cc) {
+                    case 91: char = 'Å'; break;
+                    case 92: char = 'Ä'; break;
+                    case 93: char = 'Ö'; break;
+                }
+            } else {
+                char = String.fromCharCode(cc)
+            }
+            for (var i = 0; i < getCharCounter(language, char); i++) {
+                unplayedTiles.push(char);
             }
         }
 

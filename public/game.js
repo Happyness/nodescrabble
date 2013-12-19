@@ -250,13 +250,6 @@ function onGameStarted(data) {
     console.log("Games started");
 
     console.log(JSON.stringify(data));
-    /*
-    passButton.onClick = function() {
-        // TODO: Send pass to server
-    }
-    swapButton.onClick = function() {
-        // TODO: Send swap to server
-    }*/
 
     player.turn = data.turn;
     player.letters = data.tiles;
