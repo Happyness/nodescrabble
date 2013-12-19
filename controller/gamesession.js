@@ -87,17 +87,14 @@ var gamesession = function(i, dict, lang, c) {
     createBoard(lang);
     createTiles(lang);
 
-    var switchTurn = function(data)
+    var switchTurn = function(id)
     {
-        var i;
-        if (typeof data.playerid != 'undefined' && data.playerid > 0) {
-            for (i = 0; i < players.length; i++) {
-                if (players[i].id != data.playerid) {
-                   turn = data.playerid;
+            for (var i = 0; i < players.length; i++) {
+                if (players[i].id != id) {
+                   turn = players[i].id;
                    return;
                 }
             }
-        }
     };
 
     var addPlayer = function(client)
@@ -150,8 +147,11 @@ var gamesession = function(i, dict, lang, c) {
         var randoms = [];
         for (var i = 0, index; i < amount; ++i) {
             index = Math.floor(Math.random() * unplayedTiles.length);
-            randoms.push(unplayedTiles[index]);
-            delete unplayedTiles[index];
+
+            if (unplayedTiles[index]) {
+                randoms.push({letter: unplayedTiles[index], score: board.getLetterScore(unplayedTiles[index])});
+                delete unplayedTiles[index];
+            }
         }
 
         return randoms;

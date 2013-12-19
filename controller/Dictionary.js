@@ -12,7 +12,7 @@ var Dictionary = function(l)
     {
         switch (layout) {
             case 'default' :
-                words = ["is", "jag", "test", "lol", "sa", "dö", "ja", "mig", "ta", "le"];
+                words = ["is", "jag", "test", "lol", "sa", "dö", "ja", "mig", "ta", "le", "te"];
                 break;
             default :
             // Invalid list, @TODO

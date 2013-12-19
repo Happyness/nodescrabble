@@ -17,10 +17,12 @@ Util.merge = function(to, from) {
 };
 
 Util.contains = function(a, obj) {
-    var i = a.length;
-    while (i--) {
-        if (a[i] === obj) {
-            return true;
+    if (Array.isArray(a)) {
+        var i = a.length;
+        while (i--) {
+            if (a[i] === obj) {
+                return true;
+            }
         }
     }
     return false;

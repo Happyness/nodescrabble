@@ -12,6 +12,22 @@ var Board = function(language, dictionary) {
         return board;
     };
 
+    var setTile = function(y, x, letter)
+    {
+        if (!isOnBoard(y, x)) {
+            return false;
+        }
+        board[y-1][x-1] = letter;
+    }
+
+    var getTile = function(y, x)
+    {
+        if (!isOnBoard(y, x)) {
+            return false;
+        }
+        return board[y-1][x-1];
+    }
+
     var setTiles = function(newBoard)
     {
         board = newBoard;
@@ -31,14 +47,14 @@ var Board = function(language, dictionary) {
         return {cols: cols, rows: rows};
     }
 
-    var isOnBoard = function(x, y)
+    var isOnBoard = function(y, x)
     {
         var size = getBoardSize();
 
         return (x > 0 && x <= size.cols && y > 0 && y <= size.rows);
     }
 
-    var getWordMultiplyer = function(i, j)
+    var getWordMultiplyer = function(j, i)
     {
         if (((i == 1 || i == 15) && (j == 5 || j == 11)))
             return 3;
@@ -58,7 +74,7 @@ var Board = function(language, dictionary) {
             return 1;
     }
 
-    var getLetterMultiplyer = function(i, j)
+    var getLetterMultiplyer = function(j, i)
     {
         if (((i == 1 || i == 15) && (j == 1 || j == 15)))
             return 3;
@@ -85,26 +101,33 @@ var Board = function(language, dictionary) {
 
     var getLetterScore = function(tile)
     {
-        var score = 0;
-
-        for (var i = 0; i < letterScores.length; i++) {
-            if (Util.contains(letterScores[i].letters, tile.letter)) {
-                return letterScores[i].score * tile.multiply;
+        for (var i in letterScores) {
+            if (Util.contains(letterScores[i].letters, tile)) {
+                return letterScores[i].score;
             }
         }
 
-        return 1 * tile.multiply; // Fallback if not found in any group
+        return 1;
+    }
+
+    var getScoredLetter = function(tile)
+    {
+        return tile.multiply * getLetterScore(tile.letter);
     }
 
     var getValidData = function(multiplyer, letters)
     {
         var word = "", score = 0;
-        for (var i = 0; i < letters.length; i++) {
-            word += letters[i].letter;
-            score += (getLetterScore(letters[i]));
+        for (var i in letters) {
+            word  += letters[i].letter;
+            score += (getScoredLetter(letters[i]));
         }
 
+        if (letters.length == 1) {
+            return {"score": multiplyer * score, "word": "none"};
+        }
         if (dict.valid(word)) {
+            console.log(word);
             return {"score": multiplyer * score, "word": word};
         }
 
@@ -140,14 +163,14 @@ var Board = function(language, dictionary) {
         var multiplyer = 1, tile, forward = true, run = true;
 
         var word = new Array();
-        word.push(letter);
+        //word.push({"letter": letter, "multiply": getLetterMultiplyer(y, x)});
 
-        tile = board[posx][posy];
-        while (isOnBoard(posx, posy) && tile && run) {
-            multiplyer *= getWordMultiplyer(posx, posy);
+        while (!isEmpty(posy, posx) && run == true) {
+            tile = getTile(posy, posx);
+            multiplyer *= getWordMultiplyer(posy, posx);
 
             if (forward) {
-                word.push({"letter": tile, "multiply": getLetterMultiplyer(posx, posy)});
+                word.push({"letter": tile, "multiply": getLetterMultiplyer(posy, posx)});
 
                 if (horisontal) {
                     posx++;
@@ -155,7 +178,7 @@ var Board = function(language, dictionary) {
                     posy++;
                 }
             } else {
-                word.unshift({"letter": tile, "multiply": getLetterMultiplyer(posx, posy)});
+                word.unshift({"letter": tile, "multiply": getLetterMultiplyer(posy, posx)});
 
                 if (horisontal) {
                     posx--;
@@ -164,13 +187,11 @@ var Board = function(language, dictionary) {
                 }
             }
 
-            tile = board[posx][posy];
-
-            if (!tile && forward) {
+            if (isEmpty(posy, posx) && forward) {
                 posx = x-1;
                 posy = y-1;
                 forward = false;
-            } else {
+            } else if (isEmpty(posy, posx)) {
                 run = false;
             }
         }
@@ -178,31 +199,37 @@ var Board = function(language, dictionary) {
         return getValidData(multiplyer, word);
     }
 
+    var isEmpty = function(row, col)
+    {
+        if (isOnBoard(row, col)) {
+            var tile = getTile(row, col);
+            return (tile == null || tile == "" || typeof(tile) == 'undefined');
+        }
+        return true;
+    }
+
     var putTiles = function(tiles)
     {
         var x, y, valid = true, values;
 
-        for (var i = 0; i < tiles.length; i++) {
+        for (var i in tiles) {
             x = tiles[i].x;
             y = tiles[i].y;
 
-            if (!isOnBoard(x, y) || board[x][y]) {
+            if (isEmpty(y, x)) {
+                setTile(y, x, tiles[i].letter);
+            } else {
                 return false;
             }
+        }
 
+        for (var i in tiles) {
             var data = calculateScores(tiles[i]);
             if (Array.isArray(data)) {
                 values = data;
             } else {
                 return false;
             }
-        }
-
-        for (var i = 0; i < tiles.length; i++) {
-            x = tiles[i].x;
-            y = tiles[i].y;
-
-            board[x][y] = tiles[i].letter;
         }
 
         return values;
@@ -239,28 +266,20 @@ var Board = function(language, dictionary) {
 
         for (i = 0; i < size.rows; i++) {
             for (j = 0; j < size.cols; j++) {
-                board[i] = [];
-                board[i][j] = "";
+                board[j] = [];
+                board[j][i] = "";
             }
         }
     }
 
     createBoard(language);
 
-    var getTile = function(i, j)
-    {
-        var size = getBoardSize();
-        if (!isOnBoard(i, j)) {
-            return false;
-        }
-        return board[i-1][j-1];
-    }
-
     return {
         getTiles: getTiles,
         setTiles: setTiles,
         getTile: getTile,
-        putTiles: putTiles
+        putTiles: putTiles,
+        getLetterScore: getLetterScore
     }
 };
 

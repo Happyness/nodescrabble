@@ -100,6 +100,13 @@ function onUpdate(data) {
         case 'gamelist':
             updateGameList(data);
             break;
+        case 'newtiles' :
+            addUnplayedTiles(data.tiles);
+            break;
+        case 'tiles' :
+            updateBoard(data);
+            updateGameBoard();
+            break;
         default :
             break;
     }
@@ -153,8 +160,6 @@ function onInitGameResponse(data) {
 
         console.log("Player id: " + player.getId());
         console.log("Session id: " + player.getSession());
-
-        sendReady();
     }
     else {
         console.log(data);
@@ -225,6 +230,18 @@ function onErrorMessage(data) {
     alert(data.message);
 }
 
+function addUnplayedTiles(tiles)
+{
+    var tileHolder = document.getElementById('tiles');
+
+    for (i in tiles) {
+        var div = document.createElement('div');
+        div.innerHTML = tiles[i].letter + "<sub>"+ tiles[i].score +"</sub>";
+        div.setAttribute('class', "tile");
+        tileHolder.appendChild(div);
+    }
+}
+
 function updateTiles()
 {
     console.log("Updating tiles ...");
@@ -234,7 +251,7 @@ function updateTiles()
 
         for (var i = 0; i < moveTiles.length; i++) {
             if (typeof tiles[i] != 'undefined' && tiles[i] != null) {
-                moveTiles[i].innerHTML = tiles[i] + "<sub>3</sub>";
+                moveTiles[i].innerHTML = tiles[i].letter + "<sub>" + tiles[i].score + "</sub>";
             }
         }
 }
@@ -262,7 +279,7 @@ function updateBoard() {
 }
 
 function playMove(){
-    if (turn == player.getId()) {
+    //if (turn == player.getId()) {
         // TODO: Send move to server
         console.log("sendButton.onClick");
         var moveTiles = document.querySelectorAll('.move-tile');
@@ -277,10 +294,10 @@ function playMove(){
 
         socket.emit('playmove',{playerid: player.getId(), sessionid: player.getSession(), move: moveList});
         console.log({move: moveList});
-    }
-    else {
-        alert("You'll have to wait for your turn");
-    }
+    //}
+    //else {
+    //    alert("You'll have to wait for your turn");
+    //}
 }
 
 function playPass() {
@@ -315,11 +332,20 @@ function onGameStarted(data) {
 // On move response
 function onMoveResponse(data) {
     console.log("Move response");
+    var response = document.getElementById('response');
 
     if (data.result == "success") {
+        response.innerHTML = "You got score point: " + data.score;
         console.log(JSON.stringify(data));
+
+        var moved = document.querySelectorAll('.move-tile');
+
+        for (var i in moved) {
+            moved[i].className = 'played-tile';
+        }
     }
     else {
+        response.innerHTML = data.message;
         console.log(JSON.stringify(data));
     }
 }

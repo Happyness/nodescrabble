@@ -78,7 +78,8 @@ html(lang="en")
         div(id="tiles" ondragenter="dragEnter(event)" ondrop="drop(event)" ondragover="allowDrop(event)")
             - for(var j=1; j <= 8; j++)
                 div(id="tile"+j class="tile" draggable="true" ondragstart="drag(event)") T
-
+        br
+        h2(id='response')
         br
         .controls
             input.sendButton(type='button', value='Play', id='sendButton' onClick='playMove()')
