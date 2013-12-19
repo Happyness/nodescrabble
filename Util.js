@@ -16,6 +16,16 @@ Util.merge = function(to, from) {
     return to;
 };
 
+Util.contains = function(a, obj) {
+    var i = a.length;
+    while (i--) {
+        if (a[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+};
+
 Util.shuffle = function (array) {
     var counter = array.length, temp, index;
 

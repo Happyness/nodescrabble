@@ -261,11 +261,10 @@ function updateBoard() {
     }
 }
 
-function playMove()
-{
+function playMove(){
     if (turn == player.getId()) {
         // TODO: Send move to server
-        console.log("sendButton.onClick")
+        console.log("sendButton.onClick");
         var moveTiles = document.querySelectorAll('.move-tile');
         console.log("moveTiles.length " + moveTiles.length);
         var moveList = [];
@@ -275,13 +274,23 @@ function playMove()
 
             moveList.push({letter: value, x: moveTiles[i].parentNode.id, y: moveTiles[i].parentNode.parentNode.id});
         }
-        socket.emit("playmove", moveList);
-        console.log(moveList);
+        socket.emit('playmove', {move: moveList});
+        console.log({move: moveList});
     }
     else {
         alert("You'll have to wait for your turn");
     }
+}
 
+function playPass() {
+    if (turn == player.getId()) {
+
+        console.log("passButton.onClick");
+        socket.emit("playpass");
+    }
+    else {
+        alert("You'll have to wait for your turn");
+    }
 }
 
 // Game started
@@ -309,14 +318,7 @@ function onMoveResponse(data) {
     tileUpdates = data.tileUpdate;
     if (data.result == "success") {
         // TODO: change turn, update board
-        for (var i = 0; i < tileUpdates.length; i++) {
-            board.push( {letter: tileUpdates[i].letter, pos: tileUpdate[i].pos} );
-        }
-
-        player.turn = data.turn;
-
-        onUpdateBoard(board);
-        console.log(JSON.stringify(board));
+        console.log(JSON.stringify(data));
     }
     else {
         // TODO: make a new move

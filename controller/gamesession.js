@@ -50,7 +50,7 @@ var gamesession = function(i, dict, lang, c) {
         }
 
         for (var i = 0; i < howMany.length; i++) {
-            if (howMany[i].letters.contains(letter)) {
+            if (Util.contains(howMany[i].letters,letter)) {
                 return howMany[i].score;
             }
         }
