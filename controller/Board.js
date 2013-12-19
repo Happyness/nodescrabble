@@ -54,7 +54,7 @@ var Board = function(language, dictionary) {
         return (x > 0 && x <= size.cols && y > 0 && y <= size.rows);
     }
 
-    var getWordMultiplyer = function(j, i)
+    var getWordMultiplyer = function(i, j)
     {
         if (((i == 1 || i == 15) && (j == 5 || j == 11)))
             return 3;
@@ -74,7 +74,7 @@ var Board = function(language, dictionary) {
             return 1;
     }
 
-    var getLetterMultiplyer = function(j, i)
+    var getLetterMultiplyer = function(i, j)
     {
         if (((i == 1 || i == 15) && (j == 1 || j == 15)))
             return 3;

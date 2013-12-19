@@ -99,7 +99,7 @@ var gamesession = function(i, dict, lang, c) {
 
     var addPlayer = function(client)
     {
-        if (players.length > 10) {
+        if (players.length >= 2) {
             return false;
         }
 
@@ -150,7 +150,7 @@ var gamesession = function(i, dict, lang, c) {
 
             if (unplayedTiles[index]) {
                 randoms.push({letter: unplayedTiles[index], score: board.getLetterScore(unplayedTiles[index])});
-                delete unplayedTiles[index];
+                unplayedTiles.splice(index, 1);
             }
         }
 
