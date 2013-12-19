@@ -9,6 +9,7 @@ var sendButton;
 var passButton;
 var swapButton;
 var gameTable;
+var turn;
 
 /**************************************************
  ** GAME INITIALISATION
@@ -28,7 +29,8 @@ function init() {
     player = new Player();
 
     // Keep track of game board
-    board = [];
+    board = [[]];
+
 
     // Connect to server
     socket = io.connect('http://localhost:3000');
@@ -237,12 +239,49 @@ function updateTiles()
         }
 }
 
+function updateBoard() {
+    console.log("Updating board ...");
+    var gameTable = document.getElementById('gameTable');
+    var trs = gameTable.getElementsByTagName('tr');
+    console.log("trs.lenght() " + trs.length);
+    for (var i = 0; i < trs.length; i++) {
+        var tds = trs[i].getElementsByTagName('td');
+        console.log("tds.lenght() " + tds.length);
+        for (var j = 0; j < tds.length; j++) {
+            console.log("update tile " + i + "," + j);
+            if (board[i][j] != null && board[i][j] != "") {
+                if (tds[j].innerHTML == "") {
+                    var div = document.createElement('div');
+                    div.innerHTML = data[i].letter;
+                    div.setAttribute('class', "played-tile");
+                    tds[j].appendChild(div);
+                }
+            }
+        }
+    }
+}
+
 function playMove()
 {
+    if (turn == player.getId()) {
         // TODO: Send move to server
         console.log("sendButton.onClick")
-        var board = moveToJson();
-        console.log(JSON.stringify(board));
+        var moveTiles = document.querySelectorAll('.move-tile');
+        console.log("moveTiles.length " + moveTiles.length);
+        var moveList = [];
+        for (var i = 0; i < moveTiles.length; i++) {
+            var noHtmlString = moveTiles[i].innerHTML.replace(/<(?:.|\n)*?>/gm, '');
+            var value = noHtmlString.replace(/[0-9]/g, '');
+
+            moveList.push({letter: value, x: moveTiles[i].parentNode.id, y: moveTiles[i].parentNode.parentNode.id});
+        }
+        socket.emit("playmove", moveList);
+        console.log(moveList);
+    }
+    else {
+        alert("You'll have to wait for your turn");
+    }
+
 }
 
 // Game started
@@ -251,14 +290,15 @@ function onGameStarted(data) {
 
     console.log(JSON.stringify(data));
 
-    player.turn = data.turn;
+    turn = data.turn;
     player.letters = data.tiles;
     board = data.board;
 
-    turn = (player.getId() == player.turn) ? "your turn" : "opponent turn";
+    var turnString = (player.getId() == turn) ? "your turn" : "opponent turn";
 
-    header.innerHTML = "Game is now started, it is " + turn;
+    header.innerHTML = "Game is now started, it is " + turnString;
 
+    updateBoard();
     updateTiles();
 }
 
