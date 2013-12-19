@@ -99,6 +99,10 @@ io.sockets.on('connection', function (client) {
         controller.quitGame(data);
     });
 
+    client.on('playmove', function(data) {
+        controller.makeMove(client, data);
+    });
+
     client.on('startgame', function (data) {
         console.log('Try to start game');
         controller.startGame(client, data);
@@ -118,10 +122,9 @@ io.sockets.on('connection', function (client) {
 
         if (session != false) {
             var state = session.getState();
+            state.completeSession();
             state.onINGAME = function (event, oldState, newState) {
-                client.on('playmove', function(data) {
-                    controller.makeMove(client, data);
-                });
+
             }
         }
     });

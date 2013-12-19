@@ -76,7 +76,7 @@ var setEventHandlers = function() {
     socket.on("game-started", onGameStarted);
 
     // On move response
-    socket.on("move-response", onMoveResponse);
+    socket.on("playmove-response", onMoveResponse);
 
     // On game board update
     socket.on("update-board", onUpdateBoard);

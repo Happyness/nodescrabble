@@ -139,9 +139,34 @@ var ServerController = function()
         return session;
     };
 
-    var calculateMove = function calculateMove()
+    var calculateMove = function calculateMove(data)
     {
+        var session = getSession(data.sessionid);
 
+        if (session == false) {
+            return createResponseMessage("Session does not exist", true);
+        } else {
+            var board = session.getBoard();
+            var score = board.putTiles(data.move);
+
+            if (score != false) {
+                var player = session.getPlayerById(data.playerid);
+
+                if (!player) {
+                    return createResponseMessage("Player do not exist", true);
+                } else {
+                    player.addScore(score);
+                    return createResponseMessage({
+                        "playerid": player.getId(),
+                        "score": score,
+                        "tiles": data.move,
+                        "totalscore": player.getScore()
+                    });
+                }
+            } else {
+                return createResponseMessage("Invalid word played", true);
+            }
+        }
     }
 
     var getGames = function(client, data)
@@ -151,10 +176,14 @@ var ServerController = function()
 
     var makeMove = function makeMove(client, data)
     {
+        console.log("Try to make a move");
+        console.log(JSON.stringify(data));
         var response;
 
-        if (isArray(data.move)) {
-            response = createResponseMessage(calculateMove(data));
+        if (!data.sessionid || !data.playerid) {
+            response = createResponseMessage("Session and player id is required to make a move", true);
+        } else if (Array.isArray(data.move)) {
+            response = calculateMove(data);
         } else {
             switch (data.move) {
                 case 'pass':
@@ -170,9 +199,11 @@ var ServerController = function()
                     response = createResponseMessage("Invalid move", true);
                     break;
             }
-
-            client.emit('playmove-response', response);
         }
+
+        console.log(JSON.stringify(response));
+
+        client.emit('playmove-response', response);
     };
 
     return {

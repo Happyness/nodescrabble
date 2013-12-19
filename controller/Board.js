@@ -105,7 +105,7 @@ var Board = function(language, dictionary) {
         }
 
         if (dict.valid(word)) {
-            return multiplyer * score;
+            return {"score": multiplyer * score, "word": word};
         }
 
         return false;
@@ -179,7 +179,7 @@ var Board = function(language, dictionary) {
 
     var putTiles = function(tiles)
     {
-        var x, y, valid = true, score;
+        var x, y, valid = true, score = 0;
 
         for (var i = 0; i < tiles.length; i++) {
             x = tiles[i].x;
@@ -189,8 +189,10 @@ var Board = function(language, dictionary) {
                 return false;
             }
 
-            score = calculateScores(tiles[i]);
-            if (!score) {
+            var value = calculateScores(tiles[i]);
+            if (value != false) {
+                score += value;
+            } else {
                 return false;
             }
         }
@@ -199,9 +201,10 @@ var Board = function(language, dictionary) {
             x = tiles[i].x;
             y = tiles[i].y;
 
-
             board[x][y] = tiles[i].letter;
         }
+
+        return score;
     }
 
     var createBoard = function(lang)
