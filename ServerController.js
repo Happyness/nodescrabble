@@ -197,9 +197,10 @@ var ServerController = function()
                     player.setPassed(0);
 
                     client.emit('update', {type: 'playable-tiles', tiles: newTiles});
+
                     sendToOpponent(session, player, 'update', {
                         "type": 'played-tiles',
-                        "tiles": tiles,
+                        "tiles": session.addScoresToTiles(tiles),
                         "turn": session.getTurn()
                     });
 
@@ -208,7 +209,8 @@ var ServerController = function()
                         "score": score,
                         "tiles": tiles,
                         "words": words,
-                        "totalscore": player.getScore()
+                        "totalscore": player.getScore(),
+                        turn: session.getTurn()
                     });
                 }
             } else {

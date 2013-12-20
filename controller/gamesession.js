@@ -101,8 +101,8 @@ var gamesession = function(i, dict, lang, c) {
     var switchTurn = function(id)
     {
             for (var i = 0; i < players.length; i++) {
-                if (players[i].id != id) {
-                   turn = players[i].id;
+                if (players[i].getId() != id) {
+                   turn = players[i].getId();
                    return;
                 }
             }

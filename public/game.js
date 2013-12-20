@@ -370,25 +370,22 @@ function onGameStarted(data) {
     addUnplayedTiles(data.tiles);
 }
 
+function createButton(value, ev, id)
+{
+    var button = document.createElement('input');
+    button.setAttribute('type', 'button');
+    button.setAttribute('value', value);
+    button.setAttribute('id', id);
+    button.setAttribute('onClick', ev);
+
+    return button;
+}
+
 function createButtons() {
     var controlsDiv = document.getElementById('inGameControls');
-    var sendButton = document.createElement('input');
-    sendButton.setAttribute('type', 'button');
-    sendButton.setAttribute('value', 'Play');
-    sendButton.setAttribute('id', 'sendButton');
-    sendButton.setAttribute('onClick', 'playMove()');
-
-    var passButton = document.createElement('input');
-    passButton.setAttribute('type', 'button');
-    passButton.setAttribute('value', 'Pass');
-    passButton.setAttribute('id', 'passButton');
-    passButton.setAttribute('onClick', 'playPass()');
-
-    var swapButton = document.createElement('input');
-    swapButton.setAttribute('type', 'button');
-    swapButton.setAttribute('value', 'Swap');
-    swapButton.setAttribute('id', 'swapButton');
-    swapButton.setAttribute('onClick', 'playSwap()');
+    var sendButton = createButton('Play', 'playMove()', 'sendButton');
+    var passButton = createButton('Pass', 'playPass()', 'passButton');
+    var swapButton = createButton('Swap', 'playSwap()', 'swapButton');
 
     controlsDiv.appendChild(sendButton);
     controlsDiv.appendChild(passButton);
@@ -402,16 +399,7 @@ function createTilesBoard() {
     div.setAttribute('ondragenter', 'dragEnter(event)');
     div.setAttribute('ondrop', 'drop(event)');
     div.setAttribute('ondragover', 'allowDrop(event)');
-    /*
-    for(var j=1; j <= 7; j++) {
-        var tile = document.createElement('div');
-        tile.setAttribute('id', 'tile'+j);
-        tile.setAttribute('class', 'tile');
-        tile.setAttribute('draggable', 'true');
-        tile.setAttribute('ondragstart', 'drag(event)');
-        div.appendChild(tile);
-    }
-    */
+
     tilesBoard.appendChild(div);
 }
 
@@ -602,6 +590,7 @@ function onMoveResponse(data) {
     if (data.result == "success") {
         response.innerHTML = "You got score point: " + data.score;
         console.log(JSON.stringify(data));
+        turn = data.turn;
 
         var moved = document.querySelectorAll('.move-tile');
 
