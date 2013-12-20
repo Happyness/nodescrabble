@@ -70,12 +70,13 @@ var ServerController = function()
         return {"tiles": session.getUnplayedTiles(noTiles), "board": session.getBoard().getTiles(), "turn": session.getTurn()}
     }
 
-    var sendToOpponent = function(session, player, messageType, message)
+    var sendToOpponent = function(session, messageType, message)
     {
         var players = session.getPlayers();
+        var turn = session.getTurn();
 
         for (i in players) {
-            if (players[i].getId() != player.getId()) {
+            if (players[i].getId() == turn) {
                 players[i].getClient().emit(messageType, message);
             }
         }
@@ -163,13 +164,11 @@ var ServerController = function()
     {
         var session = getSession(data.sessionid);
         var tiles = data.move;
-
-        console.log(JSON.stringify(data));
-        console.log(session.getTurn());
+        var id = data.playerid;
 
         if (session == false) {
             return createResponseMessage("Session does not exist", true);
-        } else if (session.getTurn() != data.playerid) {
+        } else if (session.getTurn() != id) {
             return createResponseMessage("It is not your turn", true);
         } else {
             var board = session.getBoard();
@@ -185,7 +184,7 @@ var ServerController = function()
                     if (data[i].word != 'none')
                         words.push(data[i].word);
                 }
-                var player = session.getPlayerById(data.playerid);
+                var player = session.getPlayerById(id);
 
                 if (!player) {
                     return createResponseMessage("Player do not exist", true);
@@ -201,7 +200,7 @@ var ServerController = function()
 
                     client.emit('update', {type: 'playable-tiles', tiles: newTiles});
 
-                    sendToOpponent(session, player, 'update', {
+                    sendToOpponent(session, 'update', {
                         "type": 'played-tiles',
                         "tiles": session.addScoresToTiles(tiles),
                         "turn": session.getTurn()

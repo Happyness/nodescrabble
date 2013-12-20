@@ -151,28 +151,6 @@ function addUnplayedTiles(tiles)
     }
 }
 
-function updateBoard() {
-    console.log("Updating board ...");
-    var gameTable = document.getElementById('gameTable');
-    var trs = gameTable.getElementsByTagName('tr');
-    console.log("trs.lenght() " + trs.length);
-    for (var i = 0; i < trs.length; i++) {
-        var tds = trs[i].getElementsByTagName('td');
-        console.log("tds.lenght() " + tds.length);
-        for (var j = 0; j < tds.length; j++) {
-            console.log("update tile " + i + "," + j);
-            if (board[i][j] != null && board[i][j] != "") {
-                if (tds[j].innerHTML == "") {
-                    var div = document.createElement('div');
-                    div.innerHTML = data[i].letter;
-                    div.setAttribute('class', "played-tile");
-                    tds[j].appendChild(div);
-                }
-            }
-        }
-    }
-}
-
 
 /**************************************************
  ** ON SOCKET EVENTS

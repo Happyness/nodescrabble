@@ -129,9 +129,8 @@ var gamesession = function(i, dict, lang, c) {
 
     var getPlayerById = function getPlayerById(id)
     {
-        var i;
-        for (i = 0; i < players.length; i++) {
-            if (players[i].id == id) return players[i];
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].getId() == id) return players[i];
         }
 
         return false;
