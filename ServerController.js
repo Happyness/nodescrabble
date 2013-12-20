@@ -73,10 +73,13 @@ var ServerController = function()
         var players = session.getPlayers();
 
         for (i in players) {
-            players[i].getClient().emit(messageType, message);
-
             if (messageType == 'game-started') {
-                players[i].addLetters(message.tiles);
+                var gameMessage = getGameMessage(session, 7);
+                console.log(JSON.stringify(gameMessage));
+                players[i].getClient().emit(messageType, gameMessage);
+                players[i].addLetters(gameMessage.tiles);
+            } else {
+                players[i].getClient().emit(messageType, message);
             }
         }
     }
@@ -87,7 +90,7 @@ var ServerController = function()
             var session = getSession(data.sessionid);
 
             if (session != false) {
-                broadcastToSession(session, 'game-started', getGameMessage(session, 7));
+                broadcastToSession(session, 'game-started');
             } else {
                 client.emit('game-started', createResponseMessage("Session do not exist", true));
             }

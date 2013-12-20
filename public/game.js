@@ -10,6 +10,7 @@ var passButton;
 var swapButton;
 var gameTable;
 var turn;
+var currentTile = 1;
 
 /**************************************************
  ** GAME INITIALISATION
@@ -157,9 +158,6 @@ function updateBoard() {
         }
     }
 }
-
-
-
 
 
 /**************************************************
@@ -326,6 +324,8 @@ function onGameStarted(data) {
     player.letters = data.tiles;
     board = data.board;
 
+    addUnplayedTiles(data.tiles);
+
     var turnString = (player.getId() == turn) ? "your turn" : "opponent turn";
 
     header.innerHTML = "Game is now started, it is " + turnString;
@@ -334,7 +334,7 @@ function onGameStarted(data) {
     createTilesBoard();
     createButtons();
     updateBoard();
-    updateTiles();
+    //updateTiles();
 }
 
 function createButtons() {
