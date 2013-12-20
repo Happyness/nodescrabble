@@ -10,6 +10,7 @@ var passButton;
 var swapButton;
 var gameTable;
 var turn;
+var currentTile = 1;
 
 /**************************************************
  ** GAME INITIALISATION
@@ -240,7 +241,12 @@ function addUnplayedTiles(tiles)
         var div = document.createElement('div');
         div.innerHTML = tiles[i].letter + "<sub>"+ tiles[i].score +"</sub>";
         div.setAttribute('class', "tile");
+        div.setAttribute('draggable', "true");
+        div.setAttribute('ondragstart', "drag(event)");
+        div.setAttribute('id', "tile"+currentTile);
         tileHolder.appendChild(div);
+
+        currentTile++;
     }
 }
 
@@ -267,7 +273,7 @@ function updateBoard() {
         var tds = trs[i].getElementsByTagName('td');
         console.log("tds.lenght() " + tds.length);
         for (var j = 0; j < tds.length; j++) {
-            console.log("update tile " + i + "," + j);
+            //console.log("update tile " + i + "," + j);
             if (board[i][j] != null && board[i][j] != "") {
                 if (tds[j].innerHTML == "") {
                     var div = document.createElement('div');
@@ -323,12 +329,14 @@ function onGameStarted(data) {
     player.letters = data.tiles;
     board = data.board;
 
+    addUnplayedTiles(data.tiles);
+
     var turnString = (player.getId() == turn) ? "your turn" : "opponent turn";
 
     header.innerHTML = "Game is now started, it is " + turnString;
 
     updateBoard();
-    updateTiles();
+    //updateTiles();
 }
 
 // On move response
