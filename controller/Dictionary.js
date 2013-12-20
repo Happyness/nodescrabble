@@ -4,6 +4,7 @@
 
 var Dictionary = function(l)
 {
+    var fs = require('fs');
     var layout = l;
     var words;
     var letterScores;
@@ -12,7 +13,11 @@ var Dictionary = function(l)
     {
         switch (layout) {
             case 'default' :
-                words = ["is", "jag", "test", "lol", "sa", "dö", "ja", "mig", "ta", "le", "te"];
+                words = fs.readFileSync('./model/sv.txt').toString().split("\n");
+                for(i in words) {
+                    console.log(words[i]);
+                }
+                //words = ["is", "jag", "test", "lol", "sa", "dö", "ja", "mig", "ta", "le", "te"];
                 break;
             default :
             // Invalid list, @TODO
