@@ -425,165 +425,80 @@ function createGameBoard() {
         var tr = document.createElement('tr');
         tr.setAttribute('id', i);
         for(var j=1; j <= 15; j++) {
+            var td = document.createElement('td');
+            td.setAttribute('id', j);
+            td.setAttribute('ondragenter', 'dragEnter(event)');
+            td.setAttribute('ondrop', 'drop(event)');
+            td.setAttribute('ondragover', 'allowDrop(event)');
             if (((i == 1 || i == 15) && (j == 1 || j == 15))) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'tl');
                 tr.appendChild(td);
             }
             else if (((i == 2 || i == 14) && (j == 6 || j == 10))) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'tl');
                 tr.appendChild(td);
             }
             else if (((i == 4 || i == 12) && (j == 4 || j == 12))) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'tl');
                 tr.appendChild(td);
             }
             else if (((i == 6 || i == 10) && (j == 2 || j == 6 || j == 10 || j == 14))) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'tl');
                 tr.appendChild(td);
             }
             else if (((i == 1 || i == 15) && (j == 5 || j == 11))) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'tw');
                 tr.appendChild(td);
             }
             else if (((i == 5 || i == 11) && (j == 1 || j == 15))) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'tw');
                 tr.appendChild(td);
             }
             else if ((i == 1 || i == 15) && j == 8) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'tw');
                 tr.appendChild(td);
             }
             else if ((i == 2 || i == 14) && (j == 2 || j == 14)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dl');
                 tr.appendChild(td);
             }
             else if ((i == 3 || i == 5 || i == 11 || i == 13) && (j == 7 || j == 9)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dl');
                 tr.appendChild(td);
             }
             else if ((i == 7 || i == 9) && (j == 3 || j == 5 || j == 11 || j == 13)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dl');
                 tr.appendChild(td);
             }
             else if ((i == 8) && (j == 1 || j == 15)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dl');
                 tr.appendChild(td);
             }
             else if ((i == 3 || i == 13) && (j == 3 || j == 13)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dw');
                 tr.appendChild(td);
             }
             else if ((i == 4 || i == 12) && (j == 8)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dw');
                 tr.appendChild(td);
             }
             else if ((i == 5 || i == 11) && (j == 5 || j == 11)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dw');
                 tr.appendChild(td);
             }
             else if ((i == 8) && (j == 4 || j == 12)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dw');
                 tr.appendChild(td);
             }
             else if ((i == 8) && (j == 4 || j == 12)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'dw');
                 tr.appendChild(td);
             }
             else if ((i == 8) && (j == 8)) {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'center');
                 tr.appendChild(td);
             }
             else {
-                var td = document.createElement('td');
-                td.setAttribute('id', j);
-                td.setAttribute('ondragenter', 'dragEnter(event)');
-                td.setAttribute('ondrop', 'drop(event)');
-                td.setAttribute('ondragover', 'allowDrop(event)');
                 td.setAttribute('class', 'regular');
                 tr.appendChild(td);
             }
