@@ -8,7 +8,7 @@ var gamesession = function(i, dict, lang, c) {
     var unplayedTiles = [];
     var playedTiles = [];
     var board = [[]];
-    var turn = i;
+    var turn;
     var state;
     var activeDictionary;
 
@@ -206,7 +206,7 @@ var gamesession = function(i, dict, lang, c) {
         return tiles;
     }
 
-    turn = addPlayer(c);
+    turn = addPlayer(c).getId();
 
     return {
         addPlayer: addPlayer,

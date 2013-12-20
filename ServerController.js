@@ -67,7 +67,7 @@ var ServerController = function()
 
     var getGameMessage = function(session, noTiles)
     {
-        return {"tiles": session.getUnplayedTiles(noTiles), "board": session.getBoard().getTiles(), "turn": session.getTurn().getId()}
+        return {"tiles": session.getUnplayedTiles(noTiles), "board": session.getBoard().getTiles(), "turn": session.getTurn()}
     }
 
     var sendToOpponent = function(session, player, messageType, message)
@@ -164,9 +164,12 @@ var ServerController = function()
         var session = getSession(data.sessionid);
         var tiles = data.move;
 
+        console.log(JSON.stringify(data));
+        console.log(session.getTurn());
+
         if (session == false) {
             return createResponseMessage("Session does not exist", true);
-        } else if (session.getTurn() != session.getPlayer(data.playerid)) {
+        } else if (session.getTurn() != data.playerid) {
             return createResponseMessage("It is not your turn", true);
         } else {
             var board = session.getBoard();
