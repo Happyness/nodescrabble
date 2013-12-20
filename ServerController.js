@@ -172,17 +172,21 @@ var ServerController = function()
             return createResponseMessage("It is not your turn", true);
         } else {
             var board = session.getBoard();
-            var data = board.putTiles(data.move);
+            var tilesResponse = board.putTiles(tiles);
 
-            if (data != false) {
+            if (tilesResponse != false) {
                 var score = 0;
                 var words = new Array();
 
-                for (var i = 0; i < data.length; i++) {
-                    score += data[i].score;
+                for (var i = 0; i < tilesResponse.length; i++) {
+                    var tilesData = tilesResponse[i];
 
-                    if (data[i].word != 'none')
-                        words.push(data[i].word);
+                    for (var j = 0; j < tilesData.length; j++) {
+                        score += tilesData[j].score;
+
+                        if (tilesData[i].word != 'none')
+                            words.push(tilesData[j].word);
+                    }
                 }
                 var player = session.getPlayerById(id);
 

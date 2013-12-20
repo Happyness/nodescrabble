@@ -210,7 +210,7 @@ var Board = function(language, dictionary) {
 
     var putTiles = function(tiles)
     {
-        var x, y, valid = true, values;
+        var x, y, valid = true, values = new Array();
 
         for (var i in tiles) {
             x = tiles[i].x;
@@ -226,11 +226,13 @@ var Board = function(language, dictionary) {
         for (var i in tiles) {
             var data = calculateScores(tiles[i]);
             if (Array.isArray(data)) {
-                values = data;
+                values.push(data);
             } else {
                 return false;
             }
         }
+
+        console.log(values);
 
         return values;
     }
