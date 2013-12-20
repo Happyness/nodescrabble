@@ -87,3 +87,13 @@ td .tile {
     color: #000;
     text-align: center;
 }
+
+.swap {
+    float: left;
+    width: 27px;
+    height: 27px;
+    background-color: #e87d0d;
+    margin-right: 1px;
+    color: #000;
+    text-align: center;
+}

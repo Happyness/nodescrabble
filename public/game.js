@@ -12,6 +12,7 @@ var gameTable;
 var turn;
 var currentTile = 1;
 var dev = true;
+var swapMode = false;
 
 /**************************************************
  ** GAME INITIALISATION
@@ -102,6 +103,11 @@ function onUpdate(data) {
     switch(data.type) {
         case 'gamelist':
             updateGameList(data);
+            break;
+        case 'move':
+            turn = data.turn;
+            var response = document.getElementById('response');
+            response.innerHTML = getTurn();
             break;
         case 'playable-tiles' :
             if (data.tiles) {
@@ -292,8 +298,8 @@ function updateBoard(tiles) {
 }
 
 function playMove(){
-    //if (turn == player.getId()) {
-        // TODO: Send move to server
+    if (turn == player.getId() && swapMode != true) {
+        // Send move to server
         console.log("sendButton.onClick");
         var moveTiles = document.querySelectorAll('.move-tile');
         console.log("moveTiles.length " + moveTiles.length);
@@ -307,20 +313,94 @@ function playMove(){
 
         socket.emit('playmove',{playerid: player.getId(), sessionid: player.getSession(), move: moveList});
         console.log({move: moveList});
-    //}
-    //else {
-    //    alert("You'll have to wait for your turn");
-    //}
-}
-
-function playPass() {
-    if (turn == player.getId()) {
-
-        console.log("passButton.onClick");
-        socket.emit("playpass");
     }
     else {
         alert("You'll have to wait for your turn");
+    }
+}
+
+function playPass() {
+    if (turn == player.getId() && swapMode != true) {
+        // Send pass to server
+        console.log("passButton.onClick");
+        socket.emit("playmove", {move: "pass", sessionid: player.getSession(), userid: player.getId()});
+    }
+    else {
+        alert("You'll have to wait for your turn");
+    }
+}
+
+function playSwap() {
+    if (turn == player.getId() && swapMode == true) {
+        // Send swap to server
+        console.log("playSwap.onClick");
+        var swapTiles = document.querySelectorAll('.swap');
+        var tilesDiv = document.getElementById('tiles');
+        var swapList = [];
+        if (swapTiles != null) {
+            for (var i = 0; i < swapTiles.length; i++) {
+                var noHtmlString = swapTiles[i].innerHTML.replace(/<(?:.|\n)*?>/gm, '');
+                var value = noHtmlString.replace(/[0-9]/g, '');
+
+                swapList.push(value);
+                tilesDiv.removeChild(swapTiles[i]);
+
+            }
+            //socket.emit("playmove", {move: 'swap', sessionid: player.getSession(), userid: player.getId(), tiles: swapList});
+            stopSwap();
+
+        }
+    }
+    else {
+        alert("You'll have to wait for your turn");
+    }
+}
+
+function stopSwap() {
+    var button = document.getElementById('swapButton');
+    button.setAttribute('onClick', 'startSwap()');
+
+    var tilesDivs = document.querySelectorAll('.tile');
+
+    for (var i = 0; i < tilesDivs.length; i++) {
+        tilesDivs[i].removeAttribute('onClick');
+    }
+
+    var controlsDiv = document.getElementById('inGameControls');
+    controlsDiv.removeChild(document.getElementById('cancelButton'));
+    swapMode = false;
+}
+
+function startSwap() {
+    if (turn == player.getId()) {
+        swapMode = true;
+        console.log("startSwap.onClick");
+        var tilesDivs = document.querySelectorAll('.tile');
+        console.log(tilesDivs);
+        for (var i = 0; i < tilesDivs.length; i++) {
+            tilesDivs[i].setAttribute('onClick', 'toggleSwapClass(event)');
+        }
+        var updateButton = document.getElementById('swapButton');
+        updateButton.setAttribute('onClick', 'playSwap()');
+
+        var controlsDiv = document.getElementById('inGameControls');
+        var cancelButton = createButton('Cancel', 'stopSwap()', 'cancelButton');
+        controlsDiv.appendChild(cancelButton);
+
+    }
+    else {
+        alert("You'll have to wait for your turn");
+    }
+}
+
+function toggleSwapClass(ev) {
+    console.log(ev);
+    var data = ev.srcElement;
+    if (document.getElementById(data.id).className == "tile") {
+        document.getElementById(data.id).className = "swap";
+    }
+    else {
+        document.getElementById(data.id).className = "tile";
     }
 }
 
@@ -363,7 +443,7 @@ function createButtons() {
     var controlsDiv = document.getElementById('inGameControls');
     var sendButton = createButton('Play', 'playMove()', 'sendButton');
     var passButton = createButton('Pass', 'playPass()', 'passButton');
-    var swapButton = createButton('Swap', 'playSwap()', 'swapButton');
+    var swapButton = createButton('Swap', 'startSwap()', 'swapButton');
 
     controlsDiv.appendChild(sendButton);
     controlsDiv.appendChild(passButton);
