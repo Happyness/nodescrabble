@@ -68,6 +68,15 @@ var ServerController = function()
         return {"tiles": session.getUnplayedTiles(noTiles), "board": session.getBoard().getTiles(), "turn": session.getTurn().getId()}
     }
 
+    var sendToOpponent = function(player, messageType, message)
+    {
+        for (i in players) {
+            if (players[i].getId() != player.getId()) {
+                players[i].getClient().emit(messageType, message);
+            }
+        }
+    }
+
     var broadcastToSession = function(session, messageType, message)
     {
         var players = session.getPlayers();
@@ -75,7 +84,6 @@ var ServerController = function()
         for (i in players) {
             if (messageType == 'game-started') {
                 var gameMessage = getGameMessage(session, 7);
-                console.log(JSON.stringify(gameMessage));
                 players[i].getClient().emit(messageType, gameMessage);
                 players[i].addLetters(gameMessage.tiles);
             } else {
@@ -147,7 +155,7 @@ var ServerController = function()
         return session;
     };
 
-    var calculateMove = function calculateMove(data)
+    var calculateMove = function calculateMove(client, data)
     {
         var session = getSession(data.sessionid);
         var tiles = data.move;
@@ -181,7 +189,8 @@ var ServerController = function()
                     console.log(tiles);
                     var newTiles = session.getUnplayedTiles(tiles.length);
 
-                    player.getClient().emit('update', {type: 'newtiles', tiles: newTiles});
+                    client.emit('update', {type: 'playable-tiles', tiles: newTiles});
+                    sendToOpponent(player, 'update', {type: 'played-tiles', tiles: tiles});
 
                     player.addLetters(newTiles);
                     session.switchTurn(player.getId());
@@ -214,7 +223,7 @@ var ServerController = function()
         if (!data.sessionid || !data.playerid) {
             response = createResponseMessage("Session and player id is required to make a move", true);
         } else if (Array.isArray(data.move)) {
-            response = calculateMove(data);
+            response = calculateMove(client, data);
         } else {
             switch (data.move) {
                 case 'pass':
