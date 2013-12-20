@@ -11,6 +11,7 @@ var swapButton;
 var gameTable;
 var turn;
 var currentTile = 1;
+var dev = true;
 
 /**************************************************
  ** GAME INITIALISATION
@@ -34,7 +35,6 @@ function init() {
 
 
     // Connect to server
-    var dev = true;
     var address = (dev != true) ? 'http://nodescrabbler.herokuapp.com' : 'http://localhost:3000';
     socket = io.connect(address);
 
@@ -103,12 +103,20 @@ function onUpdate(data) {
         case 'gamelist':
             updateGameList(data);
             break;
-        case 'newtiles' :
-            addUnplayedTiles(data.tiles);
+        case 'playable-tiles' :
+            if (data.tiles) {
+                addUnplayedTiles(data.tiles);
+            }
             break;
-        case 'tiles' :
-            updateBoard(data);
-            updateGameBoard();
+        case 'played-tiles' :
+            console.log(JSON.stringify(data));
+            if (data.tiles && data.turn) {
+                updateBoard(data.tiles);
+
+                turn = data.turn;
+                var response = document.getElementById('response');
+                response.innerHTML = getTurn();
+            }
             break;
         default :
             break;
@@ -250,36 +258,34 @@ function addUnplayedTiles(tiles)
     }
 }
 
-function updateTiles()
+function isBoardTileEmpty(y, x)
 {
-    console.log("Updating tiles ...");
-    var tiles = player.letters;
-    var moveTiles = document.querySelectorAll('.tile');
-    console.log(moveTiles);
-
-        for (var i = 0; i < moveTiles.length; i++) {
-            if (typeof tiles[i] != 'undefined' && tiles[i] != null) {
-                moveTiles[i].innerHTML = tiles[i].letter + "<sub>" + tiles[i].score + "</sub>";
-            }
-        }
+    return (board[y][x] == null || board[y][x] == "");
 }
 
-function updateBoard() {
+function updateBoard(tiles) {
     console.log("Updating board ...");
+
     var gameTable = document.getElementById('gameTable');
     var trs = gameTable.getElementsByTagName('tr');
-    console.log("trs.lenght() " + trs.length);
     for (var i = 0; i < trs.length; i++) {
         var tds = trs[i].getElementsByTagName('td');
-        console.log("tds.lenght() " + tds.length);
+
         for (var j = 0; j < tds.length; j++) {
-            //console.log("update tile " + i + "," + j);
-            if (board[i][j] != null && board[i][j] != "") {
-                if (tds[j].innerHTML == "") {
-                    var div = document.createElement('div');
-                    div.innerHTML = data[i].letter;
-                    div.setAttribute('class', "played-tile");
-                    tds[j].appendChild(div);
+            for (var t in tiles) {
+                x = tiles[t].x - 1;
+                y = tiles[t].y - 1;
+
+                if (isBoardTileEmpty(y, x) && x == j && y == i) {
+                    board[y][x] = tiles[t].letter;
+
+                    console.log("update tile " + i + "," + j);
+                    if (tds[j].innerHTML == "") {
+                        var div = document.createElement('div');
+                        div.innerHTML = tiles[t].letter + "<sub>" + tiles[t].score + "</sub>";
+                        div.setAttribute('class', "played-tile");
+                        tds[j].appendChild(div);
+                    }
                 }
             }
         }
@@ -319,6 +325,11 @@ function playPass() {
     }
 }
 
+function getTurn()
+{
+    return (player.getId() == turn) ? "your turn" : "opponent turn";
+}
+
 // Game started
 function onGameStarted(data) {
     console.log("Games started");
@@ -331,9 +342,7 @@ function onGameStarted(data) {
 
     addUnplayedTiles(data.tiles);
 
-    var turnString = (player.getId() == turn) ? "your turn" : "opponent turn";
-
-    header.innerHTML = "Game is now started, it is " + turnString;
+    header.innerHTML = "Game is now started, it is " + getTurn();
 
     updateBoard();
     //updateTiles();
@@ -404,7 +413,8 @@ function sendReady()
     });
 }
 
-function joinGame() {
+function joinGame()
+{
     console.log("joinButton");
     var gamesSelect = document.getElementById('gamesSelect');
     var sessionid = gamesSelect.options[gamesSelect.selectedIndex].value;
@@ -414,7 +424,9 @@ function joinGame() {
 
 function createGame() {
     console.log("createGame");
-    socket.emit('initgame', {language: "sv", dictionary: "default"});
+
+    var language = (dev == true) ? 'dev' : 'sv';
+    socket.emit('initgame', {language: "dev", dictionary: "default"});
 }
 
 function moveToJson() {

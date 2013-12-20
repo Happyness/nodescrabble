@@ -8,7 +8,9 @@ var ServerController = function()
     {
         var list = new Array();
         for (i = 0; i < sessions.length; i++) {
-            list.push({"sessionid": sessions[i].getId()});
+            if (sessions[i].getPlayers().length < 2) {
+                list.push({"sessionid": sessions[i].getId()});
+            }
         }
 
         return JSON.stringify(list);
@@ -68,8 +70,10 @@ var ServerController = function()
         return {"tiles": session.getUnplayedTiles(noTiles), "board": session.getBoard().getTiles(), "turn": session.getTurn().getId()}
     }
 
-    var sendToOpponent = function(player, messageType, message)
+    var sendToOpponent = function(session, player, messageType, message)
     {
+        var players = session.getPlayers();
+
         for (i in players) {
             if (players[i].getId() != player.getId()) {
                 players[i].getClient().emit(messageType, message);
@@ -186,19 +190,23 @@ var ServerController = function()
                     player.addScore(score);
                     player.addPlayedTiles(tiles);
 
-                    console.log(tiles);
                     var newTiles = session.getUnplayedTiles(tiles.length);
-
-                    client.emit('update', {type: 'playable-tiles', tiles: newTiles});
-                    sendToOpponent(player, 'update', {type: 'played-tiles', tiles: tiles});
 
                     player.addLetters(newTiles);
                     session.switchTurn(player.getId());
                     player.setPassed(0);
+
+                    client.emit('update', {type: 'playable-tiles', tiles: newTiles});
+                    sendToOpponent(session, player, 'update', {
+                        "type": 'played-tiles',
+                        "tiles": tiles,
+                        "turn": session.getTurn()
+                    });
+
                     return createResponseMessage({
                         "playerid": player.getId(),
                         "score": score,
-                        "tiles": data.move,
+                        "tiles": tiles,
                         "words": words,
                         "totalscore": player.getScore()
                     });

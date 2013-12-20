@@ -8,7 +8,7 @@ var gamesession = function(i, dict, lang, c) {
     var unplayedTiles = [];
     var playedTiles = [];
     var board = [[]];
-    var turn;
+    var turn = i;
     var state;
     var activeDictionary;
 
@@ -27,7 +27,17 @@ var gamesession = function(i, dict, lang, c) {
         var howMany;
 
         switch (lang) {
-            case 'sv':
+            case 'dev' :
+                howMany = [
+                    {"letters": ['A', 'R', 'S', 'T', 'E', 'I'], "score": 3},
+                    {"letters": ['R'], "score": 0},
+                    {"letters": ['N'], "score": 0},
+                    {"letters": ['D', 'L', 'O'], "score": 0},
+                    {"letters": ['G', 'K', 'M', 'U'], "score": 0},
+                    {"letters": ['H', 'Ä', 'F', 'V', 'B', 'Ö', 'P', 'Å'], "score": 0},
+                    {"letters": ['J', 'Y', 'C', 'X', 'Z'], "score": 0}
+                ];
+                break;
             /* Swedish board:
              1 point: A ×8, R ×8, S ×8, T ×8, E ×7, N ×6, D ×5, I ×5, L ×5
              2 points: O ×5, G ×3, K ×3, M ×3, H ×2
@@ -36,6 +46,7 @@ var gamesession = function(i, dict, lang, c) {
              7 points: J ×1, Y ×1
              8 points: C ×1, X ×1
              10 points: Z ×1 */
+            case 'sv':
             default:
                 howMany = [
                     {"letters": ['A', 'R', 'S', 'T'], "score": 8},
@@ -186,6 +197,15 @@ var gamesession = function(i, dict, lang, c) {
         return board;
     }
 
+    var addScoresToTiles = function(tiles)
+    {
+        for (var i in tiles) {
+            tiles[i].score = board.getLetterScore(tiles[i].letter);
+        }
+
+        return tiles;
+    }
+
     turn = addPlayer(c);
 
     return {
@@ -203,7 +223,8 @@ var gamesession = function(i, dict, lang, c) {
         setId: setId,
         setTurn: setTurn,
         setState: setState,
-        getBoard: getBoard
+        getBoard: getBoard,
+        addScoresToTiles: addScoresToTiles
     }
 };
 
