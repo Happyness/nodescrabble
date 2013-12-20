@@ -134,8 +134,44 @@ function updateGameList(data) {
     }
 }
 
+function addUnplayedTiles(tiles)
+{
+    var tileHolder = document.getElementById('tiles');
 
+    for (i in tiles) {
+        var div = document.createElement('div');
+        div.innerHTML = tiles[i].letter + "<sub>"+ tiles[i].score +"</sub>";
+        div.setAttribute('class', "tile");
+        div.setAttribute('draggable', "true");
+        div.setAttribute('ondragstart', "drag(event)");
+        div.setAttribute('id', "tile"+currentTile);
+        tileHolder.appendChild(div);
 
+        currentTile++;
+    }
+}
+
+function updateBoard() {
+    console.log("Updating board ...");
+    var gameTable = document.getElementById('gameTable');
+    var trs = gameTable.getElementsByTagName('tr');
+    console.log("trs.lenght() " + trs.length);
+    for (var i = 0; i < trs.length; i++) {
+        var tds = trs[i].getElementsByTagName('td');
+        console.log("tds.lenght() " + tds.length);
+        for (var j = 0; j < tds.length; j++) {
+            console.log("update tile " + i + "," + j);
+            if (board[i][j] != null && board[i][j] != "") {
+                if (tds[j].innerHTML == "") {
+                    var div = document.createElement('div');
+                    div.innerHTML = data[i].letter;
+                    div.setAttribute('class', "played-tile");
+                    tds[j].appendChild(div);
+                }
+            }
+        }
+    }
+}
 
 
 /**************************************************
@@ -241,22 +277,7 @@ function onErrorMessage(data) {
     alert(data.message);
 }
 
-function addUnplayedTiles(tiles)
-{
-    var tileHolder = document.getElementById('tiles');
 
-    for (i in tiles) {
-        var div = document.createElement('div');
-        div.innerHTML = tiles[i].letter + "<sub>"+ tiles[i].score +"</sub>";
-        div.setAttribute('class', "tile");
-        div.setAttribute('draggable', "true");
-        div.setAttribute('ondragstart', "drag(event)");
-        div.setAttribute('id', "tile"+currentTile);
-        tileHolder.appendChild(div);
-
-        currentTile++;
-    }
-}
 
 function isBoardTileEmpty(y, x)
 {
@@ -340,12 +361,237 @@ function onGameStarted(data) {
     player.letters = data.tiles;
     board = data.board;
 
-    addUnplayedTiles(data.tiles);
-
     header.innerHTML = "Game is now started, it is " + getTurn();
 
+    createGameBoard();
+    createTilesBoard();
+    createButtons();
     updateBoard();
-    //updateTiles();
+    addUnplayedTiles(data.tiles);
+}
+
+function createButtons() {
+    var controlsDiv = document.getElementById('inGameControls');
+    var sendButton = document.createElement('input');
+    sendButton.setAttribute('type', 'button');
+    sendButton.setAttribute('value', 'Play');
+    sendButton.setAttribute('id', 'sendButton');
+    sendButton.setAttribute('onClick', 'playMove()');
+
+    var passButton = document.createElement('input');
+    passButton.setAttribute('type', 'button');
+    passButton.setAttribute('value', 'Pass');
+    passButton.setAttribute('id', 'passButton');
+    passButton.setAttribute('onClick', 'playPass()');
+
+    var swapButton = document.createElement('input');
+    swapButton.setAttribute('type', 'button');
+    swapButton.setAttribute('value', 'Swap');
+    swapButton.setAttribute('id', 'swapButton');
+    swapButton.setAttribute('onClick', 'playSwap()');
+
+    controlsDiv.appendChild(sendButton);
+    controlsDiv.appendChild(passButton);
+    controlsDiv.appendChild(swapButton);
+}
+
+function createTilesBoard() {
+    var tilesBoard = document.getElementById('tilesBoard');
+    var div = document.createElement('div');
+    div.setAttribute('id', 'tiles');
+    div.setAttribute('ondragenter', 'dragEnter(event)');
+    div.setAttribute('ondrop', 'drop(event)');
+    div.setAttribute('ondragover', 'allowDrop(event)');
+    /*
+    for(var j=1; j <= 7; j++) {
+        var tile = document.createElement('div');
+        tile.setAttribute('id', 'tile'+j);
+        tile.setAttribute('class', 'tile');
+        tile.setAttribute('draggable', 'true');
+        tile.setAttribute('ondragstart', 'drag(event)');
+        div.appendChild(tile);
+    }
+    */
+    tilesBoard.appendChild(div);
+}
+
+function createGameBoard() {
+    var boardDiv = document.getElementById('board');
+    var table = document.createElement('table');
+    table.setAttribute('id', "gameTable");
+    var tbody = document.createElement('tbody');
+
+    for(var i=1; i <= 15; i++) {
+        var tr = document.createElement('tr');
+        tr.setAttribute('id', i);
+        for(var j=1; j <= 15; j++) {
+            if (((i == 1 || i == 15) && (j == 1 || j == 15))) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'tl');
+                tr.appendChild(td);
+            }
+            else if (((i == 2 || i == 14) && (j == 6 || j == 10))) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'tl');
+                tr.appendChild(td);
+            }
+            else if (((i == 4 || i == 12) && (j == 4 || j == 12))) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'tl');
+                tr.appendChild(td);
+            }
+            else if (((i == 6 || i == 10) && (j == 2 || j == 6 || j == 10 || j == 14))) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'tl');
+                tr.appendChild(td);
+            }
+            else if (((i == 1 || i == 15) && (j == 5 || j == 11))) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'tw');
+                tr.appendChild(td);
+            }
+            else if (((i == 5 || i == 11) && (j == 1 || j == 15))) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'tw');
+                tr.appendChild(td);
+            }
+            else if ((i == 1 || i == 15) && j == 8) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'tw');
+                tr.appendChild(td);
+            }
+            else if ((i == 2 || i == 14) && (j == 2 || j == 14)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dl');
+                tr.appendChild(td);
+            }
+            else if ((i == 3 || i == 5 || i == 11 || i == 13) && (j == 7 || j == 9)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dl');
+                tr.appendChild(td);
+            }
+            else if ((i == 7 || i == 9) && (j == 3 || j == 5 || j == 11 || j == 13)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dl');
+                tr.appendChild(td);
+            }
+            else if ((i == 8) && (j == 1 || j == 15)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dl');
+                tr.appendChild(td);
+            }
+            else if ((i == 3 || i == 13) && (j == 3 || j == 13)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dw');
+                tr.appendChild(td);
+            }
+            else if ((i == 4 || i == 12) && (j == 8)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dw');
+                tr.appendChild(td);
+            }
+            else if ((i == 5 || i == 11) && (j == 5 || j == 11)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dw');
+                tr.appendChild(td);
+            }
+            else if ((i == 8) && (j == 4 || j == 12)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dw');
+                tr.appendChild(td);
+            }
+            else if ((i == 8) && (j == 4 || j == 12)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'dw');
+                tr.appendChild(td);
+            }
+            else if ((i == 8) && (j == 8)) {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'center');
+                tr.appendChild(td);
+            }
+            else {
+                var td = document.createElement('td');
+                td.setAttribute('id', j);
+                td.setAttribute('ondragenter', 'dragEnter(event)');
+                td.setAttribute('ondrop', 'drop(event)');
+                td.setAttribute('ondragover', 'allowDrop(event)');
+                td.setAttribute('class', 'regular');
+                tr.appendChild(td);
+            }
+        }
+        tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    boardDiv.appendChild(table);
 }
 
 // On move response
@@ -427,20 +673,6 @@ function createGame() {
 
     var language = (dev == true) ? 'dev' : 'sv';
     socket.emit('initgame', {language: "dev", dictionary: "default"});
-}
-
-function moveToJson() {
-    console.log("moveToJson()");
-    tempMove = [];
-    var moveTiles = document.querySelectorAll('.move-tile');
-    for (var i = 0; i < moveTiles.length; i++) {
-        var pos = moveTiles[i].parentNode.cellIndex;
-        var value = moveTiles[i].innerHTML;
-
-        tempMove.push({letter: value,
-                    pos: pos});
-    }
-    return tempMove;
 }
 
 window.onload = function() {
