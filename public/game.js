@@ -133,6 +133,9 @@ function addUnplayedTiles(tiles)
         var div = document.createElement('div');
         div.innerHTML = tiles[i].letter + "<sub>"+ tiles[i].score +"</sub>";
         div.setAttribute('class', "tile");
+        div.setAttribute('draggable', "true");
+        div.setAttribute('ondragstart', "drag(event)");
+        div.setAttribute('id', "tile"+currentTile);
         tileHolder.appendChild(div);
     }
 }
@@ -324,8 +327,6 @@ function onGameStarted(data) {
     player.letters = data.tiles;
     board = data.board;
 
-    addUnplayedTiles(data.tiles);
-
     var turnString = (player.getId() == turn) ? "your turn" : "opponent turn";
 
     header.innerHTML = "Game is now started, it is " + turnString;
@@ -334,6 +335,7 @@ function onGameStarted(data) {
     createTilesBoard();
     createButtons();
     updateBoard();
+    addUnplayedTiles(data.tiles);
     //updateTiles();
 }
 
@@ -369,6 +371,7 @@ function createTilesBoard() {
     div.setAttribute('ondragenter', 'dragEnter(event)');
     div.setAttribute('ondrop', 'drop(event)');
     div.setAttribute('ondragover', 'allowDrop(event)');
+    /*
     for(var j=1; j <= 7; j++) {
         var tile = document.createElement('div');
         tile.setAttribute('id', 'tile'+j);
@@ -377,6 +380,7 @@ function createTilesBoard() {
         tile.setAttribute('ondragstart', 'drag(event)');
         div.appendChild(tile);
     }
+    */
     tilesBoard.appendChild(div);
 }
 
