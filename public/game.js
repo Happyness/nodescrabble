@@ -137,6 +137,8 @@ function addUnplayedTiles(tiles)
         div.setAttribute('ondragstart', "drag(event)");
         div.setAttribute('id', "tile"+currentTile);
         tileHolder.appendChild(div);
+
+        currentTile++;
     }
 }
 
