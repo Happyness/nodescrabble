@@ -13,6 +13,7 @@ var turn;
 var currentTile = 1;
 var dev = true;
 var swapMode = false;
+var viewState = 'chooseGame';
 
 /**************************************************
  ** GAME INITIALISATION
@@ -20,13 +21,6 @@ var swapMode = false;
 function init() {
 
     console.log("Init");
-
-    // Init ui
-    // sendButton = document.getElementById("sendButton");
-    // passButton = document.getElementById("passButton");
-    // swapButton = document.getElementById("swapButton");
-    // joinButton = document.getElementById("joinButton");
-    // createGameButton = document.getElementById("createGameButton");
 
     // Keep track of tiles, letters, session and id
     player = new Player();
@@ -111,13 +105,13 @@ function onUpdate(data) {
             response.innerHTML = getTurn();
             break;
         case 'playable-tiles' :
-            if (data.tiles) {
+            if (data.tiles && viewState != 'ingame') {
                 addUnplayedTiles(data.tiles);
             }
             break;
         case 'played-tiles' :
             console.log(JSON.stringify(data));
-            if (data.tiles && data.turn) {
+            if (data.tiles && data.turn  && viewState != 'ingame') {
                 updateBoard(data.tiles);
 
                 turn = data.turn;
@@ -139,6 +133,79 @@ function updateGameList(data) {
         var value = games[i].sessionid;
         gamesSelect.options.add(new Option(value, value))
     }
+}
+
+function createElement(tag, value, attributes)
+{
+    var element = document.createElement(tag);
+    element.innerHTML = value;
+
+    for (var i in attributes) {
+        element.setAttribute(attributes[i].key, attributes[i].value);
+    }
+
+    return element;
+}
+
+function switchToView(view)
+{
+    if (viewState == view) {
+        return;
+    }
+    switch (view) {
+        case 'choosegame' :
+            var inGame = document.getElementById("inGame");
+            while (inGame.firstChild) {
+                inGame.removeChild(inGame.firstChild);
+            }
+            var chooseGame = document.getElementById("chooseGame");
+            var header = createElement('h1', 'NodeScrabble', [{key: 'id', value: 'header'}]);
+            var selectList = createElement('div', '', [{key: 'id', value: 'select'}]);
+            var lister = createElement('select', '', [{key: 'id', value: 'gamesSelect'}]);
+            selectList.appendChild(lister);
+
+            var controls = createElement('div', '', [{key: 'id', value: 'controls'}]);
+            controls.appendChild(createElement('input', '', [
+                {key: 'type', value: 'button'},
+                {key: 'value', value: 'Join Game'},
+                {key: 'id', value: 'joinButton'},
+                {key: 'onclick', value: 'joinGame()'}
+            ]));
+            controls.appendChild(createElement('input', '', [
+                {key: 'type', value: 'button'},
+                {key: 'value', value: 'Create Game'},
+                {key: 'id', value: 'createGameButton'},
+                {key: 'onclick', value: 'createGame()'}
+            ]));
+            selectList.appendChild(controls);
+
+            chooseGame.appendChild(header);
+            chooseGame.appendChild(selectList);
+
+            socket.emit('games', {playerid: player.getId()});
+            break;
+        case 'ingame' :
+            var chooseGame = document.getElementById("chooseGame");
+            while (chooseGame.firstChild) {
+                chooseGame.removeChild(chooseGame.firstChild);
+            }
+            var inGame = document.getElementById("inGame");
+            var boardDiv = createElement('div', '', [{key: 'id', value: 'boardDiv'}]);
+            var tilesBoard = createElement('div', '', [{key: 'id', value: 'tilesBoard'}]);
+            var controlsDiv = createElement('div', '', [{key: 'id', value: 'inGameControls'}]);
+            var response = createElement('h2', '', [{key: 'id', value: 'response'}]);
+
+            createGameBoard(boardDiv);
+            createTilesBoard(tilesBoard);
+            createButtons(controlsDiv);
+
+            inGame.appendChild(controlsDiv);
+            inGame.appendChild(response);
+            inGame.appendChild(tilesBoard);
+            inGame.appendChild(boardDiv);
+            break;
+    }
+    viewState = view;
 }
 
 function addUnplayedTiles(tiles)
@@ -306,6 +373,11 @@ function updateBoard(tiles) {
     }
 }
 
+function viewGameList()
+{
+    switchToView('choosegame');
+}
+
 function playMove(){
     if (turn == player.getId() && swapMode != true) {
         // Send move to server
@@ -426,20 +498,21 @@ function getTurn()
 // Game started
 function onGameStarted(data) {
     console.log("Games started");
-
     console.log(JSON.stringify(data));
 
     turn = data.turn;
     player.letters = data.tiles;
     board = data.board;
 
-    header.innerHTML = "Game is now started, it is " + getTurn();
 
-    createGameBoard();
-    createTilesBoard();
-    createButtons();
-    updateBoard();
-    addUnplayedTiles(data.tiles);
+    switchToView('ingame');
+    if (viewState == 'ingame') {
+        updateBoard(data.playedTiles);
+        addUnplayedTiles(data.tiles);
+    }
+
+    var response = document.getElementById('response');
+    response.innerHTML = "Game is now started, it is " + getTurn();
 }
 
 function createButton(value, ev, id)
@@ -453,19 +526,19 @@ function createButton(value, ev, id)
     return button;
 }
 
-function createButtons() {
-    var controlsDiv = document.getElementById('inGameControls');
+function createButtons(controlsDiv) {
+    var gameListButton = createButton('Back to gamelist', 'viewGameList()', 'gameListButton');
     var sendButton = createButton('Play', 'playMove()', 'sendButton');
     var passButton = createButton('Pass', 'playPass()', 'passButton');
     var swapButton = createButton('Swap', 'startSwap()', 'swapButton');
 
+    controlsDiv.appendChild(gameListButton);
     controlsDiv.appendChild(sendButton);
     controlsDiv.appendChild(passButton);
     controlsDiv.appendChild(swapButton);
 }
 
-function createTilesBoard() {
-    var tilesBoard = document.getElementById('tilesBoard');
+function createTilesBoard(tilesBoard) {
     var div = document.createElement('div');
     div.setAttribute('id', 'tiles');
     div.setAttribute('ondragenter', 'dragEnter(event)');
@@ -475,8 +548,7 @@ function createTilesBoard() {
     tilesBoard.appendChild(div);
 }
 
-function createGameBoard() {
-    var boardDiv = document.getElementById('board');
+function createGameBoard(boardDiv) {
     var table = document.createElement('table');
     table.setAttribute('id', "gameTable");
     var tbody = document.createElement('tbody');
@@ -636,8 +708,6 @@ function onGameEnded(data) {
             response.innerHTML += getPlayerAsReadable(data.scores[i].playerid) + "; score: " + data.scores[i].score + "<br>";
         }
     }
-
-    // @TODO: Go back to init game or something?
 }
 
 // Server message
@@ -662,16 +732,17 @@ function joinGame()
     var gamesSelect = document.getElementById('gamesSelect');
     var sessionid = gamesSelect.options[gamesSelect.selectedIndex].value;
     player.setSession(sessionid);
-    socket.emit('joingame', {sessionid: sessionid});
+    socket.emit('joingame', {sessionid: sessionid, playerid: player.getId()});
 }
 
 function createGame() {
     console.log("createGame");
 
     var language = (dev == true) ? 'dev' : 'sv';
-    socket.emit('initgame', {language: "dev", dictionary: "default"});
+    socket.emit('initgame', {language: language, dictionary: "default"});
 }
 
 window.onload = function() {
     init();
+    switchToView('choosegame');
 };

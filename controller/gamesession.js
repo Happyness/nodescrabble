@@ -87,7 +87,7 @@ var gamesession = function(i, dict, lang, c) {
         switch (lang) {
             case 'dev' :
                 howMany = [
-                    {"letters": ['A', 'R', 'S', 'T', 'E', 'I'], "score": 3},
+                    {"letters": ['A', 'R', 'S', 'T', 'E', 'I'], "score": 10},
                     {"letters": ['R'], "score": 0},
                     {"letters": ['N'], "score": 0},
                     {"letters": ['D', 'L', 'O'], "score": 0},
@@ -172,9 +172,8 @@ var gamesession = function(i, dict, lang, c) {
             return false;
         }
 
-        var player = new RemotePlayer(players.length + 1);
+        var player = new RemotePlayer(players.length + client.manager.handshaken[client.id].address);
         player.setClient(client);
-
         players.push(player);
 
         return player;
@@ -239,6 +238,15 @@ var gamesession = function(i, dict, lang, c) {
         }
     }
 
+    var addPlayedTiles = function(tiles)
+    {
+        tiles = addScoresToTiles(tiles);
+
+        for (var i in tiles) {
+            playedTiles.push(tiles[i]);
+        }
+    }
+
     var getState = function()
     {
         return state;
@@ -300,7 +308,8 @@ var gamesession = function(i, dict, lang, c) {
         addScoresToTiles: addScoresToTiles,
         isGameEnded: isGameEnded,
         getScores: getScores,
-        setRandomTurn: setRandomTurn
+        setRandomTurn: setRandomTurn,
+        addPlayedTiles: addPlayedTiles
     }
 };
 

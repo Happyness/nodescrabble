@@ -10,19 +10,6 @@ html(lang="en")
 
         link(rel='stylesheet', href='/stylesheets/style.css')
     body
-        h1(id='header') NodeScrabble
-        .select(id='select')
-            select(id="gamesSelect")
-        br
-        .controls(id='controls')
-            input.joinButton(type='button', value='Join Game', id='joinButton', onclick='joinGame()')
-            input.createGameButton(type='button', value='Create Game', id='createGameButton' onClick='createGame()')
-        br
-        #board
+        #chooseGame
+        #inGame
 
-        br
-        #tilesBoard
-        br
-        h2(id='response')
-        br
-        .controls(id='inGameControls')

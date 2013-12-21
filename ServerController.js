@@ -4,11 +4,11 @@ var ServerController = function()
 {
     var sessions = new Array();
 
-    var getAllSessions = function()
+    var getAllSessions = function(playerid)
     {
         var list = new Array();
         for (i = 0; i < sessions.length; i++) {
-            if (sessions[i].getPlayers().length < 2) {
+            if (sessions[i].getPlayers().length < 2 || sessions[i].getPlayerById(playerid) != false) {
                 list.push({"sessionid": sessions[i].getId()});
             }
         }
@@ -36,7 +36,7 @@ var ServerController = function()
 
     var initGame = function(client, data)
     {
-        var message;
+        var message, player;
 
         if (data.language == null || data.dictionary == null) {
             console.log(data.language);
@@ -45,17 +45,18 @@ var ServerController = function()
         } else if (sessions.length <= 3) {
             var session = createGameSession(client, data);
             sessions.push(session);
+            player = session.getPlayer(1).getId();
 
             message = createResponseMessage({
                 "sessionid": session.getId(),
-                "playerid": session.getPlayer(1).getId()
+                "playerid": player
             });
         } else {
             message = createResponseMessage("No more game sessions allowed at the moment", true);
         }
 
         client.emit('initgame-response', message);
-        client.broadcast.emit("update", {"type": "gamelist", "games": getAllSessions()});
+        client.broadcast.emit("update", {"type": "gamelist", "games": getAllSessions(player)});
     };
 
     var createResponseMessage = function(message, error)
@@ -64,11 +65,6 @@ var ServerController = function()
 
         return Util.merge({"result": "success"}, message);
     };
-
-    var getGameMessage = function(session, noTiles)
-    {
-        return {"tiles": session.getUnplayedTiles(noTiles), "board": session.getBoard().getTiles(), "turn": session.getTurn()}
-    }
 
     var sendToOpponent = function(session, messageType, message)
     {
@@ -85,12 +81,29 @@ var ServerController = function()
     var broadcastToSession = function(session, messageType, message)
     {
         var players = session.getPlayers();
+        var gameMessage;
 
         for (i in players) {
             if (messageType == 'game-started') {
-                var gameMessage = getGameMessage(session, 7);
+                var letters = players[i].getLetters();
+                if (letters.length == 0) {
+                    players[i].addLetters(session.getUnplayedTiles(7));
+                }
+                if (message == players[i].getId()) {
+                    gameMessage = {
+                        "tiles": players[i].getLetters(),
+                        "board": session.getBoard().getTiles(),
+                        "turn": session.getTurn(),
+                        "playedTiles": session.getPlayedTiles()//@TODO session.getPlayedTiles();
+                    };
+                } else {
+                    gameMessage = {
+                        "tiles": players[i].getLetters(),
+                        "board": session.getBoard().getTiles(),
+                        "turn": session.getTurn()
+                    };
+                }
                 players[i].getClient().emit(messageType, gameMessage);
-                players[i].addLetters(gameMessage.tiles);
             } else {
                 players[i].getClient().emit(messageType, message);
             }
@@ -103,7 +116,7 @@ var ServerController = function()
             var session = getSession(data.sessionid);
 
             if (session != false) {
-                broadcastToSession(session, 'game-started');
+                broadcastToSession(session, 'game-started', data.playerid);
             } else {
                 client.emit('game-started', createResponseMessage("Session do not exist", true));
             }
@@ -142,26 +155,38 @@ var ServerController = function()
     {
         var message, session = false;
 
-        if (data.sessionid == null) {
+        if (!data.sessionid) {
             message = createResponseMessage("Game session id is required for joining", true);
         } else {
             session = getSession(data.sessionid);
 
             if (session != false) {
-                var player = session.addPlayer(client);
-                session.setRandomTurn();
-
-                if (player == false) {
-                    message = createResponseMessage("Game has two players already", true);
-                } else {
+                var player = session.getPlayerById(data.playerid);
+                if (player != false) {
                     message = createResponseMessage({
                         "language": session.language,
                         "dictionary": session.dictionary,
-                        "playerid": player.getId()
+                        "playerid": player.getId(),
+                        "message" : "welcome back"
                     });
+                } else if (session.getPlayers().length < 2) {
+                    var player = session.addPlayer(client);
+                    session.setRandomTurn();
+
+                    if (player == false) {
+                        message = createResponseMessage("Game has two players already", true);
+                    } else {
+                        message = createResponseMessage({
+                            "language": session.language,
+                            "dictionary": session.dictionary,
+                            "playerid": player.getId()
+                        });
+                    }
+                } else {
+                    message = createResponseMessage("Game has two players already", true);
                 }
             } else {
-                message = createResponseMessage("Game has two players already", true);
+                message = createResponseMessage("Session does not exist", true);
             }
         }
 
@@ -208,6 +233,7 @@ var ServerController = function()
                     session.switchTurn(player.getId());
                     player.addScore(score);
                     player.addPlayedTiles(tiles);
+                    session.addPlayedTiles(tiles);
 
                     var newTiles = session.getUnplayedTiles(tiles.length);
 
@@ -238,7 +264,7 @@ var ServerController = function()
 
     var getGames = function(client, data)
     {
-        client.emit('games-response', createResponseMessage({"games": getAllSessions()}));
+        client.emit('update', createResponseMessage({"type": 'gamelist', "games": getAllSessions(data.playerid)}));
     }
 
     var swapTiles = function(session, oldTiles)
