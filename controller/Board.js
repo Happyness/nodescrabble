@@ -6,6 +6,8 @@ var Board = function(language, dictionary) {
     var board = [[]];
     var dict = dictionary;
     var letterScores;
+    var checkedPos = new Array();
+    var usedMultiplyers = new Array();
 
     var getTiles = function()
     {
@@ -56,6 +58,10 @@ var Board = function(language, dictionary) {
 
     var getWordMultiplyer = function(i, j)
     {
+        if (isUsedMultiplyer(j, i)) return 1;
+
+        addUsedMultiplyer(j, i);
+
         if (((i == 1 || i == 15) && (j == 5 || j == 11)))
             return 3;
         else if (((i == 5 || i == 11) && (j == 1 || j == 15)))
@@ -76,6 +82,10 @@ var Board = function(language, dictionary) {
 
     var getLetterMultiplyer = function(i, j)
     {
+        if (isUsedMultiplyer(j, i)) return 1;
+
+        addUsedMultiplyer(j, i);
+
         if (((i == 1 || i == 15) && (j == 1 || j == 15)))
             return 3;
         else if (((i == 2 || i == 14) && (j == 6 || j == 10)))
@@ -96,7 +106,32 @@ var Board = function(language, dictionary) {
             return 2;
 
         else return 1;
+    }
 
+    var isUsedMultiplyer = function(y, x)
+    {
+        for (var i in usedMultiplyers) {
+            if (usedMultiplyers[i].x == x && usedMultiplyers[i].y == y) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    var addUsedMultiplyer = function(y, x)
+    {
+        usedMultiplyers.push({x: x, y: y});
+    }
+
+    var getLettersScore = function(tiles)
+    {
+        var score = 0;
+        for (var i in tiles) {
+            score += getLetterScore(tiles[i]);
+        }
+
+        return score;
     }
 
     var getLetterScore = function(tile)
@@ -117,15 +152,16 @@ var Board = function(language, dictionary) {
 
     var getValidData = function(multiplyer, letters)
     {
+        if (letters.length == 1) {
+            return {"score": 0, "word": 'none'};
+        }
+
         var word = "", score = 0;
         for (var i in letters) {
             word  += letters[i].letter;
             score += (getScoredLetter(letters[i]));
         }
 
-        if (letters.length == 1) {
-            return {"score": multiplyer * score, "word": "none"};
-        }
         if (dict.valid(word)) {
             console.log(word);
             return {"score": multiplyer * score, "word": word};
@@ -136,6 +172,7 @@ var Board = function(language, dictionary) {
 
     var calculateScores = function(tile)
     {
+        checkedPos = new Array();
         var result;
         var valid = new Array();
         result = validWord(tile.letter, tile.x, tile.y, true) // Horisontal check
@@ -157,17 +194,37 @@ var Board = function(language, dictionary) {
         return valid;
     }
 
+    var addCheckedPos = function(y, x, horisontal)
+    {
+        checkedPos.push({x: x, y: y, horisontal: horisontal});
+    }
+
+    var isCheckedPos = function(y, x, horisontal)
+    {
+        for (var i in checkedPos) {
+            if (checkedPos[i].x == x && checkedPos[i].y == y && checkedPos[i].horisontal == horisontal) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     var validWord = function(letter, x, y, horisontal)
     {
         var posx = x, posy = y;
         var multiplyer = 1, tile, forward = true, run = true;
 
         var word = new Array();
-        //word.push({"letter": letter, "multiply": getLetterMultiplyer(y, x)});
+        console.log("horisontal:" + horisontal);
+        console.log(JSON.stringify(checkedPos));
 
-        while (!isEmpty(posy, posx) && run == true) {
+        while (!isEmpty(posy, posx) && !isCheckedPos(posy, posx, horisontal) && run == true) {
             tile = getTile(posy, posx);
             multiplyer *= getWordMultiplyer(posy, posx);
+            addCheckedPos(posy, posx, horisontal);
+
+            console.log("row: "+posy+", col: "+posx);
 
             if (forward) {
                 word.push({"letter": tile, "multiply": getLetterMultiplyer(posy, posx)});
@@ -188,13 +245,15 @@ var Board = function(language, dictionary) {
             }
 
             if (isEmpty(posy, posx) && forward) {
-                posx = x-1;
-                posy = y-1;
+                posx = x - 1;
+                posy = y - 1;
                 forward = false;
             } else if (isEmpty(posy, posx)) {
                 run = false;
             }
         }
+
+        console.log(JSON.stringify(word));
 
         return getValidData(multiplyer, word);
     }
@@ -208,26 +267,54 @@ var Board = function(language, dictionary) {
         return true;
     }
 
-    var putTiles = function(tiles)
+    var addTiles = function(tiles)
     {
-        var x, y, valid = true, values = new Array();
-
         for (var i in tiles) {
             x = tiles[i].x;
             y = tiles[i].y;
 
             if (isEmpty(y, x)) {
                 setTile(y, x, tiles[i].letter);
-            } else {
-                return false;
             }
+        }
+    }
+
+    var removeTiles = function(tiles)
+    {
+        for (var i in tiles) {
+            x = tiles[i].x;
+            y = tiles[i].y;
+
+            if (!isEmpty(y, x)) {
+                setTile(y, x, null);
+            }
+        }
+    }
+
+    var putTiles = function(tiles)
+    {
+        var x, y, valid = true, values = new Array(), counter = 0;
+
+        for (var i in tiles) {
+            x = tiles[i].x;
+            y = tiles[i].y;
+
+            if (isEmpty(y, x)) {
+                counter++;
+            }
+        }
+
+        if (counter == tiles.length) {
+            addTiles(tiles);
         }
 
         for (var i in tiles) {
             var data = calculateScores(tiles[i]);
+
             if (Array.isArray(data)) {
                 values.push(data);
             } else {
+                removeTiles(tiles);
                 return false;
             }
         }
@@ -281,7 +368,8 @@ var Board = function(language, dictionary) {
         setTiles: setTiles,
         getTile: getTile,
         putTiles: putTiles,
-        getLetterScore: getLetterScore
+        getLetterScore: getLetterScore,
+        getLettersScore: getLettersScore
     }
 };
 

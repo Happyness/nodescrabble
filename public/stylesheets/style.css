@@ -12,7 +12,7 @@ sub {
     vertical-align:text-bottom; font-size:50%;
 }
 
-[draggable=true]:hover {
+.tile:hover, .move-tile:hover {
     cursor: pointer; cursor: hand;
 }
 

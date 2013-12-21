@@ -12,6 +12,64 @@ var gamesession = function(i, dict, lang, c) {
     var state;
     var activeDictionary;
 
+    var getScores = function()
+    {
+        var scores = new Array();
+
+        for (var i in players) {
+            scores.push({playerid: players[i].getId(), score:players[i].getScore()});
+        }
+
+        return scores;
+    }
+
+    var calcEndScore = function()
+    {
+        for (var i in players) {
+            var player = players[i];
+            var letters = player.getLetters();
+
+            if (letters.length == 0) {
+                player.addScore(50);
+            } else {
+                player.substractScore(board.getLettersScore(letters));
+            }
+        }
+    }
+
+    var getOpponentId = function(id)
+    {
+        for (var i in players) {
+            var pid = players[i].getId();
+            if (id != pid) {
+                return pid;
+            }
+        }
+    }
+
+    var isGameEnded = function()
+    {
+        var next = false, counter = 0;
+
+        for (var i in players) {
+            if (players[i].getNoPasses() >= 2) {
+                calcEndScore();
+                return getOpponentId(players[i].getId());
+            }
+            if (players[i].getLetters().length == 0 && unplayedTiles.length == 0) counter++;
+        }
+
+        if (counter > 0) {
+            calcEndScore();
+            var player1 = players[0], player2 = players[1];
+            if (player1.getScore() == player2.getScore()) { return 0;
+            } else if (player1.getScore() > player2.getScore()) { return player1.getId();
+            } else { return player2.getId(); }
+        }
+
+        return false;
+    }
+
     var createDictionary = function(dictionary)
     {
         activeDictionary = new Dictionary(dictionary);
@@ -167,6 +225,15 @@ var gamesession = function(i, dict, lang, c) {
         return randoms;
     };
 
+    var addUnplayedTiles = function(tiles)
+    {
+        tiles = addScoresToTiles(tiles);
+
+        for (var i in tiles) {
+            unplayedTiles.push(tiles[i]);
+        }
+    }
+
     var getState = function()
     {
         return state;
@@ -199,7 +266,8 @@ var gamesession = function(i, dict, lang, c) {
     var addScoresToTiles = function(tiles)
     {
         for (var i in tiles) {
-            tiles[i].score = board.getLetterScore(tiles[i].letter);
+            if (!tiles[i].score)
+                tiles[i].score = board.getLetterScore(tiles[i].letter);
         }
 
         return tiles;
@@ -215,6 +283,7 @@ var gamesession = function(i, dict, lang, c) {
         getState: getState,
         getSession: getSession,
         getUnplayedTiles: getUnplayedTiles,
+        addUnplayedTiles: addUnplayedTiles,
         getPlayedTiles: getPlayedTiles,
         getPlayers: getPlayers,
         getTurn: getTurn,
@@ -223,7 +292,9 @@ var gamesession = function(i, dict, lang, c) {
         setTurn: setTurn,
         setState: setState,
         getBoard: getBoard,
-        addScoresToTiles: addScoresToTiles
+        addScoresToTiles: addScoresToTiles,
+        isGameEnded: isGameEnded,
+        getScores: getScores
     }
 };
 

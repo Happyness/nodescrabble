@@ -46,6 +46,10 @@ var RemotePlayer = function(i) {
         score += value;
     };
 
+    var substractScore = function(value) {
+        score -= value;
+    };
+
    var setClient = function(c)
    {
        client = c;
@@ -61,6 +65,11 @@ var RemotePlayer = function(i) {
         passed++;
     }
 
+    var getNoPasses = function()
+    {
+        return passed;
+    }
+
     return {
         getScore: getScore,
         getClient: getClient,
@@ -73,7 +82,9 @@ var RemotePlayer = function(i) {
         setClient: setClient,
         addScore: addScore,
         addPassed: addPassed,
-        setPassed: setPassed
+        setPassed: setPassed,
+        substractScore: substractScore,
+        getNoPasses: getNoPasses
     }
 };
 

@@ -120,6 +120,15 @@ var ServerController = function()
         });
     };
 
+    var removeSession = function(id)
+    {
+        for (var i in sessions) {
+            if (sessions[i].getId() == id) {
+                sessions.splice(i, 1);
+            }
+        }
+    }
+
     var getSession = function(id)
     {
         for (i = 0; i < sessions.length; i++) {
@@ -184,25 +193,25 @@ var ServerController = function()
                     for (var j = 0; j < tilesData.length; j++) {
                         score += tilesData[j].score;
 
-                        if (tilesData[i].word != 'none')
+                        if (tilesData[j].word != 'none')
                             words.push(tilesData[j].word);
                     }
                 }
                 var player = session.getPlayerById(id);
 
-                if (!player) {
+                if (score == 0) {
+                    return createResponseMessage("Invalid word", true);
+                } else if (!player) {
                     return createResponseMessage("Player do not exist", true);
                 } else {
+                    session.switchTurn(player.getId());
                     player.addScore(score);
                     player.addPlayedTiles(tiles);
 
                     var newTiles = session.getUnplayedTiles(tiles.length);
 
                     player.addLetters(newTiles);
-                    session.switchTurn(player.getId());
                     player.setPassed(0);
-
-                    client.emit('update', {type: 'playable-tiles', tiles: newTiles});
 
                     sendToOpponent(session, 'update', {
                         "type": 'played-tiles',
@@ -213,6 +222,7 @@ var ServerController = function()
                     return createResponseMessage({
                         "playerid": player.getId(),
                         "score": score,
+                        "newtiles": newTiles,
                         "tiles": tiles,
                         "words": words,
                         "totalscore": player.getScore(),
@@ -230,6 +240,19 @@ var ServerController = function()
         client.emit('games-response', createResponseMessage({"games": getAllSessions()}));
     }
 
+    var swapTiles = function(session, oldTiles)
+    {
+         session.addUnplayedTiles(oldTiles);
+         var newTiles = session.getUnplayedTiles(oldTiles.length);
+
+         if (newTiles.length != oldTiles.length) {
+             session.addUnplayedTiles(newTiles);
+             return false;
+         } else {
+             return newTiles;
+         }
+    }
+
     var makeMove = function makeMove(client, data)
     {
         console.log("Try to make a move");
@@ -241,23 +264,46 @@ var ServerController = function()
         } else if (Array.isArray(data.move)) {
             response = calculateMove(client, data);
         } else {
+            var session = getSession(data.sessionid);
+
             switch (data.move) {
                 case 'pass':
-                    session.getPlayer(data.playerId).addPassed();
-                    session.switchTurn(data.playerid);
-
-                    broadcastToSession(session, 'update', {type: "move"});
-                    response = createResponseMessage("");
+                    session.getPlayer(data.playerid).addPassed();
+                    var winner = session.isGameEnded();
+                    if (winner != false) {
+                        broadcastToSession(session, 'game-ended', {winner: winner, scores: session.getScores()});
+                        removeSession(data.sessionid);
+                    } else {
+                        session.switchTurn(data.playerid);
+                        broadcastToSession(session, 'update', {type: "move", turn: session.getTurn()});
+                    }
+                    return;
                     break;
                 case 'swap' :
-                    response = createResponseMessage(swapTiles(data));
                     session.switchTurn(data.playerid);
+                    session.getPlayer(data.playerid).setPassed(0); // Reset pass
+                    var oldTiles = data.tiles;
+                    var newTiles = swapTiles(session, oldTiles);
+                    console.log(JSON.stringify(newTiles));
+
+                    if (newTiles != false) {
+                        sendToOpponent(session, 'update', {type: "move", turn: session.getTurn()});
+                        response = createResponseMessage({tiles: newTiles});
+                    } else {
+                        response = createResponseMessage("Not enough tiles", true);
+                    }
                     break;
                 default :
                     console.log("Error: " + "Invalid move");
                     response = createResponseMessage("Invalid move", true);
                     break;
             }
+        }
+
+        var winner = session.isGameEnded();
+        if (winner != false) {
+            broadcastToSession(session, 'update', {type: "game-ended", winner: winner, scores: session.getScores()});
+            removeSession(data.sessionid);
         }
 
         console.log(JSON.stringify(response));

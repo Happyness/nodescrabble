@@ -98,6 +98,7 @@ var setEventHandlers = function() {
  **************************************************/
 function onUpdate(data) {
     console.log("On Update");
+    console.log(JSON.stringify(data));
 
     // TODO: check for type of update and calculate next move
     switch(data.type) {
@@ -285,10 +286,18 @@ function updateBoard(tiles) {
                     board[y][x] = tiles[t].letter;
 
                     console.log("update tile " + i + "," + j);
+                    var div = document.createElement('div');
+                    div.innerHTML = tiles[t].letter + "<sub>" + tiles[t].score + "</sub>";
+                    div.setAttribute('class', "played-tile");
+
                     if (tds[j].innerHTML == "") {
-                        var div = document.createElement('div');
-                        div.innerHTML = tiles[t].letter + "<sub>" + tiles[t].score + "</sub>";
-                        div.setAttribute('class', "played-tile");
+                        tds[j].appendChild(div);
+                    } else {
+                        var moveTile = tds[j].getElementsByTagName('div');
+                        if (moveTile.length > 0) {
+                            var tileHolder = document.getElementById('tiles');
+                            tileHolder.appendChild(moveTile[0]);
+                        }
                         tds[j].appendChild(div);
                     }
                 }
@@ -301,18 +310,23 @@ function playMove(){
     if (turn == player.getId() && swapMode != true) {
         // Send move to server
         console.log("sendButton.onClick");
-        var moveTiles = document.querySelectorAll('.move-tile');
+        var moveTiles = document.getElementsByClassName('move-tile');
         console.log("moveTiles.length " + moveTiles.length);
         var moveList = [];
         for (var i = 0; i < moveTiles.length; i++) {
             var noHtmlString = moveTiles[i].innerHTML.replace(/<(?:.|\n)*?>/gm, '');
             var value = noHtmlString.replace(/[0-9]/g, '');
+            var pos = moveTiles[i].parentNode.id.split('-');
 
-            moveList.push({letter: value, x: moveTiles[i].parentNode.id, y: moveTiles[i].parentNode.parentNode.id});
+            console.log(JSON.stringify(pos));
+
+            moveList.push({letter: value, x: pos[1], y: pos[0]});
         }
 
-        socket.emit('playmove',{playerid: player.getId(), sessionid: player.getSession(), move: moveList});
-        console.log({move: moveList});
+        if (moveList.length > 0) {
+            socket.emit('playmove',{playerid: player.getId(), sessionid: player.getSession(), move: moveList});
+            console.log({move: moveList});
+        }
     }
     else {
         alert("You'll have to wait for your turn");
@@ -323,7 +337,7 @@ function playPass() {
     if (turn == player.getId() && swapMode != true) {
         // Send pass to server
         console.log("passButton.onClick");
-        socket.emit("playmove", {move: "pass", sessionid: player.getSession(), userid: player.getId()});
+        socket.emit("playmove", {move: "pass", sessionid: player.getSession(), playerid: player.getId()});
     }
     else {
         alert("You'll have to wait for your turn");
@@ -346,9 +360,8 @@ function playSwap() {
                 tilesDiv.removeChild(swapTiles[i]);
 
             }
-            //socket.emit("playmove", {move: 'swap', sessionid: player.getSession(), userid: player.getId(), tiles: swapList});
+            socket.emit("playmove", {move: 'swap', sessionid: player.getSession(), playerid: player.getId(), tiles: swapList});
             stopSwap();
-
         }
     }
     else {
@@ -395,12 +408,13 @@ function startSwap() {
 
 function toggleSwapClass(ev) {
     console.log(ev);
-    var data = ev.srcElement;
-    if (document.getElementById(data.id).className == "tile") {
-        document.getElementById(data.id).className = "swap";
+    var element = ev.target || ev.srcElement;
+
+    if (element.className == "tile") {
+        element.className = "swap";
     }
-    else {
-        document.getElementById(data.id).className = "tile";
+    else if (element.classnName == "swap") {
+        element.className = "tile";
     }
 }
 
@@ -469,10 +483,9 @@ function createGameBoard() {
 
     for(var i=1; i <= 15; i++) {
         var tr = document.createElement('tr');
-        tr.setAttribute('id', i);
         for(var j=1; j <= 15; j++) {
             var td = document.createElement('td');
-            td.setAttribute('id', j);
+            td.setAttribute('id', i + '-' + j);
             td.setAttribute('ondragenter', 'dragEnter(event)');
             td.setAttribute('ondrop', 'drop(event)');
             td.setAttribute('ondragover', 'allowDrop(event)');
@@ -561,6 +574,10 @@ function onMoveResponse(data) {
     var response = document.getElementById('response');
 
     if (data.result == "success") {
+        if (data.newtiles) {
+            addUnplayedTiles(data.newtiles);
+        }
+
         response.innerHTML = "You got score point: " + data.score;
         console.log(JSON.stringify(data));
         turn = data.turn;
@@ -598,11 +615,29 @@ function onUpdateBoard(data) {
     console.log(JSON.stringify(board));
 };
 
+function getPlayerAsReadable(id)
+{
+    if (id == 0) return 'No one';
+    return (id == player.getId() ? 'you' : 'opponent');
+}
+
 // On game ended
 function onGameEnded(data) {
     console.log("Game ended");
 
-    // TODO: game ended
+    var response = document.getElementById('response');
+
+    console.log(JSON.stringify(data));
+
+    if (data.winner && data.scores) {
+        response.innerHTML = "Winner is: " + getPlayerAsReadable(data.winner) + "<br>\n";
+
+        for (var i in data.scores) {
+            response.innerHTML += getPlayerAsReadable(data.scores[i].playerid) + "; score: " + data.scores[i].score + "<br>";
+        }
+    }
+
+    // @TODO: Go back to init game or something?
 }
 
 // Server message
