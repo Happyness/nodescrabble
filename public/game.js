@@ -11,7 +11,7 @@ var swapButton;
 var gameTable;
 var turn;
 var currentTile = 1;
-var dev = true;
+var dev = false;
 var swapMode = false;
 
 /**************************************************
