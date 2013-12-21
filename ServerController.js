@@ -149,6 +149,7 @@ var ServerController = function()
 
             if (session != false) {
                 var player = session.addPlayer(client);
+                session.setRandomTurn();
 
                 if (player == false) {
                     message = createResponseMessage("Game has two players already", true);

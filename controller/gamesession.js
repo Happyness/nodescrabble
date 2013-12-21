@@ -211,6 +211,11 @@ var gamesession = function(i, dict, lang, c) {
         return session;
     };
 
+    var setRandomTurn = function()
+    {
+        turn = players[Math.floor(Math.random() * players.length)].getId();
+    }
+
     var getUnplayedTiles = function(amount) {
         var randoms = [];
         for (var i = 0, index; i < amount; ++i) {
@@ -273,7 +278,7 @@ var gamesession = function(i, dict, lang, c) {
         return tiles;
     }
 
-    turn = addPlayer(c).getId();
+    addPlayer(c);
 
     return {
         addPlayer: addPlayer,
@@ -294,7 +299,8 @@ var gamesession = function(i, dict, lang, c) {
         getBoard: getBoard,
         addScoresToTiles: addScoresToTiles,
         isGameEnded: isGameEnded,
-        getScores: getScores
+        getScores: getScores,
+        setRandomTurn: setRandomTurn
     }
 };
 
