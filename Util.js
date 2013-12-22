@@ -4,16 +4,19 @@
 var Util = function()
 {}
 
-Util.merge = function(to, from) {
-    for (n in from) {
-        if (typeof to[n] != 'object') {
-            to[n] = from[n];
-        } else if (typeof from[n] == 'object') {
-            to[n] = realMerge(to[n], from[n]);
-        }
+Util.merge = function(objOne, objTwo) {
+    if (objOne instanceof Array) {
+        return objOne.concat(objTwo);
     }
-
-    return to;
+    var merge = {};
+    var property;
+    for (property in objOne) {
+        merge[property] = objOne[property];
+    }
+    for (property in objTwo) {
+        merge[property] = objTwo[property];
+    }
+    return merge;
 };
 
 Util.contains = function(a, obj) {

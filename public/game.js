@@ -105,13 +105,13 @@ function onUpdate(data) {
             response.innerHTML = getTurn();
             break;
         case 'playable-tiles' :
-            if (data.tiles && viewState != 'ingame') {
+            if (data.tiles && viewState == 'ingame') {
                 addUnplayedTiles(data.tiles);
             }
             break;
         case 'played-tiles' :
             console.log(JSON.stringify(data));
-            if (data.tiles && data.turn  && viewState != 'ingame') {
+            if (data.tiles && data.turn  && viewState == 'ingame') {
                 updateBoard(data.tiles);
 
                 turn = data.turn;
@@ -500,16 +500,18 @@ function onGameStarted(data) {
     console.log("Games started");
     console.log(JSON.stringify(data));
 
+    if (viewState == 'ingame') {
+        return;
+    }
+
     turn = data.turn;
     player.letters = data.tiles;
     board = data.board;
 
 
     switchToView('ingame');
-    if (viewState == 'ingame') {
         updateBoard(data.playedTiles);
         addUnplayedTiles(data.tiles);
-    }
 
     var response = document.getElementById('response');
     response.innerHTML = "Game is now started, it is " + getTurn();

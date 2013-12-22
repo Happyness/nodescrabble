@@ -2,7 +2,7 @@ RemotePlayer = require('./RemotePlayer').RemotePlayer;
 Board = require('./Board').Board;
 Dictionary = require('./Dictionary').Dictionary;
 
-var gamesession = function(i, dict, lang, c) {
+var gamesession = function(i, dict, lang, player) {
     var id = i;
     var players = new Array();
     var unplayedTiles = [];
@@ -166,17 +166,14 @@ var gamesession = function(i, dict, lang, c) {
             }
     };
 
-    var addPlayer = function(client)
+    var addPlayer = function(player)
     {
         if (players.length >= 2) {
             return false;
         }
 
-        var player = new RemotePlayer(players.length + client.manager.handshaken[client.id].address);
-        player.setClient(client);
         players.push(player);
-
-        return player;
+        return true;
     }
 
     var getPlayers = function()
@@ -276,6 +273,43 @@ var gamesession = function(i, dict, lang, c) {
         return board;
     }
 
+    var scanScoreAndWords = function(data)
+    {
+        var words = new Array(), score = 0, result;
+
+        if (Array.isArray(data)) {
+            for (var i in data) {
+                result = scanScoreAndWords(data[i]);
+                score += result.score;
+                words = Util.merge(words, result.words);
+            }
+        } else {
+            score += data.score;
+            if (data.word != 'none') words.push(data.word);
+        }
+
+        return {words: words, score: score};
+    }
+
+    var playTiles = function(tiles)
+    {
+        var playResponse = board.putTiles(tiles);
+
+        if (playResponse != false) {
+            var result = scanScoreAndWords(playResponse);
+
+            if (result.score == 0) {
+                board.removeTiles(tiles);
+                board.printBoard();
+                return false;
+            } else {
+                if (tiles.length == 7) result.score += 40;
+                return result;
+            }
+        }
+        return false;
+    }
+
     var addScoresToTiles = function(tiles)
     {
         for (var i in tiles) {
@@ -286,7 +320,15 @@ var gamesession = function(i, dict, lang, c) {
         return tiles;
     }
 
-    addPlayer(c);
+    var isCenter = function(tiles)
+    {
+        if (board.isBoardEmpty()) {
+            return board.isWordCrossingCenter(tiles);
+        }
+        return true; // Only check if empty board
+    }
+
+    addPlayer(player);
 
     return {
         addPlayer: addPlayer,
@@ -309,7 +351,9 @@ var gamesession = function(i, dict, lang, c) {
         isGameEnded: isGameEnded,
         getScores: getScores,
         setRandomTurn: setRandomTurn,
-        addPlayedTiles: addPlayedTiles
+        addPlayedTiles: addPlayedTiles,
+        playTiles: playTiles,
+        isCenter: isCenter
     }
 };
 

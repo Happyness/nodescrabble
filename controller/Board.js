@@ -56,7 +56,7 @@ var Board = function(language, dictionary) {
         return (x > 0 && x <= size.cols && y > 0 && y <= size.rows);
     }
 
-    var getWordMultiplyer = function(i, j)
+    var getWordMultiplyer = function(j, j)
     {
         if (isUsedMultiplyer(j, i)) return 1;
 
@@ -80,7 +80,7 @@ var Board = function(language, dictionary) {
             return 1;
     }
 
-    var getLetterMultiplyer = function(i, j)
+    var getLetterMultiplyer = function(j, i)
     {
         if (isUsedMultiplyer(j, i)) return 1;
 
@@ -152,7 +152,7 @@ var Board = function(language, dictionary) {
 
     var getValidData = function(multiplyer, letters)
     {
-        if (letters.length == 1) {
+        if (letters.length <= 1) {
             return {"score": 0, "word": 'none'};
         }
 
@@ -170,12 +170,11 @@ var Board = function(language, dictionary) {
         return false;
     }
 
-    var calculateScores = function(tile)
+    var calculateScores = function(tile, deep)
     {
-        checkedPos = new Array();
         var result;
         var valid = new Array();
-        result = validWord(tile.letter, tile.x, tile.y, true) // Horisontal check
+        result = validWord(tile.letter, tile.x, tile.y, true, deep) // Horisontal check
 
         if (result != false) {
             valid.push(result);
@@ -183,7 +182,7 @@ var Board = function(language, dictionary) {
             return false;
         }
 
-        result = validWord(tile.letter, tile.x, tile.y, false); // Vertical check
+        result = validWord(tile.letter, tile.x, tile.y, false, deep); // Vertical check
 
         if (result != false) {
             valid.push(result);
@@ -210,21 +209,31 @@ var Board = function(language, dictionary) {
         return false;
     }
 
-    var validWord = function(letter, x, y, horisontal)
+    var validWord = function(letter, x, y, horisontal, deep)
     {
         var posx = x, posy = y;
         var multiplyer = 1, tile, forward = true, run = true;
 
         var word = new Array();
-        console.log("horisontal:" + horisontal);
-        console.log(JSON.stringify(checkedPos));
+        //console.log("horisontal:" + horisontal);
+        //console.log(JSON.stringify(checkedPos));
+        var result = new Array(), tmpres;
 
         while (!isEmpty(posy, posx) && !isCheckedPos(posy, posx, horisontal) && run == true) {
             tile = getTile(posy, posx);
             multiplyer *= getWordMultiplyer(posy, posx);
             addCheckedPos(posy, posx, horisontal);
-
             console.log("row: "+posy+", col: "+posx);
+
+            if (deep < 1) {
+                deep++;
+                tmpres = calculateScores({letter: tile, x: posx, y: posy}, deep);
+                if (tmpres != false) {
+                    result.push(tmpres);
+                } else {
+                    return false;
+                }
+            }
 
             if (forward) {
                 word.push({"letter": tile, "multiply": getLetterMultiplyer(posy, posx)});
@@ -245,17 +254,55 @@ var Board = function(language, dictionary) {
             }
 
             if (isEmpty(posy, posx) && forward) {
-                posx = x - 1;
-                posy = y - 1;
+                if (horisontal) {
+                    posx = x - 1;
+                    posy = y;
+                } else {
+                    posy = y - 1;
+                    posx = x;
+                }
                 forward = false;
             } else if (isEmpty(posy, posx)) {
                 run = false;
             }
         }
 
-        console.log(JSON.stringify(word));
+        //console.log(JSON.stringify(word));
 
-        return getValidData(multiplyer, word);
+        tmpres = getValidData(multiplyer, word);
+        if (tmpres != false) {
+            result.push(tmpres);
+        } else {
+            return false;
+        }
+
+        return result;
+    }
+
+    var isWordCrossingCenter = function(tiles)
+    {
+        var size = getBoardSize();
+        var cx = Math.ceil(size.cols / 2);
+        var cy = Math.ceil(size.rows / 2);
+
+        for (var i in tiles) {
+            if (tiles[i].x == cx && tiles[i].y == cy) return true;
+        }
+
+        return false;
+    }
+
+    var isBoardEmpty = function()
+    {
+        var size = getBoardSize();
+
+        for (var y = 1; y <= size.rows; y++) {
+            for (var x = 1; x <= size.cols; x++) {
+                if (!isEmpty(y, x)) return false;
+            }
+        }
+
+        return true;
     }
 
     var isEmpty = function(row, col)
@@ -285,15 +332,26 @@ var Board = function(language, dictionary) {
             x = tiles[i].x;
             y = tiles[i].y;
 
-            if (!isEmpty(y, x)) {
-                setTile(y, x, null);
-            }
+            setTile(y, x, null);
         }
+    }
+
+    var printBoard = function()
+    {
+        var output = "";
+
+        for (var row in board) {
+            output += JSON.stringify(board[row]) + "\r\n";
+        }
+
+        console.log(output);
     }
 
     var putTiles = function(tiles)
     {
+        checkedPos = new Array();
         var x, y, valid = true, values = new Array(), counter = 0;
+        var tmptiles = tiles.slice(0);
 
         for (var i in tiles) {
             x = tiles[i].x;
@@ -305,21 +363,24 @@ var Board = function(language, dictionary) {
         }
 
         if (counter == tiles.length) {
-            addTiles(tiles);
+            addTiles(tmptiles);
+        } else {
+            return false;
         }
 
         for (var i in tiles) {
-            var data = calculateScores(tiles[i]);
+            var data = calculateScores(tiles[i], 0);
 
-            if (Array.isArray(data)) {
-                values.push(data);
-            } else {
-                removeTiles(tiles);
+            if (data == false) {
+                console.log("Invalid word in playTiles");
+                removeTiles(tmptiles);
+                printBoard();
+
                 return false;
+            } else {
+                values.push(data);
             }
         }
-
-        console.log(values);
 
         return values;
     }
@@ -368,8 +429,12 @@ var Board = function(language, dictionary) {
         setTiles: setTiles,
         getTile: getTile,
         putTiles: putTiles,
+        printBoard: printBoard,
+        removeTiles: removeTiles,
         getLetterScore: getLetterScore,
-        getLettersScore: getLettersScore
+        getLettersScore: getLettersScore,
+        isBoardEmpty: isBoardEmpty,
+        isWordCrossingCenter: isWordCrossingCenter
     }
 };
 

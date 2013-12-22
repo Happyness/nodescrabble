@@ -4,12 +4,16 @@
 var Util = function()
 {}
 
-Util.merge = function(to, from) {
+Util.merge = function(to, from, writeover) {
     for (n in from) {
         if (typeof to[n] != 'object') {
-            to[n] = from[n];
+            if (writeover) {
+                to[n] = from[n];
+            } else {
+                to.push(from[n]);
+            }
         } else if (typeof from[n] == 'object') {
-            to[n] = realMerge(to[n], from[n]);
+            to[n] = Util.merge(to[n], from[n]);
         }
     }
 
