@@ -293,12 +293,18 @@ var ServerController = function()
             response = calculateMove(client, data);
         } else {
             var session = getSession(data.sessionid);
-            var player  = session.getPlayerById(data.playerid);
+            var player = false;
+
+            if (session) {
+                player  = session.getPlayerById(data.playerid);
+            }
 
             if (!session) {
                 return createResponseMessage("Session does not exist", true);
             } else if (!player) {
                 return createResponseMessage("Player does not exist", true);
+            } else if (session.getTurn() != player.getId()) {
+                    return createResponseMessage("It is not your turn", true);
             } else {
                 switch (data.move) {
                     case 'pass':

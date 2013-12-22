@@ -28,7 +28,6 @@ function init() {
     // Keep track of game board
     board = [[]];
 
-
     // Connect to server
     var address = (dev != true) ? 'http://nodescrabbler.herokuapp.com' : 'http://localhost:3000';
     socket = io.connect(address);
