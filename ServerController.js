@@ -293,44 +293,51 @@ var ServerController = function()
             response = calculateMove(client, data);
         } else {
             var session = getSession(data.sessionid);
+            var player  = session.getPlayerById(data.playerid);
 
-            switch (data.move) {
-                case 'pass':
-                    session.getPlayer(data.playerid).addPassed();
-                    var winner = session.isGameEnded();
-                    if (winner != false) {
-                        broadcastToSession(session, 'game-ended', {winner: winner, scores: session.getScores()});
-                        removeSession(data.sessionid);
-                    } else {
-                        session.switchTurn(data.playerid);
-                        broadcastToSession(session, 'update', {type: "move", turn: session.getTurn()});
-                    }
-                    return;
-                    break;
-                case 'swap' :
-                    session.switchTurn(data.playerid);
-                    session.getPlayer(data.playerid).setPassed(0); // Reset pass
-                    var oldTiles = data.tiles;
-                    var newTiles = swapTiles(session, oldTiles);
-                    console.log(JSON.stringify(newTiles));
+            if (!session) {
+                return createResponseMessage("Session does not exist", true);
+            } else if (!player) {
+                return createResponseMessage("Player does not exist", true);
+            } else {
+                switch (data.move) {
+                    case 'pass':
+                        player.addPassed();
+                        var winner = session.isGameEnded();
+                        if (winner != false) {
+                            broadcastToSession(session, 'game-ended', {winner: winner, scores: session.getScores()});
+                            removeSession(session.getId());
+                        } else {
+                            session.switchTurn(player.getId());
+                            broadcastToSession(session, 'update', {type: "move", turn: session.getTurn()});
+                        }
+                        return;
+                        break;
+                    case 'swap' :
+                        session.switchTurn(player.getId());
+                        player.setPassed(0); // Reset pass
+                        var oldTiles = data.tiles;
+                        var newTiles = swapTiles(session, oldTiles);
+                        console.log(JSON.stringify(newTiles));
 
-                    if (newTiles != false) {
-                        sendToOpponent(session, 'update', {type: "move", turn: session.getTurn()});
-                        response = createResponseMessage({tiles: newTiles});
-                    } else {
-                        response = createResponseMessage("Not enough tiles", true);
-                    }
-                    break;
-                default :
-                    console.log("Error: " + "Invalid move");
-                    response = createResponseMessage("Invalid move", true);
-                    break;
-            }
+                        if (newTiles != false) {
+                            sendToOpponent(session, 'update', {type: "move", turn: session.getTurn()});
+                            response = createResponseMessage({tiles: newTiles});
+                        } else {
+                            response = createResponseMessage("Not enough tiles", true);
+                        }
+                        break;
+                    default :
+                        console.log("Error: " + "Invalid move");
+                        response = createResponseMessage("Invalid move", true);
+                        break;
+                }
 
-            var winner = session.isGameEnded();
-            if (winner != false) {
-                broadcastToSession(session, 'update', {type: "game-ended", winner: winner, scores: session.getScores()});
-                removeSession(data.sessionid);
+                var winner = session.isGameEnded();
+                if (winner != false) {
+                    broadcastToSession(session, 'update', {type: "game-ended", winner: winner, scores: session.getScores()});
+                    removeSession(data.sessionid);
+                }
             }
         }
 
