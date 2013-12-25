@@ -119,7 +119,7 @@ var gamesession = function(i, dict, lang, player) {
         }
 
         for (var i = 0; i < howMany.length; i++) {
-            if (Util.contains(howMany[i].letters,letter)) {
+            if (Util.contains(howMany[i].letters, letter)) {
                 return howMany[i].score;
             }
         }
@@ -328,6 +328,26 @@ var gamesession = function(i, dict, lang, player) {
         return true; // Only check if empty board
     }
 
+    var isTileGrouped = function(tiles)
+    {
+        var tile;
+        // Dont check if board is empty
+        if (!board.isBoardEmpty()) {
+            for (i in tiles) {
+                tile = tiles[i];
+
+                if (!board.isEmpty(tile.y, parseInt(tile.x) + 1)) return true; // right
+                if (!board.isEmpty(tile.y, parseInt(tile.x) - 1)) return true; // left
+                if (!board.isEmpty(parseInt(tile.y) + 1, tile.x)) return true; // down
+                if (!board.isEmpty(parseInt(tile.y) - 1, tile.x)) return true; // up
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
     addPlayer(player);
 
     return {
@@ -353,7 +373,8 @@ var gamesession = function(i, dict, lang, player) {
         setRandomTurn: setRandomTurn,
         addPlayedTiles: addPlayedTiles,
         playTiles: playTiles,
-        isCenter: isCenter
+        isCenter: isCenter,
+        isTileGrouped: isTileGrouped
     }
 };
 

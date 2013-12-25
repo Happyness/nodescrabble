@@ -222,6 +222,8 @@ var ServerController = function()
                 } else {
                     if (!session.isCenter(tiles)) {
                         return createResponseMessage("First word must be in center of game board", true);
+                    } else if (!session.isTileGrouped(tiles)) {
+                        return createResponseMessage("You need to put a word next to another one", true);
                     }
 
                     var tilesResponse = session.playTiles(tiles);

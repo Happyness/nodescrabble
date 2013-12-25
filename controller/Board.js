@@ -37,22 +37,17 @@ var Board = function(language, dictionary) {
 
     var getBoardSize = function()
     {
-        var rows, cols;
-
         switch (lang) {
             case 'sv':
             default:
-                rows = cols = 15;
+                return {cols: 15, rows: 15};
                 break;
         }
-
-        return {cols: cols, rows: rows};
     }
 
     var isOnBoard = function(y, x)
     {
         var size = getBoardSize();
-
         return (x > 0 && x <= size.cols && y > 0 && y <= size.rows);
     }
 
@@ -309,7 +304,7 @@ var Board = function(language, dictionary) {
     {
         if (isOnBoard(row, col)) {
             var tile = getTile(row, col);
-            return (tile == null || tile == "" || typeof(tile) == 'undefined');
+            return (tile == null || tile == "" || typeof(tile) == 'undefined' || tile == false);
         }
         return true;
     }
@@ -434,6 +429,7 @@ var Board = function(language, dictionary) {
         getLetterScore: getLetterScore,
         getLettersScore: getLettersScore,
         isBoardEmpty: isBoardEmpty,
+        isEmpty: isEmpty,
         isWordCrossingCenter: isWordCrossingCenter
     }
 };
