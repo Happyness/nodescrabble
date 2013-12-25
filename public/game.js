@@ -7,7 +7,7 @@ var board;
 var tiles;
 var gameTable;
 var currentTile = 1;
-var dev = true;
+var dev = false;
 var swapMode = false;
 var viewState = 'chooseGame';
 var sessions = new Array();
@@ -110,12 +110,12 @@ function updateGameList(data) {
     console.log("updateGameList()")
     var gamesSelect = document.getElementById("gamesSelect");
     gamesSelect.options.length = 0;
-    var games = JSON.parse(data.games);
+    var games = JSON.parse(data.games), value;
     for (var i = 0; i < games.length; i++) {
         if (games[i].playerid) {
-            var value = games[i].sessionid + '-' + games[i].playerid;
+            value = games[i].sessionid + '-' + games[i].playerid;
         } else {
-            var value = games[i].sessionid + '-none';
+            value = games[i].sessionid + '-none';
         }
 
         gamesSelect.options.add(new Option(games[i].sessionid, value))
@@ -280,6 +280,7 @@ function onJoinGameResponse(data) {
 // Socket disconnection
 function onSocketDisconnect() {
     console.log("Socket disconnect");
+    switchToView('choosegame');
     alert("Server closed current socket connection");
 }
 
@@ -638,7 +639,7 @@ function onMoveResponse(data) {
 function getPlayerAsReadable(id)
 {
     if (id == 0) return 'No one';
-    return (id == player.getId() ? 'you' : 'opponent');
+    return (id == activeSession.getPlayerId() ? 'you' : 'opponent');
 }
 
 // On game ended

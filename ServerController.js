@@ -126,6 +126,8 @@ var ServerController = function()
 
     var startGame = function(client, data)
     {
+        console.log(JSON.stringify(data));
+
         if (data.playerid && data.sessionid) {
             var session = getSession(data.sessionid);
 
