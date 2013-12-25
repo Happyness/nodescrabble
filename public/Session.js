@@ -1,9 +1,9 @@
 /**************************************************
- ** GAME PLAYER CLASS
+ ** GAME SESSION CLASS
  **************************************************/
-var Player = function() {
-    var id;
-    var session;
+var Session = function(sid, pid) {
+    var id = sid;
+    var playerid = pid;
     var letters = [];
     var playedTiles = [];
     var turn;
@@ -12,8 +12,8 @@ var Player = function() {
         return id;
     };
 
-    var getSession = function() {
-        return session;
+    var getPlayerId = function() {
+        return playerid;
     };
 
     var getLetters = function() {
@@ -28,14 +28,6 @@ var Player = function() {
         return turn;
     };
 
-    var setId = function(newId) {
-        id = newId;
-    };
-
-    var setSession = function(newSession) {
-        session = newSession;
-    };
-
     var setLetters = function(newLetters) {
         letters = newLetters;
     };
@@ -48,16 +40,30 @@ var Player = function() {
         turn = newTurn;
     };
 
+    var setId = function(i) {
+        id = i;
+    };
+
+    var setPlayerId = function(id) {
+        playerid = id;
+    };
+
+    var isMyTurn = function()
+    {
+        return playerid == turn;
+    }
+
     return {
         getId: getId,
-        getSession: getSession,
+        getPlayerId: getPlayerId,
         getLetters: getLetters,
         getPlayedTiles: getPlayedTiles,
         getTurn: getTurn,
         setId: setId,
-        setSession: setSession,
         setLetters: setLetters,
         setPlayedTiles: setPlayedTiles,
-        setTurn: setTurn
+        setTurn: setTurn,
+        setPlayerId: setPlayerId,
+        isMyTurn: isMyTurn
     }
 };

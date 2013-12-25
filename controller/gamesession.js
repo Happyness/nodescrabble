@@ -11,6 +11,7 @@ var gamesession = function(i, dict, lang, player) {
     var turn;
     var state;
     var activeDictionary;
+    var winner = false;
 
     var getScores = function()
     {
@@ -37,6 +38,11 @@ var gamesession = function(i, dict, lang, player) {
         }
     }
 
+    var hasWinner = function()
+    {
+        return winner;
+    }
+
     var getOpponentId = function(id)
     {
         for (var i in players) {
@@ -54,12 +60,14 @@ var gamesession = function(i, dict, lang, player) {
         for (var i in players) {
             if (players[i].getNoPasses() >= 2) {
                 calcEndScore();
+                winner = true;
                 return getOpponentId(players[i].getId());
             }
             if (players[i].getLetters().length == 0 && unplayedTiles.length == 0) counter++;
         }
 
         if (counter > 0) {
+            winner = true;
             calcEndScore();
             var player1 = players[0], player2 = players[1];
             if (player1.getScore() == player2.getScore()) { return 0;
@@ -181,7 +189,7 @@ var gamesession = function(i, dict, lang, player) {
         return players;
     }
 
-    var getPlayerById = function getPlayerById(id)
+    var getPlayerById = function(id)
     {
         for (var i = 0; i < players.length; i++) {
             if (players[i].getId() == id) return players[i];
@@ -190,7 +198,16 @@ var gamesession = function(i, dict, lang, player) {
         return false;
     };
 
-    var getPlayer = function getPlayer(key)
+    var getPlayerByIp = function(ip)
+    {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].getClient()._remoteAddress == ip) return players[i];
+        }
+
+        return false;
+    };
+
+    var getPlayer = function(key)
     {
         if (key <= players.length) {
             return players[key - 1];
@@ -374,7 +391,9 @@ var gamesession = function(i, dict, lang, player) {
         addPlayedTiles: addPlayedTiles,
         playTiles: playTiles,
         isCenter: isCenter,
-        isTileGrouped: isTileGrouped
+        isTileGrouped: isTileGrouped,
+        hasWinner: hasWinner,
+        getPlayerByIp: getPlayerByIp
     }
 };
 

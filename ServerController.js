@@ -3,13 +3,17 @@ Util = require('./Util').Util
 var ServerController = function()
 {
     var sessions = new Array();
-    var noPlayers = 0;
+    var noPlayers = 0, noSessions = 0;
 
-    var getAllSessions = function(playerid)
+    var getAllSessions = function(client, playerid)
     {
+        var ip   = client._remoteAddress;
         var list = new Array();
+
         for (i = 0; i < sessions.length; i++) {
-            if (sessions[i].getPlayers().length < 2 || sessions[i].getPlayerById(playerid) != false) {
+            if (sessions[i].getPlayers().length < 2 ||
+                sessions[i].getPlayerById(playerid) != false ||
+                sessions[i].getPlayerByIp(ip) != false) {
                 list.push({"sessionid": sessions[i].getId()});
             }
         }
@@ -21,7 +25,7 @@ var ServerController = function()
     {
         Stately = require('stately.js');
         gamesession = require('./controller/gamesession').gamesession;
-        var id = 10 + sessions.length * 55;
+        var id = 10 + noSessions * 55;
         var player = new RemotePlayer(noPlayers + 1);
         player.setClient(client);
 
@@ -43,14 +47,13 @@ var ServerController = function()
         var message, player;
 
         if (data.language == null || data.dictionary == null) {
-            console.log(data.language);
-            console.log(data.dictionary);
             message = createResponseMessage("Missing language or dictionary in message", true);
         } else if (sessions.length <= 3) {
             var session = createGameSession(client, data);
             sessions.push(session);
             player = session.getPlayer(1).getId();
             noPlayers++;
+            noSessions++;
 
             message = createResponseMessage({
                 "sessionid": session.getId(),
@@ -267,7 +270,8 @@ var ServerController = function()
 
     var getGames = function(client, data)
     {
-        client.emit('update', createResponseMessage({"type": 'gamelist', "games": getAllSessions(data.playerid)}));
+        var games = data.playerid ? getAllSessions(client, data.playerid) : getAllSessions(client);
+        client.emit('update', createResponseMessage({"type": 'gamelist', "games": games}));
     }
 
     var swapTiles = function(session, oldTiles)
@@ -291,8 +295,6 @@ var ServerController = function()
 
         if (!data.sessionid || !data.playerid) {
             response = createResponseMessage("Session and player id is required to make a move", true);
-        } else if (Array.isArray(data.move)) {
-            response = calculateMove(client, data);
         } else {
             var session = getSession(data.sessionid);
             var player = false;
@@ -302,49 +304,54 @@ var ServerController = function()
             }
 
             if (!session) {
-                return createResponseMessage("Session does not exist", true);
+                response = createResponseMessage("Session does not exist", true);
             } else if (!player) {
-                return createResponseMessage("Player does not exist", true);
+                response = createResponseMessage("Player does not exist", true);
+            } else if (session.hasWinner()) {
+                response = createResponseMessage("Game is ended, no moves allowed", true);
             } else if (session.getTurn() != player.getId()) {
-                    return createResponseMessage("It is not your turn", true);
+                response = createResponseMessage("It is not your turn", true);
             } else {
-                switch (data.move) {
-                    case 'pass':
-                        player.addPassed();
-                        var winner = session.isGameEnded();
-                        if (winner != false) {
-                            broadcastToSession(session, 'game-ended', {winner: winner, scores: session.getScores()});
-                            removeSession(session.getId());
-                        } else {
+                if (Array.isArray(data.move)) {
+                    response = calculateMove(client, data);
+                } else {
+                    switch (data.move) {
+                        case 'pass':
+                            player.addPassed();
+                            var winner = session.isGameEnded();
+                            if (winner != false) {
+                                broadcastToSession(session, 'game-ended', {winner: winner, scores: session.getScores()});
+                                removeSession(session.getId());
+                            } else {
+                                session.switchTurn(player.getId());
+                                broadcastToSession(session, 'update', {type: "move", turn: session.getTurn()});
+                            }
+                            return;
+                            break;
+                        case 'swap' :
                             session.switchTurn(player.getId());
-                            broadcastToSession(session, 'update', {type: "move", turn: session.getTurn()});
-                        }
-                        return;
-                        break;
-                    case 'swap' :
-                        session.switchTurn(player.getId());
-                        player.setPassed(0); // Reset pass
-                        var oldTiles = data.tiles;
-                        var newTiles = swapTiles(session, oldTiles);
-                        console.log(JSON.stringify(newTiles));
+                            player.setPassed(0); // Reset pass
+                            var oldTiles = data.tiles;
+                            var newTiles = swapTiles(session, oldTiles);
 
-                        if (newTiles != false) {
-                            sendToOpponent(session, 'update', {type: "move", turn: session.getTurn()});
-                            response = createResponseMessage({tiles: newTiles});
-                        } else {
-                            response = createResponseMessage("Not enough tiles", true);
-                        }
-                        break;
-                    default :
-                        console.log("Error: " + "Invalid move");
-                        response = createResponseMessage("Invalid move", true);
-                        break;
-                }
+                            if (newTiles != false) {
+                                sendToOpponent(session, 'update', {type: "move", turn: session.getTurn()});
+                                response = createResponseMessage({newtiles: newTiles, turn: session.getTurn()});
+                            } else {
+                                response = createResponseMessage("Not enough tiles", true);
+                            }
+                            break;
+                        default :
+                            console.log("Error: " + "Invalid move");
+                            response = createResponseMessage("Invalid move", true);
+                            break;
+                    }
 
-                var winner = session.isGameEnded();
-                if (winner != false) {
-                    broadcastToSession(session, 'update', {type: "game-ended", winner: winner, scores: session.getScores()});
-                    removeSession(data.sessionid);
+                    var winner = session.isGameEnded();
+                    if (winner != false) {
+                        broadcastToSession(session, 'update', {type: "game-ended", winner: winner, scores: session.getScores()});
+                        removeSession(data.sessionid);
+                    }
                 }
             }
         }
@@ -352,6 +359,11 @@ var ServerController = function()
         console.log(JSON.stringify(response));
         client.emit('playmove-response', response);
     };
+
+    var clientDisconnected = function(client)
+    {
+        // @TODO when client dies
+    }
 
     return {
         initGame: initGame,
@@ -363,7 +375,8 @@ var ServerController = function()
         createGameSession: createGameSession,
         getAllSessions: getAllSessions,
         getGames: getGames,
-        startGame: startGame
+        startGame: startGame,
+        clientDisconnected: clientDisconnected
     }
 };
 

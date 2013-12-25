@@ -91,10 +91,12 @@ var controller = new ServerController();
 io.sockets.on('connection', function (client) {
     console.log("Got connection from client");
 
-    client.emit('message', { message: 'welcome to nodescrabble'});
-    client.emit("update", {"type": "gamelist", "games": controller.getAllSessions()});
-    client.broadcast.emit("update", {"type": "gamelist", "games": controller.getAllSessions()});
+    // Socket disconnection
+    client.on("disconnect", function(data) {
+        controller.clientDisconnected(client);
+    });
 
+    client.emit('message', { message: 'welcome to nodescrabble'});
     client.on('quit', function (data) {
         controller.quitGame(data);
     });
