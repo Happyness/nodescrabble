@@ -112,8 +112,13 @@ function updateGameList(data) {
     gamesSelect.options.length = 0;
     var games = JSON.parse(data.games);
     for (var i = 0; i < games.length; i++) {
-        var value = games[i].sessionid;
-        gamesSelect.options.add(new Option(value, value))
+        if (games[i].playerid) {
+            var value = games[i].sessionid + '-' + games[i].playerid;
+        } else {
+            var value = games[i].sessionid + '-none';
+        }
+
+        gamesSelect.options.add(new Option(games[i].sessionid, value))
     }
 }
 
@@ -275,12 +280,12 @@ function onJoinGameResponse(data) {
 // Socket disconnection
 function onSocketDisconnect() {
     console.log("Socket disconnect");
+    alert("Server closed current socket connection");
 }
 
 // On error
 function onErrorMessage(data) {
     console.log("Error message" + data);
-
     alert(data.message);
 }
 
@@ -630,28 +635,6 @@ function onMoveResponse(data) {
     }
 }
 
-// On game board update
-function onUpdateBoard(data) {
-    console.log("Update board");
-    gameTable = document.getElementById("gameTable");
-
-    for (var i = 0; i < data.length; i++) {
-        if(document.getElementById(data[i].pos).innerHTML == "") {
-            console.log("DEBUG");
-            board.push({letter: data[i].letter, pos: data[i].pos});
-            var div = document.createElement('div');
-            div.innerHTML = data[i].letter;
-            div.setAttribute('class', "played-tile");
-            var td = document.getElementById(data[i].pos);
-            td.appendChild(div);
-        }
-        else {
-            console.log("tile already set");
-        }
-    }
-    console.log(JSON.stringify(board));
-};
-
 function getPlayerAsReadable(id)
 {
     if (id == 0) return 'No one';
@@ -685,7 +668,15 @@ function onGameEnded(data) {
 function onServerMessage(data) {
     console.log(data.message);
 
-    //TODO: show server message
+    switch (data.type) {
+        case "disconnected" :
+            switchToView('choosegame');
+            break;
+        default :
+            break;
+    }
+
+    alert(data.message);
 };
 
 function sendReady()
@@ -712,7 +703,10 @@ function joinGame()
 {
     console.log("joinButton");
     var gamesSelect = document.getElementById('gamesSelect');
-    var sessionid = gamesSelect.options[gamesSelect.selectedIndex].value;
+    var values = gamesSelect.options[gamesSelect.selectedIndex].value.split('-');
+    var sessionid = values[0];
+    var playerid  = values[1];
+
     var session = getSession(sessionid);
     var message;
 
@@ -720,8 +714,9 @@ function joinGame()
         activeSession = session;
         message = {sessionid: sessionid, playerid: session.getPlayerId()};
     } else {
-        activeSession = new Session(sessionid);
-        message = {sessionid: sessionid};
+        var id = playerid == 'none' ? -1 : playerid;
+        activeSession = new Session(sessionid, id);
+        message = {sessionid: sessionid, playerid: id};
         sessions.push(activeSession);
     }
 

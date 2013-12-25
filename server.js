@@ -96,7 +96,10 @@ io.sockets.on('connection', function (client) {
         controller.clientDisconnected(client);
     });
 
-    client.emit('message', { message: 'welcome to nodescrabble'});
+    if ('development' != app.get('env')) {
+        client.emit('message', { message: 'welcome to nodescrabble'});
+    }
+
     client.on('quit', function (data) {
         controller.quitGame(data);
     });

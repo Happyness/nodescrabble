@@ -11,10 +11,15 @@ var ServerController = function()
         var list = new Array();
 
         for (i = 0; i < sessions.length; i++) {
-            if (sessions[i].getPlayers().length < 2 ||
-                sessions[i].getPlayerById(playerid) != false ||
-                sessions[i].getPlayerByIp(ip) != false) {
+            var player = sessions[i].getPlayerByIp(ip);
+            var player2 = sessions[i].getPlayerById(playerid);
+
+            if (sessions[i].getPlayers().length < 2) {
                 list.push({"sessionid": sessions[i].getId()});
+            } else if (player != false) {
+                list.push({"sessionid": sessions[i].getId(), "playerid": player.getId()});
+            } else if (player2 != false) {
+                list.push({"sessionid": sessions[i].getId(), "playerid": player2.getId()});
             }
         }
 
@@ -362,7 +367,14 @@ var ServerController = function()
 
     var clientDisconnected = function(client)
     {
-        // @TODO when client dies
+        for (var i in sessions) {
+            var player = sessions[i].getPlayerByIp(client._remoteAddress);
+
+            if (player != false) {
+                broadcastToSession(sessions[i], 'message', {type: "disconnected", message: 'Player ' + player.getId() + ' got disconnected'});
+                //sessions[i].removePlayer(player);
+            }
+        }
     }
 
     return {

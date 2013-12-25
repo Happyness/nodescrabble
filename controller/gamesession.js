@@ -184,6 +184,13 @@ var gamesession = function(i, dict, lang, player) {
         return true;
     }
 
+    var removePlayer = function(player)
+    {
+        for (var i in players) {
+            if (players[i].getId() == player.getId()) players.splice(i, 1);
+        }
+    }
+
     var getPlayers = function()
     {
         return players;
@@ -393,7 +400,8 @@ var gamesession = function(i, dict, lang, player) {
         isCenter: isCenter,
         isTileGrouped: isTileGrouped,
         hasWinner: hasWinner,
-        getPlayerByIp: getPlayerByIp
+        getPlayerByIp: getPlayerByIp,
+        removePlayer: removePlayer
     }
 };
 
