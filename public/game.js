@@ -557,8 +557,8 @@ function createTilesBoard(tilesBoard) {
 
 function createChat(chatDiv) {
     var chatContent = createElement('div', '', [{key: 'id', value: 'chatContent'}]);
-    var inputField = createElement('input', '', [{key: 'id', value: 'chatInput'}]);
-    var sendMessage = createButton('Send', 'sendChatMessage()', 'sendMessage')
+    var inputField = createElement('input', '', [{key: 'id', value: 'chatInput'}, {key: 'onkeydown', value: 'if (event.keyCode == 13) document.getElementById("sendMessage").click()'}]);
+    var sendMessage = createButton('Send', 'sendChatMessage()', 'sendMessage');
 
     chatDiv.appendChild(chatContent);
     chatDiv.appendChild(inputField);
@@ -801,6 +801,7 @@ function onChatMessage(data) {
         }
         var chatContent = document.getElementById("chatContent");
         chatContent.innerHTML = html;
+        chatContent.scrollTop = chatContent.scrollHeight;
     }
 }
 
