@@ -87,7 +87,7 @@ ServerController = require('./ServerController').ServerController;
 var controller = new ServerController();
 
 io.sockets.on('connection', function (client) {
-    console.log("Got connection from client");
+    console.log("Got connection from client with id: " + client.id);
 
     // Socket disconnection
     client.on("disconnect", function(data) {
@@ -112,7 +112,7 @@ io.sockets.on('connection', function (client) {
     });
 
     client.on('games', function (data) {
-        controller.getGames(client, data);
+        controller.getGames(client);
     });
 
     client.on('initgame', function(data) {
@@ -124,11 +124,11 @@ io.sockets.on('connection', function (client) {
         var session = controller.joinGame(client, data);
 
         if (session != false) {
-            var state = session.getState();
-            state.completeSession();
-            state.onINGAME = function (event, oldState, newState) {
+            //var state = session.getState();
+            //state.completeSession();
+            //state.onINGAME = function (event, oldState, newState) {
 
-            }
+            //}
         }
     });
     client.on('chatmessage', function(data) {

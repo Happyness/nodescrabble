@@ -12,6 +12,7 @@ var gamesession = function(i, dict, lang, player) {
     var state;
     var activeDictionary;
     var winner = false;
+    var rememberPlayer;
 
     var getScores = function()
     {
@@ -205,10 +206,10 @@ var gamesession = function(i, dict, lang, player) {
         return false;
     };
 
-    var getPlayerByIp = function(ip)
+    var getPlayerByClient = function(client)
     {
         for (var i = 0; i < players.length; i++) {
-            if (players[i].getClient()._remoteAddress == ip) return players[i];
+            if (players[i].getClient() && players[i].getClient().id == client.id) return players[i];
         }
 
         return false;
@@ -372,6 +373,22 @@ var gamesession = function(i, dict, lang, player) {
         return true;
     }
 
+    var setRememberPlayer = function(player)
+    {
+        rememberPlayer = player;
+    }
+
+    var getRememberPlayer = function()
+    {
+        player = rememberPlayer;
+
+        if (rememberPlayer) {
+            rememberPlayer = null;
+        }
+
+        return player;
+    }
+
     addPlayer(player);
 
     return {
@@ -400,8 +417,10 @@ var gamesession = function(i, dict, lang, player) {
         isCenter: isCenter,
         isTileGrouped: isTileGrouped,
         hasWinner: hasWinner,
-        getPlayerByIp: getPlayerByIp,
-        removePlayer: removePlayer
+        getPlayerByClient: getPlayerByClient,
+        removePlayer: removePlayer,
+        setRememberPlayer: setRememberPlayer,
+        getRememberPlayer: getRememberPlayer
     }
 };
 

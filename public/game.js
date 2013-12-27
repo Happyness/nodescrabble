@@ -7,7 +7,7 @@ var board;
 var tiles;
 var gameTable;
 var currentTile = 1;
-var dev = false;
+var dev = true;
 var swapMode = false;
 var viewState = 'chooseGame';
 var sessions = new Array();
@@ -114,12 +114,7 @@ function updateGameList(data) {
     gamesSelect.options.length = 0;
     var games = JSON.parse(data.games), value;
     for (var i = 0; i < games.length; i++) {
-        if (games[i].playerid) {
-            value = games[i].sessionid + '-' + games[i].playerid;
-        } else {
-            value = games[i].sessionid + '-none';
-        }
-
+        value = games[i].sessionid;
         gamesSelect.options.add(new Option(games[i].sessionid, value))
     }
 }
@@ -756,20 +751,17 @@ function joinGame()
 {
     console.log("joinButton");
     var gamesSelect = document.getElementById('gamesSelect');
-    var values = gamesSelect.options[gamesSelect.selectedIndex].value.split('-');
-    var sessionid = values[0];
-    var playerid  = values[1];
+    var sessionid = gamesSelect.options[gamesSelect.selectedIndex].value;
 
     var session = getSession(sessionid);
     var message;
 
     if (session != false) {
         activeSession = session;
-        message = {sessionid: sessionid, playerid: session.getPlayerId()};
+        message = {sessionid: sessionid};
     } else {
-        var id = playerid == 'none' ? 0 : playerid;
-        activeSession = new Session(sessionid, id);
-        message = {sessionid: sessionid, playerid: id};
+        activeSession = new Session(sessionid);
+        message = {sessionid: sessionid};
         sessions.push(activeSession);
     }
 
