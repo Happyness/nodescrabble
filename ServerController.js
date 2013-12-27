@@ -179,6 +179,7 @@ var ServerController = function()
             if (session != false) {
                 var player = session.getPlayerById(data.playerid);
                 if (player != false) {
+                    player.setClient(client);
                     message = createResponseMessage({
                         "language": session.language,
                         "dictionary": session.dictionary,
