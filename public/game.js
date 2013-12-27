@@ -723,7 +723,7 @@ function onServerMessage(data) {
 
     switch (data.type) {
         case "disconnected" :
-            switchToView('choosegame');
+            //switchToView('choosegame');
             break;
         default :
             break;
@@ -767,7 +767,7 @@ function joinGame()
         activeSession = session;
         message = {sessionid: sessionid, playerid: session.getPlayerId()};
     } else {
-        var id = playerid == 'none' ? -1 : playerid;
+        var id = playerid == 'none' ? 0 : playerid;
         activeSession = new Session(sessionid, id);
         message = {sessionid: sessionid, playerid: id};
         sessions.push(activeSession);

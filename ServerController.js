@@ -103,6 +103,7 @@ var ServerController = function()
                 if (letters.length == 0) {
                     players[i].addLetters(session.getUnplayedTiles(7));
                 }
+                console.log("try id: " + message + ", compared to: " + players[i].getId());
                 if (message == players[i].getId()) {
                     gameMessage = {
                         "tiles": players[i].getLetters(),
@@ -167,114 +168,97 @@ var ServerController = function()
         return false;
     };
 
-    var joinGame = function joinGame(client, data)
+    var joinGame = function (client, data)
     {
-        var message, session = false;
+        console.log(JSON.stringify(data));
 
-        if (!data.sessionid) {
-            message = createResponseMessage("Game session id is required for joining", true);
+        var message, session, player;
+        var check = checkSessionAndPlayer(data.sessionid, data.playerid);
+
+        if (!check.session) {
+            message = check.message;
         } else {
-            session = getSession(data.sessionid);
+            session = check.session;
 
-            if (session != false) {
-                var player = session.getPlayerById(data.playerid);
-                if (player != false) {
-                    player.setClient(client);
-                    message = createResponseMessage({
-                        "language": session.language,
-                        "dictionary": session.dictionary,
-                        "playerid": player.getId(),
-                        "message" : "welcome back"
-                    });
-                } else if (session.getPlayers().length < 2) {
-                    var player = new RemotePlayer(noPlayers + 1);
-                    player.setClient(client);
+            var player = session.getPlayerById(data.playerid);
+            if (player != false) {
+                player.setClient(client);
+                message = createResponseMessage({
+                    "language": session.language,
+                    "dictionary": session.dictionary,
+                    "playerid": player.getId(),
+                    "message" : "welcome back"
+                });
+            } else if (session.getPlayers().length < 2) {
+                var player = new RemotePlayer(noPlayers);
+                player.setClient(client);
+                session.addPlayer(player);
+                noPlayers++;
 
-                    if (!session.addPlayer(player)) {
-                        message = createResponseMessage("Game has two players already", true);
-                    } else {
-                        noPlayers++;
-                        session.setRandomTurn();
-
-                        message = createResponseMessage({
-                            "language": session.language,
-                            "dictionary": session.dictionary,
-                            "playerid": player.getId()
-                        });
-                    }
-                } else {
-                    message = createResponseMessage("Game has two players already", true);
-                }
+                message = createResponseMessage({
+                    "language": session.language,
+                    "dictionary": session.dictionary,
+                    "playerid": player.getId()
+                });
             } else {
-                message = createResponseMessage("Session does not exist", true);
+                message = createResponseMessage('Cannot join, 2 players already', true);
             }
         }
 
         client.emit('joingame-response', message);
-
         return session;
     };
 
-    var calculateMove = function calculateMove(client, data)
+    var calculateMove = function (session, player, data)
     {
-        var session = getSession(data.sessionid);
         var tiles = data.move;
-        var id = data.playerid;
 
-        if (session == false) {
-            return createResponseMessage("Session does not exist", true);
-        } else if (session.getTurn() != id) {
+        if (session.getTurn() != player.getId()) {
             return createResponseMessage("It is not your turn", true);
         } else {
-                var player = session.getPlayerById(id);
+            if (!session.isCenter(tiles)) {
+                return createResponseMessage("First word must be in center of game board", true);
+            } else if (!session.isTileGrouped(tiles)) {
+                return createResponseMessage("You need to put a word next to another one", true);
+            }
 
-                if (!player) {
-                    return createResponseMessage("Player do not exist", true);
-                } else {
-                    if (!session.isCenter(tiles)) {
-                        return createResponseMessage("First word must be in center of game board", true);
-                    } else if (!session.isTileGrouped(tiles)) {
-                        return createResponseMessage("You need to put a word next to another one", true);
-                    }
+            var tilesResponse = session.playTiles(tiles);
 
-                    var tilesResponse = session.playTiles(tiles);
+            if (tilesResponse != false) {
+                console.log(tilesResponse);
+                var score = tilesResponse.score;
+                var words = tilesResponse.words;
 
-                    if (tilesResponse != false) {
-                        console.log(tilesResponse);
-                        var score = tilesResponse.score;
-                        var words = tilesResponse.words;
+                session.switchTurn(player.getId());
+                player.addScore(score);
+                player.addPlayedTiles(tiles);
+                session.addPlayedTiles(tiles);
 
-                        session.switchTurn(player.getId());
-                        player.addScore(score);
-                        player.addPlayedTiles(tiles);
-                        session.addPlayedTiles(tiles);
+                var newTiles = session.getUnplayedTiles(tiles.length);
 
-                        var newTiles = session.getUnplayedTiles(tiles.length);
+                player.addLetters(newTiles);
+                player.setPassed(0);
 
-                        player.addLetters(newTiles);
-                        player.setPassed(0);
+                sendToOpponent(session, 'update', {
+                    "type": 'move',
+                    "tiles": session.addScoresToTiles(tiles),
+                    "turn": session.getTurn(),
+                    "playerid": player.getId(),
+                    "score": player.getScore()
+                });
 
-                        sendToOpponent(session, 'update', {
-                            "type": 'move',
-                            "tiles": session.addScoresToTiles(tiles),
-                            "turn": session.getTurn(),
-                            "playerid": player.getId(),
-                            "score": player.getScore()
-                        });
-
-                        return createResponseMessage({
-                            "playerid": player.getId(),
-                            "score": score,
-                            "newtiles": newTiles,
-                            "tiles": tiles,
-                            "words": words,
-                            "totalscore": player.getScore(),
-                            turn: session.getTurn()
-                        });
-                    } else {
-                        return createResponseMessage("Invalid word played", true);
-                    }
-                }
+                return createResponseMessage({
+                    "playerid": player.getId(),
+                    "score": score,
+                    "newtiles": newTiles,
+                    "tiles": tiles,
+                    "words": words,
+                    "totalscore": player.getScore(),
+                    turn: session.getTurn()
+                });
+            } else {
+                return createResponseMessage("Invalid word played", true);
+            }
         }
     }
 
@@ -324,27 +308,59 @@ var ServerController = function()
         }
     }
 
+    var makeSwap = function(player, session)
+    {
+        session.switchTurn(player.getId());
+        player.setPassed(0); // Reset pass
+        var oldTiles = data.tiles;
+        var newTiles = swapTiles(session, oldTiles);
+
+        if (newTiles != false) {
+            sendToOpponent(session, 'update', {type: "move", turn: session.getTurn()});
+            return createResponseMessage({newtiles: newTiles, turn: session.getTurn()});
+        }
+
+        return createResponseMessage("Not enough tiles", true);
+    }
+
+    var checkSessionAndPlayer = function(sessionid, playerid)
+    {
+        var session = getSession(sessionid);
+        var player = false;
+
+        if (session) {
+            player  = session.getPlayerById(playerid);
+        }
+
+        if (!session) {
+            return {message: createResponseMessage("Session does not exist", true)};
+        } else if (!player) {
+            return {message: createResponseMessage("Player does not exist", true), session: session};
+        } else {
+            return {session: session, player: player};
+        }
+    }
+
     var makeMove = function makeMove(client, data)
     {
         console.log("Try to make a move");
         console.log(JSON.stringify(data));
-        var response;
+        var response, session, player;
 
         if (!data.sessionid || !data.playerid) {
             response = createResponseMessage("Session and player id is required to make a move", true);
         } else {
-            var session = getSession(data.sessionid);
-            var player = false;
+            var check = checkSessionAndPlayer(data.sessionid, data.playerid);
 
-            if (session) {
-                player  = session.getPlayerById(data.playerid);
+            if (!check.message) {
+                client.emit('playmove-response', check.message);
+                return;
+            } else {
+                session = check.session;
+                player = check.player;
             }
 
-            if (!session) {
-                response = createResponseMessage("Session does not exist", true);
-            } else if (!player) {
-                response = createResponseMessage("Player does not exist", true);
-            } else if (session.hasWinner()) {
+            if (session.hasWinner()) {
                 response = createResponseMessage("Game is ended, no moves allowed", true);
             } else if (session.getTurn() != player.getId()) {
                 response = createResponseMessage("It is not your turn", true);
@@ -353,7 +369,7 @@ var ServerController = function()
             } else {
                 player.setLocked(true);
                 if (Array.isArray(data.move)) {
-                    response = calculateMove(client, data);
+                    response = calculateMove(session, player, data);
                 } else {
                     switch (data.move) {
                         case 'pass':
@@ -361,29 +377,19 @@ var ServerController = function()
                             return;
                             break;
                         case 'swap' :
-                            session.switchTurn(player.getId());
-                            player.setPassed(0); // Reset pass
-                            var oldTiles = data.tiles;
-                            var newTiles = swapTiles(session, oldTiles);
-
-                            if (newTiles != false) {
-                                sendToOpponent(session, 'update', {type: "move", turn: session.getTurn()});
-                                response = createResponseMessage({newtiles: newTiles, turn: session.getTurn()});
-                            } else {
-                                response = createResponseMessage("Not enough tiles", true);
-                            }
+                            response = makeSwap(player, session);
                             break;
                         default :
                             console.log("Error: " + "Invalid move");
                             response = createResponseMessage("Invalid move", true);
                             break;
                     }
+                }
 
-                    var winner = session.isGameEnded();
-                    if (winner != false) {
-                        broadcastToSession(session, 'update', {type: "game-ended", winner: winner, scores: session.getScores()});
-                        removeSession(data.sessionid);
-                    }
+                var winner = session.isGameEnded();
+                if (winner != false) {
+                    broadcastToSession(session, 'update', {type: "game-ended", winner: winner, scores: session.getScores()});
+                    removeSession(data.sessionid);
                 }
 
                 player.setLocked(false);
