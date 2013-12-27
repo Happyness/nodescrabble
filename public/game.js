@@ -82,6 +82,14 @@ function onUpdate(data) {
             updateGameList(data);
             break;
         case 'move':
+            if (data.tiles && viewState == 'ingame') {
+                updateBoard(data.tiles);
+            }
+
+            if (data.score && data.playerid) {
+                updateScoreBoard(data.score, data.playerid);
+            }
+
             activeSession.setTurn(data.turn);
             var response = document.getElementById('response');
             response.innerHTML = getTurn();
@@ -89,16 +97,6 @@ function onUpdate(data) {
         case 'playable-tiles' :
             if (data.tiles && viewState == 'ingame') {
                 addUnplayedTiles(data.tiles);
-            }
-            break;
-        case 'played-tiles' :
-            console.log(JSON.stringify(data));
-            if (data.tiles && data.turn  && viewState == 'ingame') {
-                updateBoard(data.tiles);
-
-                activeSession.setTurn(data.turn);
-                var response = document.getElementById('response');
-                response.innerHTML = getTurn();
             }
             break;
         default :
@@ -132,6 +130,20 @@ function createElement(tag, value, attributes)
     }
 
     return element;
+}
+
+function updateScoreBoard(score, id)
+{
+    var player;
+
+    if (id == activeSession.getPlayerId()) {
+        player = document.getElementById('player-you');
+    } else {
+        player = document.getElementById('player-opponent');
+    }
+
+    var scoreElement = player.querySelector('.score');
+    scoreElement.innerHTML = score;
 }
 
 function switchToView(view)
@@ -177,19 +189,27 @@ function switchToView(view)
                 chooseGame.removeChild(chooseGame.firstChild);
             }
             var inGame = document.getElementById("inGame");
+            var leftDiv = createElement('div', '', [{key: 'id', value: 'left'}]);
+            var rightDiv = createElement('div', '', [{key: 'id', value: 'right'}]);
             var boardDiv = createElement('div', '', [{key: 'id', value: 'boardDiv'}]);
             var tilesBoard = createElement('div', '', [{key: 'id', value: 'tilesBoard'}]);
             var controlsDiv = createElement('div', '', [{key: 'id', value: 'inGameControls'}]);
             var response = createElement('h2', '', [{key: 'id', value: 'response'}]);
+            var scoreBoard = createElement('div', 'Score board', [{key: 'id', value: 'scoreboard'}]);
 
+            createScoreBoard(scoreBoard);
             createGameBoard(boardDiv);
             createTilesBoard(tilesBoard);
             createButtons(controlsDiv);
 
-            inGame.appendChild(controlsDiv);
-            inGame.appendChild(response);
-            inGame.appendChild(tilesBoard);
-            inGame.appendChild(boardDiv);
+            leftDiv.appendChild(controlsDiv);
+            leftDiv.appendChild(tilesBoard);
+            leftDiv.appendChild(boardDiv);
+            rightDiv.appendChild(response);
+            rightDiv.appendChild(scoreBoard);
+
+            inGame.appendChild(leftDiv);
+            inGame.appendChild(rightDiv);
             break;
     }
     viewState = view;
@@ -503,6 +523,21 @@ function createButtons(controlsDiv) {
     controlsDiv.appendChild(swapButton);
 }
 
+function createScoreBoard(scoreBoard) {
+    for (var i = 0; i < 2; i++) {
+        var div;
+        if (i % 2 == 0) {
+            div = createElement('div', '', [{key: 'id', value: 'player-you'}]);
+            div.appendChild(createElement('span', 'You', [{key: 'class', value: 'label'}]));
+        } else {
+            div = createElement('div', '', [{key: 'id', value: 'player-opponent'}]);
+            div.appendChild(createElement('span', 'Opponent', [{key: 'class', value: 'label'}]));
+        }
+        div.appendChild(createElement('span', '0', [{key: 'class', value: 'score'}]));
+        scoreBoard.appendChild(div);
+    }
+}
+
 function createTilesBoard(tilesBoard) {
     var div = document.createElement('div');
     div.setAttribute('id', 'tiles');
@@ -628,9 +663,9 @@ function onMoveResponse(data) {
             for (var i in data.newtiles) {
                 response.innerHTML += data.newtiles[i].letter + ', ';
             }
-        } else {
-            response.innerHTML = "You got score point: " + data.score;
         }
+
+        updateScoreBoard(data.totalscore, data.playerid);
     } else {
         response.innerHTML = data.message;
     }
