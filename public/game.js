@@ -784,12 +784,14 @@ function createGame() {
 }
 
 // Chat message
-function onChatMessage(data){
-    if (data.message) {
+function onChatMessage(data) {
+    if (data.error) {
+        console.log(data.error);
+        alert(data.error);
+    } else if (data.message) {
         if (data.playerid == activeSession.getPlayerId()) {
             messages.push('You: ' + data.message);
-        }
-        else {
+        } else {
             messages.push('Opponent: ' + data.message);
         }
 
@@ -800,15 +802,12 @@ function onChatMessage(data){
         var chatContent = document.getElementById("chatContent");
         chatContent.innerHTML = html;
     }
-    else {
-        console.log("There is a problem: ", data);
-    }
 }
 
 function sendChatMessage() {
     var chatInput = document.getElementById("chatInput");
     var text = chatInput.value;
-    socket.emit('sendChatMessage', {message: text, playerid: activeSession.getPlayerId(), sessionid: activeSession.getId()});
+    socket.emit('chatmessage', {message: text, playerid: activeSession.getPlayerId(), sessionid: activeSession.getId()});
     chatInput.value = "";
 }
 
