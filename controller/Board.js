@@ -157,8 +157,9 @@ var Board = function(language, dictionary) {
             score += (getScoredLetter(letters[i]));
         }
 
+        console.log(word);
+
         if (dict.valid(word)) {
-            console.log(word);
             return {"score": multiplyer * score, "word": word};
         }
 

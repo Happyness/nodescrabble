@@ -254,9 +254,11 @@ var ServerController = function()
                         player.setPassed(0);
 
                         sendToOpponent(session, 'update', {
-                            "type": 'played-tiles',
+                            "type": 'move',
                             "tiles": session.addScoresToTiles(tiles),
-                            "turn": session.getTurn()
+                            "turn": session.getTurn(),
+                            "playerid": player.getId(),
+                            "score": player.getScore()
                         });
 
                         return createResponseMessage({
