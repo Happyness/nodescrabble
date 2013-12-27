@@ -277,6 +277,19 @@ var ServerController = function()
         }
     }
 
+    var chatMessage = function(client, data)
+    {
+        if (data.playerid && data.sessionid) {
+            var session = getSession(data.sessionid);
+
+            if (session) {
+                broadcastToSession(session, 'chatmessage-response', {message: data.message, playerid: data.playerid});
+            }
+        } else {
+            client.emit('chatmessage-response', {error: 'Invalid session or player id'});
+        }
+    }
+
     var getGames = function(client, data)
     {
         var games = data.playerid ? getAllSessions(client, data.playerid) : getAllSessions(client);
@@ -392,7 +405,8 @@ var ServerController = function()
         getAllSessions: getAllSessions,
         getGames: getGames,
         startGame: startGame,
-        clientDisconnected: clientDisconnected
+        clientDisconnected: clientDisconnected,
+        chatMessage: chatMessage
     }
 };
 

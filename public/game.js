@@ -69,7 +69,7 @@ var setEventHandlers = function() {
     socket.on("message", onServerMessage);
 
     // Chat message
-    socket.on('chatMessage', onChatMessage);
+    socket.on('chatmessage-response', onChatMessage);
 
 }
 

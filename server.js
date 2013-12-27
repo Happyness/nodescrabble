@@ -131,9 +131,8 @@ io.sockets.on('connection', function (client) {
             }
         }
     });
-    client.on('sendChatMessage', function(data) {
+    client.on('chatmessage', function(data) {
         console.log('Received chat message');
-        client.emit('chatMessage', data);
-        client.broadcast.emit('chatMessage', data);
+        controller.chatMessage(client, data);
     });
 });
