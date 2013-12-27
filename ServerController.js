@@ -132,7 +132,17 @@ var ServerController = function()
             var session = getSession(data.sessionid);
 
             if (session != false) {
-                broadcastToSession(session, 'game-started', data.playerid);
+                var player = session.getPlayerById(data.playerid);
+                if (player != false) {
+                    player.getClient().emit('game-started', {
+                        "tiles": player.getLetters(),
+                        "board": session.getBoard().getTiles(),
+                        "turn": session.getTurn(),
+                        "playedTiles": session.getPlayedTiles()
+                    });
+                } else {
+                    broadcastToSession(session, 'game-started', data.playerid);
+                }
             } else {
                 client.emit('game-started', createResponseMessage("Session do not exist", true));
             }
@@ -309,6 +319,20 @@ var ServerController = function()
          }
     }
 
+    var makePass = function(player, session)
+    {
+        player.addPassed();
+
+        var winner = session.isGameEnded();
+        if (winner != false) {
+            broadcastToSession(session, 'game-ended', {winner: winner, scores: session.getScores()});
+            removeSession(session.getId());
+        } else {
+            session.switchTurn(player.getId());
+            broadcastToSession(session, 'update', {type: "move", turn: session.getTurn()});
+        }
+    }
+
     var makeMove = function makeMove(client, data)
     {
         console.log("Try to make a move");
@@ -333,21 +357,16 @@ var ServerController = function()
                 response = createResponseMessage("Game is ended, no moves allowed", true);
             } else if (session.getTurn() != player.getId()) {
                 response = createResponseMessage("It is not your turn", true);
+            } else if (player.isLocked()) {
+                response = createResponseMessage("You cannot make move multiple times in a row");
             } else {
+                player.setLocked(true);
                 if (Array.isArray(data.move)) {
                     response = calculateMove(client, data);
                 } else {
                     switch (data.move) {
                         case 'pass':
-                            player.addPassed();
-                            var winner = session.isGameEnded();
-                            if (winner != false) {
-                                broadcastToSession(session, 'game-ended', {winner: winner, scores: session.getScores()});
-                                removeSession(session.getId());
-                            } else {
-                                session.switchTurn(player.getId());
-                                broadcastToSession(session, 'update', {type: "move", turn: session.getTurn()});
-                            }
+                            makePass(player, session);
                             return;
                             break;
                         case 'swap' :
@@ -375,6 +394,8 @@ var ServerController = function()
                         removeSession(data.sessionid);
                     }
                 }
+
+                player.setLocked(false);
             }
         }
 

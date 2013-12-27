@@ -5,6 +5,7 @@ var RemotePlayer = function(i) {
     var client;
     var score = 0;
     var passed = 0;
+    var locked = false;
 
     var getScore = function() {
         return score;
@@ -70,6 +71,16 @@ var RemotePlayer = function(i) {
         return passed;
     }
 
+    var setLocked = function(mode)
+    {
+        locked = mode;
+    }
+
+    var isLocked = function()
+    {
+        return locked;
+    }
+
     return {
         getScore: getScore,
         getClient: getClient,
@@ -84,7 +95,9 @@ var RemotePlayer = function(i) {
         addPassed: addPassed,
         setPassed: setPassed,
         substractScore: substractScore,
-        getNoPasses: getNoPasses
+        getNoPasses: getNoPasses,
+        isLocked: isLocked,
+        setLocked: setLocked
     }
 };
 

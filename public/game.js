@@ -712,7 +712,7 @@ function onGameEnded(data) {
         response.innerHTML = "Winner is: " + getPlayerAsReadable(data.winner) + "<br>\n";
 
         for (var i in data.scores) {
-            response.innerHTML += getPlayerAsReadable(data.scores[i].playerid) + "; score: " + data.scores[i].score + "<br>";
+            updateScoreBoard(data.scores[i].score, data.scores[i].playerid);
         }
     }
 }
