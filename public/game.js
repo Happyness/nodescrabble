@@ -213,6 +213,7 @@ function switchToView(view)
             leftDiv.appendChild(boardDiv);
             rightDiv.appendChild(response);
             rightDiv.appendChild(scoreBoard);
+            rightDiv.appendChild(chatDiv);
 
             inGame.appendChild(leftDiv);
             inGame.appendChild(rightDiv);
