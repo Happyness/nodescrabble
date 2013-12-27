@@ -108,7 +108,7 @@ var ServerController = function()
                         "tiles": players[i].getLetters(),
                         "board": session.getBoard().getTiles(),
                         "turn": session.getTurn(),
-                        "playedTiles": session.getPlayedTiles()//@TODO session.getPlayedTiles();
+                        "playedTiles": session.getPlayedTiles()
                     };
                 } else {
                     gameMessage = {
@@ -132,17 +132,7 @@ var ServerController = function()
             var session = getSession(data.sessionid);
 
             if (session != false) {
-                var player = session.getPlayerById(data.playerid);
-                if (player != false) {
-                    player.getClient().emit('game-started', {
-                        "tiles": player.getLetters(),
-                        "board": session.getBoard().getTiles(),
-                        "turn": session.getTurn(),
-                        "playedTiles": session.getPlayedTiles()
-                    });
-                } else {
-                    broadcastToSession(session, 'game-started', data.playerid);
-                }
+                broadcastToSession(session, 'game-started', data.playerid);
             } else {
                 client.emit('game-started', createResponseMessage("Session do not exist", true));
             }
