@@ -12,6 +12,7 @@ var swapMode = false;
 var viewState = 'chooseGame';
 var sessions = new Array();
 var activeSession;
+var messages = [];
 
 /**************************************************
  ** GAME INITIALISATION
@@ -66,6 +67,9 @@ var setEventHandlers = function() {
 
     // Server message
     socket.on("message", onServerMessage);
+
+    // Chat message
+    socket.on('chatMessage', onChatMessage);
 
 }
 
@@ -181,15 +185,18 @@ function switchToView(view)
             var tilesBoard = createElement('div', '', [{key: 'id', value: 'tilesBoard'}]);
             var controlsDiv = createElement('div', '', [{key: 'id', value: 'inGameControls'}]);
             var response = createElement('h2', '', [{key: 'id', value: 'response'}]);
+            var chatDiv = createElement('div', '', [{key: 'id', value: 'chatDiv'}]);
 
             createGameBoard(boardDiv);
             createTilesBoard(tilesBoard);
             createButtons(controlsDiv);
+            createChat(chatDiv);
 
             inGame.appendChild(controlsDiv);
             inGame.appendChild(response);
             inGame.appendChild(tilesBoard);
             inGame.appendChild(boardDiv);
+            inGame.appendChild(chatDiv);
             break;
     }
     viewState = view;
@@ -513,6 +520,16 @@ function createTilesBoard(tilesBoard) {
     tilesBoard.appendChild(div);
 }
 
+function createChat(chatDiv) {
+    var chatContent = createElement('div', '', [{key: 'id', value: 'chatContent'}]);
+    var inputField = createElement('input', '', [{key: 'id', value: 'chatInput'}]);
+    var sendMessage = createButton('Send', 'sendChatMessage()', 'sendMessage')
+
+    chatDiv.appendChild(chatContent);
+    chatDiv.appendChild(inputField);
+    chatDiv.appendChild(sendMessage);
+}
+
 function createGameBoard(boardDiv) {
     var table = document.createElement('table');
     table.setAttribute('id', "gameTable");
@@ -729,6 +746,35 @@ function createGame() {
 
     var language = (dev == true) ? 'dev' : 'sv';
     socket.emit('initgame', {language: language, dictionary: "default"});
+}
+
+// Chat message
+function onChatMessage(data){
+    if (data.message) {
+        if (data.playerid == activeSession.getPlayerId()) {
+            messages.push('You: ' + data.message);
+        }
+        else {
+            messages.push('Opponent: ' + data.message);
+        }
+
+        var html = '';
+        for (var i = 0; i < messages.length; i++) {
+            html += messages[i] + '<br />';
+        }
+        var chatContent = document.getElementById("chatContent");
+        chatContent.innerHTML = html;
+    }
+    else {
+        console.log("There is a problem: ", data);
+    }
+}
+
+function sendChatMessage() {
+    var chatInput = document.getElementById("chatInput");
+    var text = chatInput.value;
+    socket.emit('sendChatMessage', {message: text, playerid: activeSession.getPlayerId()});
+    chatInput.value = "";
 }
 
 window.onload = function() {
