@@ -808,7 +808,7 @@ function onChatMessage(data){
 function sendChatMessage() {
     var chatInput = document.getElementById("chatInput");
     var text = chatInput.value;
-    socket.emit('sendChatMessage', {message: text, playerid: activeSession.getPlayerId()});
+    socket.emit('sendChatMessage', {message: text, playerid: activeSession.getPlayerId(), sessionid: activeSession.getId()});
     chatInput.value = "";
 }
 
