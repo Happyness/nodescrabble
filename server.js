@@ -79,8 +79,6 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 var io = socketio.listen(server);
 
 io.configure(function() {
-    // Only use WebSockets
-    io.set("transports", ["websocket"]);
     // Restrict log output
     io.set("log level", 2);
 });

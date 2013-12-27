@@ -7,7 +7,7 @@ var board;
 var tiles;
 var gameTable;
 var currentTile = 1;
-var dev = false;
+var dev = true;
 var swapMode = false;
 var viewState = 'chooseGame';
 var sessions = new Array();
@@ -613,6 +613,12 @@ function onMoveResponse(data) {
     console.log(JSON.stringify(data));
 
     if (data.result == "success") {
+        var moved = document.querySelectorAll('.move-tile');
+
+        for (var i in moved) {
+            moved[i].className = 'played-tile';
+        }
+
         activeSession.setTurn(data.turn);
 
         if (data.newtiles) {
@@ -624,12 +630,6 @@ function onMoveResponse(data) {
             }
         } else {
             response.innerHTML = "You got score point: " + data.score;
-
-            var moved = document.querySelectorAll('.move-tile');
-
-            for (var i in moved) {
-                moved[i].className = 'played-tile';
-            }
         }
     } else {
         response.innerHTML = data.message;
