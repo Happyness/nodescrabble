@@ -180,7 +180,7 @@ var ServerController = function()
             if (session.getPlayers().length < 2) {
                 var player = session.getRememberPlayer();
 
-                if (!player) {
+                if (!player || player.getClient()._remoteAddress != client._remoteAddress) {
                     player = new RemotePlayer(noPlayers + 1);
                 }
 
