@@ -7,15 +7,15 @@ var ServerController = function()
 
     var getAllSessions = function()
     {
-        var list = new Array();
+        var list = [];
 
         for (i = 0; i < sessions.length; i++) {
             if (sessions[i].getPlayers().length < 2) {
-                list.push({"sessionid": sessions[i].getId()});
+                list.push({sessionid: sessions[i].getId()});
             }
         }
 
-        return JSON.stringify(list);
+        return list;
     }
 
     var createGameSession = function(client, data)
@@ -42,6 +42,7 @@ var ServerController = function()
 
     var initGame = function(client, data)
     {
+        console.log(JSON.stringify(data));
         var message, player;
 
         if (data.language == null || data.dictionary == null) {
@@ -53,8 +54,8 @@ var ServerController = function()
             noSessions++;
 
             message = createResponseMessage({
-                "sessionid": session.getId(),
-                "playerid": player
+                sessionid: session.getId(),
+                playerid: player
             });
         } else {
             message = createResponseMessage("No more game sessions allowed at the moment", true);
@@ -62,14 +63,15 @@ var ServerController = function()
 
         console.log(JSON.stringify(message));
         client.emit('initgame-response', message);
-        client.broadcast.emit("update", {"type": "gamelist", "games": getAllSessions(player)});
+        client.broadcast.emit("update", {type: 'gamelist', games: getAllSessions(player)});
     };
 
     var createResponseMessage = function(message, error)
     {
-        if (error) return {"result": "error", "message": message};
+        if (error) return {result: 'error', message: message};
 
-        return Util.merge({"result": "success"}, message);
+        console.log("Before merge" + JSON.stringify(message));
+        return Util.merge({result: 'success'}, message);
     };
 
     var sendToOpponent = function(session, messageType, message)
@@ -101,16 +103,16 @@ var ServerController = function()
                 console.log("try id: " + message + ", compared to: " + players[i].getId());
                 if (message == players[i].getId()) {
                     gameMessage = {
-                        "tiles": players[i].getLetters(),
-                        "board": session.getBoard().getTiles(),
-                        "turn": session.getTurn(),
-                        "playedTiles": session.getPlayedTiles()
+                        tiles: players[i].getLetters(),
+                        board: session.getBoard().getTiles(),
+                        turn: session.getTurn(),
+                        playedTiles: session.getPlayedTiles()
                     };
                 } else {
                     gameMessage = {
-                        "tiles": players[i].getLetters(),
-                        "board": session.getBoard().getTiles(),
-                        "turn": session.getTurn()
+                        tiles: players[i].getLetters(),
+                        board: session.getBoard().getTiles(),
+                        turn: session.getTurn()
                     };
                 }
 
@@ -125,25 +127,30 @@ var ServerController = function()
     {
         console.log(JSON.stringify(data));
 
-        if (data.playerid && data.sessionid) {
-            var session = getSession(data.sessionid);
+        var session, player;
+        var check = checkSessionAndPlayer(data.sessionid, data.playerid);
+        if (check.message == null) {
+            session = check.session;
+            player = check.player;
 
-            if (session != false) {
+            player.setReady(true);
+
+            if (session.isPlayersReady()) {
                 if (typeof(session.getTurn()) == 'undefined') session.setRandomTurn();
-                broadcastToSession(session, 'game-started', data.playerid);
+                broadcastToSession(session, 'game-started');
             } else {
-                client.emit('game-started', createResponseMessage("Session do not exist", true));
+                console.log("players are not ready yet!");
             }
         } else {
-            client.emit('game-started', createResponseMessage("Cannot start game without session id and player id", true));
+            console.log(check.message);
         }
     }
 
     var getBoardMessage = function(session)
     {
         return createResponseMessage({
-            "tiles": session.getUnplayedTiles(),
-            "players": session.getPlayers()
+            tiles: session.getUnplayedTiles(),
+            players: session.getPlayers()
         });
     };
 
@@ -180,8 +187,9 @@ var ServerController = function()
             if (session.getPlayers().length < 2) {
                 var player = session.getRememberPlayer();
 
-                if (!player || player.getClient()._remoteAddress != client._remoteAddress) {
+                if (!player) {
                     player = new RemotePlayer(noPlayers + 1);
+                    sendToOpponent(session, 'message', 'Player is now reconnected')
                 }
 
                 player.setClient(client);
@@ -189,9 +197,9 @@ var ServerController = function()
                 noPlayers++;
 
                 message = createResponseMessage({
-                    "language": session.language,
-                    "dictionary": session.dictionary,
-                    "playerid": player.getId()
+                    language: session.language,
+                    dictionary: session.dictionary,
+                    playerid: player.getId()
                 });
             } else {
                 message = createResponseMessage('Cannot join, 2 players already', true);
@@ -233,20 +241,20 @@ var ServerController = function()
                 player.setPassed(0);
 
                 sendToOpponent(session, 'update', {
-                    "type": 'move',
-                    "tiles": session.addScoresToTiles(tiles),
-                    "turn": session.getTurn(),
-                    "playerid": player.getId(),
-                    "score": player.getScore()
+                    type: 'move',
+                    tiles: session.addScoresToTiles(tiles),
+                    turn: session.getTurn(),
+                    playerid: player.getId(),
+                    score: player.getScore()
                 });
 
                 return createResponseMessage({
-                    "playerid": player.getId(),
-                    "score": score,
-                    "newtiles": newTiles,
-                    "tiles": tiles,
-                    "words": words,
-                    "totalscore": player.getScore(),
+                    playerid: player.getId(),
+                    score: score,
+                    newtiles: newTiles,
+                    tiles: tiles,
+                    words: words,
+                    totalscore: player.getScore(),
                     turn: session.getTurn()
                 });
             } else {
@@ -270,7 +278,7 @@ var ServerController = function()
 
     var getGames = function(client)
     {
-        client.emit('update', createResponseMessage({"type": 'gamelist', "games": getAllSessions()}));
+        client.emit('update', createResponseMessage({type: 'gamelist', games: getAllSessions()}));
     }
 
     var swapTiles = function(session, oldTiles)
@@ -300,12 +308,11 @@ var ServerController = function()
         }
     }
 
-    var makeSwap = function(player, session)
+    var makeSwap = function(player, session, tiles)
     {
         session.switchTurn(player.getId());
         player.setPassed(0); // Reset pass
-        var oldTiles = data.tiles;
-        var newTiles = swapTiles(session, oldTiles);
+        var newTiles = swapTiles(session, tiles);
 
         if (newTiles != false) {
             sendToOpponent(session, 'update', {type: "move", turn: session.getTurn()});
@@ -369,7 +376,7 @@ var ServerController = function()
                             return;
                             break;
                         case 'swap' :
-                            response = makeSwap(player, session);
+                            response = makeSwap(player, session, data.tiles);
                             break;
                         default :
                             console.log("Error: " + "Invalid move");

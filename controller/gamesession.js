@@ -389,6 +389,21 @@ var gamesession = function(i, dict, lang, player) {
         return player;
     }
 
+    var isPlayersReady = function()
+    {
+        if (players.length < 2) {
+            return false;
+        }
+
+        for (var p in players) {
+            if (!players[p].isReady()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     addPlayer(player);
 
     return {
@@ -420,7 +435,8 @@ var gamesession = function(i, dict, lang, player) {
         getPlayerByClient: getPlayerByClient,
         removePlayer: removePlayer,
         setRememberPlayer: setRememberPlayer,
-        getRememberPlayer: getRememberPlayer
+        getRememberPlayer: getRememberPlayer,
+        isPlayersReady: isPlayersReady
     }
 };
 

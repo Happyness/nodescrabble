@@ -18,4 +18,4 @@ var userSchema = new mongoose.Schema({
 
 mongoose.model('User', userSchema);
 
-mongoose.connect('mongodb://nodescrabble:elbbarcsedon@paulo.mongohq.com:10018/nodescrabble');
+//mongoose.connect('mongodb://nodescrabble:elbbarcsedon@paulo.mongohq.com:10018/nodescrabble');

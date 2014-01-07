@@ -7,7 +7,7 @@ var board;
 var tiles;
 var gameTable;
 var currentTile = 1;
-var dev = false;
+var dev = true;
 var swapMode = false;
 var viewState;
 var sessions = new Array();
@@ -264,6 +264,8 @@ function onInitGameResponse(data) {
         select.removeChild(gamesSelect);
         controls.removeChild(joinButton);
         controls.removeChild(createGameButton);
+
+        sendReady();
     }
     else {
         console.log(data);
