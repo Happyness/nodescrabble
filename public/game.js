@@ -82,8 +82,9 @@ function onUpdate(data) {
 
     // TODO: check for type of update and calculate next move
     switch(data.type) {
-        case 'gamelist':
-            updateGameList(data);
+        case 'gameinfo':
+            updateGameList(data.games);
+            updateLanguageList(data.languages);
             break;
         case 'move':
             if (data.tiles && viewState == 'ingame') {
@@ -112,10 +113,21 @@ function updateGameList(data) {
     console.log("updateGameList()")
     var gamesSelect = document.getElementById("gamesSelect");
     gamesSelect.options.length = 0;
-    var games = JSON.parse(data.games), value;
+    var games = JSON.parse(data), value;
     for (var i = 0; i < games.length; i++) {
         value = games[i].sessionid;
         gamesSelect.options.add(new Option(games[i].sessionid, value))
+    }
+}
+
+function updateLanguageList(data) {
+    console.log("updateLanguageList()")
+    var languageSelect = document.getElementById("languageSelect");
+    languageSelect.options.length = 0;
+    var languages = JSON.parse(data), value;
+    for (var i = 0; i < languages.length; i++) {
+        value = languages[i];
+        languageSelect.options.add(new Option(languages[i], value));
     }
 }
 
@@ -160,7 +172,9 @@ function switchToView(view)
             var header = createElement('h1', 'NodeScrabble', [{key: 'id', value: 'header'}]);
             var selectList = createElement('div', '', [{key: 'id', value: 'select'}]);
             var lister = createElement('select', '', [{key: 'id', value: 'gamesSelect'}]);
+            var languageList = createElement('select', '', [{key: 'id', value: 'languageSelect'}]);
             selectList.appendChild(lister);
+            selectList.appendChild(languageList);
 
             var controls = createElement('div', '', [{key: 'id', value: 'controls'}]);
             controls.appendChild(createElement('input', '', [
@@ -242,6 +256,7 @@ function addUnplayedTiles(tiles)
 // Socket connection successful
 function onSocketConnected() {
     console.log("Connected to socket");
+    socket.emit('gameinfo');
 }
 
 // On init game response
@@ -258,10 +273,12 @@ function onInitGameResponse(data) {
         var joinButton = document.getElementById('joinButton');
         var createGameButton = document.getElementById('createGameButton');
         var gamesSelect = document.getElementById('gamesSelect');
+        var languageSelect = document.getElementById('languageSelect');
 
         header.innerHTML = "Waiting for player...";
 
         select.removeChild(gamesSelect);
+        select.removeChild(languageSelect);
         controls.removeChild(joinButton);
         controls.removeChild(createGameButton);
 
@@ -772,8 +789,8 @@ function joinGame()
 
 function createGame() {
     console.log("createGame");
-
-    var language = (dev == true) ? 'dev' : 'sv';
+    var languageSelect = document.getElementById('languageSelect');
+    var language = languageSelect.options[languageSelect.selectedIndex].value;
     socket.emit('initgame', {language: language, dictionary: "default"});
 }
 
