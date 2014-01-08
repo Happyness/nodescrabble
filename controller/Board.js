@@ -409,7 +409,15 @@ var Board = function(language, dictionary) {
         }
 
         var size = getBoardSize(lang);
-        board = [size][size];
+        console.log(size);
+        board = [[size]];
+
+        for (var i = 0; i < size; i++) {
+            board[i] = [size];
+            for (var j = 0; j < size; j++) {
+                board[i][j] = "";
+            }
+        }
     }
 
     createBoard(language);

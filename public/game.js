@@ -331,7 +331,7 @@ function onErrorMessage(data) {
 
 function isBoardTileEmpty(y, x)
 {
-    return (board[y][x] == null || board[y][x] == "");
+    return (board[y][x] == "");
 }
 
 function updateBoard(tiles) {
@@ -509,7 +509,14 @@ function onGameStarted(data) {
 
     activeSession.setTurn(data.turn);
     activeSession.setLetters(data.tiles);
-    board = [data.size][data.size];
+    board = [[data.size]];
+
+    for (var i = 0; i < data.size; i++) {
+        board[i] = [data.size];
+        for (var j = 0; j < data.size; j++) {
+            board[i][j] = "";
+        }
+    }
 
     switchToView('ingame');
     updateBoard(data.playedTiles);
