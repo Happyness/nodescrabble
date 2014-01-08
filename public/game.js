@@ -500,7 +500,7 @@ function getTurn()
 
 // Game started
 function onGameStarted(data) {
-    console.log("Games started");
+    console.log("Game started");
     console.log(JSON.stringify(data));
 
     if (viewState == 'ingame') {
@@ -508,8 +508,8 @@ function onGameStarted(data) {
     }
 
     activeSession.setTurn(data.turn);
-    activeSession.setLetters(data.letters);
-    board = data.board;
+    activeSession.setLetters(data.tiles);
+    board = [data.size][data.size];
 
     switchToView('ingame');
     updateBoard(data.playedTiles);

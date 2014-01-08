@@ -119,7 +119,8 @@ var ServerController = function()
                 message = {
                     tiles: players[i].getLetters(),
                     turn: session.getTurn(),
-                    playedTiles: session.getPlayedTiles()
+                    playedTiles: session.getPlayedTiles(),
+                    size: session.getBoard().getBoardSize()
                 };
             }
             sendMessage(client, messageType, message);

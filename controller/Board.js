@@ -3,7 +3,7 @@
  **************************************************/
 var Board = function(language, dictionary) {
     var lang = language;
-    var board = [[]];
+    var board;
     var dict = dictionary;
     var letterScores;
     var checkedPos = new Array();
@@ -38,9 +38,11 @@ var Board = function(language, dictionary) {
     var getBoardSize = function()
     {
         switch (lang) {
+            case 'en':
+                return 17;
             case 'sv':
             default:
-                return {cols: 15, rows: 15};
+                return 15;
                 break;
         }
     }
@@ -48,7 +50,7 @@ var Board = function(language, dictionary) {
     var isOnBoard = function(y, x)
     {
         var size = getBoardSize();
-        return (x > 0 && x <= size.cols && y > 0 && y <= size.rows);
+        return (x > 0 && x <= size && y > 0 && y <= size);
     }
 
     var getWordMultiplyer = function(j, j)
@@ -278,8 +280,8 @@ var Board = function(language, dictionary) {
     var isWordCrossingCenter = function(tiles)
     {
         var size = getBoardSize();
-        var cx = Math.ceil(size.cols / 2);
-        var cy = Math.ceil(size.rows / 2);
+        var cx = Math.ceil(size / 2);
+        var cy = Math.ceil(size / 2);
 
         for (var i in tiles) {
             if (tiles[i].x == cx && tiles[i].y == cy) return true;
@@ -292,8 +294,8 @@ var Board = function(language, dictionary) {
     {
         var size = getBoardSize();
 
-        for (var y = 1; y <= size.rows; y++) {
-            for (var x = 1; x <= size.cols; x++) {
+        for (var y = 1; y <= size; y++) {
+            for (var x = 1; x <= size; x++) {
                 if (!isEmpty(y, x)) return false;
             }
         }
@@ -384,15 +386,15 @@ var Board = function(language, dictionary) {
     var createBoard = function(lang)
     {
         switch (lang) {
+            /* Swedish board:
+             1 point: A ×8, R ×8, S ×8, T ×8, E ×7, N ×6, D ×5, I ×5, L ×5
+             2 points: O ×5, G ×3, K ×3, M ×3, H ×2
+             3 points: Ä ×2, F ×2, V ×2
+             4 points: U ×3, B ×2, Ö ×2, P ×2, Å ×2
+             7 points: J ×1, Y ×1
+             8 points: C ×1, X ×1
+             10 points: Z ×1 */
             case 'sv':
-                /* Swedish board:
-                1 point: A ×8, R ×8, S ×8, T ×8, E ×7, N ×6, D ×5, I ×5, L ×5
-                2 points: O ×5, G ×3, K ×3, M ×3, H ×2
-                3 points: Ä ×2, F ×2, V ×2
-                4 points: U ×3, B ×2, Ö ×2, P ×2, Å ×2
-                7 points: J ×1, Y ×1
-                8 points: C ×1, X ×1
-                10 points: Z ×1 */
             default:
                 letterScores = [
                     {"letters": ['A', 'R', 'S', 'T', 'E', 'N', 'D', 'I', 'L'], "score": 1},
@@ -407,15 +409,7 @@ var Board = function(language, dictionary) {
         }
 
         var size = getBoardSize(lang);
-
-        var i, j;
-
-        for (i = 0; i < size.rows; i++) {
-            for (j = 0; j < size.cols; j++) {
-                board[j] = [];
-                board[j][i] = "";
-            }
-        }
+        board = [size][size];
     }
 
     createBoard(language);
@@ -431,7 +425,8 @@ var Board = function(language, dictionary) {
         getLettersScore: getLettersScore,
         isBoardEmpty: isBoardEmpty,
         isEmpty: isEmpty,
-        isWordCrossingCenter: isWordCrossingCenter
+        isWordCrossingCenter: isWordCrossingCenter,
+        getBoardSize: getBoardSize
     }
 };
 

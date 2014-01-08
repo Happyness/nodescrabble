@@ -7,7 +7,7 @@ var gamesession = function(i, lang, player) {
     var players = new Array();
     var unplayedTiles = [];
     var playedTiles = [];
-    var board = [[]];
+    var board;
     var turn;
     var state;
     var activeDictionary;
