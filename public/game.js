@@ -66,10 +66,10 @@ var setEventHandlers = function() {
     socket.on("game-ended", onGameEnded);
 
     // Server message
-    socket.on("message", onServerMessage);
+    socket.on("servermessage", onServerMessage);
 
     // Chat message
-    socket.on('chatmessage-response', onChatMessage);
+    socket.on('chatmessage', onChatMessage);
 
 }
 
@@ -82,8 +82,9 @@ function onUpdate(data) {
 
     // TODO: check for type of update and calculate next move
     switch(data.type) {
-        case 'gamelist':
-            updateGameList(data);
+        case 'gameinfo':
+            updateGameList(data.games);
+            updateLanguageList(data.languages);
             break;
         case 'move':
             if (data.tiles && viewState == 'ingame') {
@@ -108,14 +109,14 @@ function onUpdate(data) {
     }
 };
 
-function updateGameList(data) {
+function updateGameList(games) {
     console.log("updateGameList()")
     var gamesSelect = document.getElementById("gamesSelect");
     gamesSelect.options.length = 0;
-    var games = JSON.parse(data.games), value;
-    for (var i = 0; i < games.length; i++) {
-        value = games[i].sessionid;
-        gamesSelect.options.add(new Option(games[i].sessionid, value))
+    var gameList = JSON.parse(games), value;
+    for (var i = 0; i < gameList.length; i++) {
+        value = gameList[i].sessionid;
+        gamesSelect.options.add(new Option(gameList[i].sessionid, value))
     }
 }
 
@@ -180,7 +181,7 @@ function switchToView(view)
             chooseGame.appendChild(header);
             chooseGame.appendChild(selectList);
 
-            socket.emit('games', {});
+            socket.emit('gameinfo', {});
             break;
         case 'ingame' :
             var chooseGame = document.getElementById("chooseGame");

@@ -2,7 +2,7 @@ RemotePlayer = require('./RemotePlayer').RemotePlayer;
 Board = require('./Board').Board;
 Dictionary = require('./Dictionary').Dictionary;
 
-var gamesession = function(i, dict, lang, player) {
+var gamesession = function(i, lang, player) {
     var id = i;
     var players = new Array();
     var unplayedTiles = [];
@@ -79,9 +79,9 @@ var gamesession = function(i, dict, lang, player) {
         return false;
     }
 
-    var createDictionary = function(dictionary)
+    var createDictionary = function(language)
     {
-        activeDictionary = new Dictionary(dictionary);
+        activeDictionary = new Dictionary(language);
     }
 
     var createBoard = function(language)
@@ -161,7 +161,7 @@ var gamesession = function(i, dict, lang, player) {
     }
 
     // Constructor methods
-    createDictionary(dict);
+    createDictionary(lang);
     createBoard(lang);
     createTiles(lang);
 

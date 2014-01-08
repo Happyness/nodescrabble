@@ -95,14 +95,16 @@ io.sockets.on('connection', function (client) {
     });
 
     if ('development' != app.get('env')) {
-        client.emit('message', { message: 'welcome to nodescrabble'});
+        client.emit('servermessage', { message: 'welcome to nodescrabble'});
     }
 
     client.on('quit', function (data) {
+        console.log('Try to quit game');
         controller.quitGame(data);
     });
 
     client.on('playmove', function(data) {
+        console.log('Try to make a move');
         controller.makeMove(client, data);
     });
 
@@ -111,8 +113,9 @@ io.sockets.on('connection', function (client) {
         controller.startGame(client, data);
     });
 
-    client.on('games', function (data) {
-        controller.getGames(client);
+    client.on('gameinfo', function (data) {
+        console.log('Try to send game info');
+        controller.sendGameInfo(client);
     });
 
     client.on('initgame', function(data) {

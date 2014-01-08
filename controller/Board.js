@@ -219,7 +219,7 @@ var Board = function(language, dictionary) {
             tile = getTile(posy, posx);
             multiplyer *= getWordMultiplyer(posy, posx);
             addCheckedPos(posy, posx, horisontal);
-            console.log("row: "+posy+", col: "+posx);
+            //console.log("row: "+posy+", col: "+posx);
 
             if (deep < 1) {
                 deep++;
