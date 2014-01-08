@@ -109,13 +109,13 @@ function onUpdate(data) {
     }
 };
 
-function updateGameList(games) {
+function updateGameList(data) {
     console.log("updateGameList()")
     var gamesSelect = document.getElementById("gamesSelect");
     gamesSelect.options.length = 0;
-    var gameList = JSON.parse(data.games), value;
-    for (var i = 0; i < games.length; i++) {
-        value = gameList[i].sessionid;
+    var value;
+    for (var i = 0; i < data.length; i++) {
+        value = data[i].sessionid;
         gamesSelect.options.add(new Option(value, value))
     }
 }
@@ -124,9 +124,9 @@ function updateLanguageList(data) {
     console.log("updateLanguageList()")
     var languageSelect = document.getElementById("languageSelect");
     languageSelect.options.length = 0;
-    var languages = JSON.parse(data), value;
-    for (var i = 0; i < languages.length; i++) {
-        value = languages[i];
+    var value;
+    for (var i = 0; i < data.length; i++) {
+        value = data[i];
         languageSelect.options.add(new Option(value, value));
     }
 }
@@ -193,8 +193,6 @@ function switchToView(view)
 
             chooseGame.appendChild(header);
             chooseGame.appendChild(selectList);
-
-            socket.emit('gameinfo', {});
             break;
         case 'ingame' :
             var chooseGame = document.getElementById("chooseGame");
@@ -256,6 +254,7 @@ function addUnplayedTiles(tiles)
 // Socket connection successful
 function onSocketConnected() {
     console.log("Connected to socket");
+    socket.emit("gameinfo", {});
 }
 
 // On init game response
@@ -823,6 +822,6 @@ function sendChatMessage() {
 }
 
 window.onload = function() {
-    init();
     switchToView('choosegame');
+    init();
 };
