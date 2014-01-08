@@ -113,10 +113,21 @@ function updateGameList(games) {
     console.log("updateGameList()")
     var gamesSelect = document.getElementById("gamesSelect");
     gamesSelect.options.length = 0;
-    var gameList = JSON.parse(games), value;
-    for (var i = 0; i < gameList.length; i++) {
+    var gameList = JSON.parse(data.games), value;
+    for (var i = 0; i < games.length; i++) {
         value = gameList[i].sessionid;
-        gamesSelect.options.add(new Option(gameList[i].sessionid, value))
+        gamesSelect.options.add(new Option(value, value))
+    }
+}
+
+function updateLanguageList(data) {
+    console.log("updateLanguageList()")
+    var languageSelect = document.getElementById("languageSelect");
+    languageSelect.options.length = 0;
+    var languages = JSON.parse(data), value;
+    for (var i = 0; i < languages.length; i++) {
+        value = languages[i];
+        languageSelect.options.add(new Option(value, value));
     }
 }
 
@@ -161,7 +172,9 @@ function switchToView(view)
             var header = createElement('h1', 'NodeScrabble', [{key: 'id', value: 'header'}]);
             var selectList = createElement('div', '', [{key: 'id', value: 'select'}]);
             var lister = createElement('select', '', [{key: 'id', value: 'gamesSelect'}]);
+            var languageList = createElement('select', '', [{key: 'id', value: 'languageSelect'}]);
             selectList.appendChild(lister);
+            selectList.appendChild(languageList);
 
             var controls = createElement('div', '', [{key: 'id', value: 'controls'}]);
             controls.appendChild(createElement('input', '', [
@@ -259,10 +272,12 @@ function onInitGameResponse(data) {
         var joinButton = document.getElementById('joinButton');
         var createGameButton = document.getElementById('createGameButton');
         var gamesSelect = document.getElementById('gamesSelect');
+        var languageSelect = document.getElementById('languageSelect');
 
         header.innerHTML = "Waiting for player...";
 
         select.removeChild(gamesSelect);
+        select.removeChild(languageSelect);
         controls.removeChild(joinButton);
         controls.removeChild(createGameButton);
 
@@ -773,9 +788,9 @@ function joinGame()
 
 function createGame() {
     console.log("createGame");
-
-    var language = (dev == true) ? 'dev' : 'sv';
-    socket.emit('initgame', {language: language, dictionary: "default"});
+    var languageSelect = document.getElementById('languageSelect');
+    var language = languageSelect.options[languageSelect.selectedIndex].value;
+    socket.emit('initgame', {language: language});
 }
 
 // Chat message
