@@ -234,15 +234,17 @@ function addUnplayedTiles(tiles)
     var tileHolder = document.getElementById('tiles');
 
     for (i in tiles) {
-        var div = document.createElement('div');
-        div.innerHTML = tiles[i].letter + "<sub>"+ tiles[i].score +"</sub>";
-        div.setAttribute('class', "tile");
-        div.setAttribute('draggable', "true");
-        div.setAttribute('ondragstart', "drag(event)");
-        div.setAttribute('id', "tile"+currentTile);
-        tileHolder.appendChild(div);
+        if (tileHolder.childElementCount < 7) {
+            var div = document.createElement('div');
+            div.innerHTML = tiles[i].letter + "<sub>"+ tiles[i].score +"</sub>";
+            div.setAttribute('class', "tile");
+            div.setAttribute('draggable', "true");
+            div.setAttribute('ondragstart', "drag(event)");
+            div.setAttribute('id', "tile"+currentTile);
+            tileHolder.appendChild(div);
 
-        currentTile++;
+            currentTile++;
+        }
     }
 }
 
@@ -350,7 +352,7 @@ function updateBoard(tiles) {
                 if (isBoardTileEmpty(y, x) && x == j && y == i) {
                     board[y][x] = tiles[t].letter;
 
-                    console.log("update tile " + i + "," + j);
+                    console.log("update tile " + i + "," + j + " where board value now is: " + board[y][x]);
                     var div = document.createElement('div');
                     div.innerHTML = tiles[t].letter + "<sub>" + tiles[t].score + "</sub>";
                     div.setAttribute('class', "played-tile");

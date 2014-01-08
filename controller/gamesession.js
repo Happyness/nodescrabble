@@ -152,7 +152,7 @@ var gamesession = function(i, lang, player) {
                 char = String.fromCharCode(cc)
             }
             for (var i = 0; i < getCharCounter(language, char); i++) {
-                unplayedTiles.push(char);
+                unplayedTiles.push({letter: char, score: board.getLetterScore(char)});
             }
         }
 
@@ -243,7 +243,7 @@ var gamesession = function(i, lang, player) {
             index = Math.floor(Math.random() * unplayedTiles.length);
 
             if (unplayedTiles[index]) {
-                randoms.push({letter: unplayedTiles[index], score: board.getLetterScore(unplayedTiles[index])});
+                randoms.push(unplayedTiles[index]);
                 unplayedTiles.splice(index, 1);
             }
         }

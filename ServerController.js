@@ -120,7 +120,8 @@ var ServerController = function()
                     tiles: players[i].getLetters(),
                     turn: session.getTurn(),
                     playedTiles: session.getPlayedTiles(),
-                    size: session.getBoard().getBoardSize()
+                    size: session.getBoard().getBoardSize(),
+                    players: session.getScores()
                 };
             }
             sendMessage(client, messageType, message);
