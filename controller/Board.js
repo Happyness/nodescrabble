@@ -440,6 +440,16 @@ var Board = function(language, dictionary) {
     var createBoard = function(lang)
     {
         switch (lang) {
+            case 'en':
+                letterScores = [
+                    {"letters": ['A', 'R', 'S', 'T', 'E', 'N', 'D', 'I', 'L'], "score": 1},
+                    {"letters": ['O', 'G', 'K', 'M', 'H'], "score": 2},
+                    {"letters": ['Ä', 'F', 'V'], "score": 3},
+                    {"letters": ['U', 'B', 'Ö', 'P', 'Å'], "score": 4},
+                    {"letters": ['J', 'Y'], "score": 5},
+                    {"letters": ['C', 'X'], "score": 6},
+                    {"letters": ['Z'], "score": 7}
+                ];
             /* Swedish board:
              1 point: A ×8, R ×8, S ×8, T ×8, E ×7, N ×6, D ×5, I ×5, L ×5
              2 points: O ×5, G ×3, K ×3, M ×3, H ×2
