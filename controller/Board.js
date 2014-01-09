@@ -39,7 +39,6 @@ var Board = function(language, dictionary) {
     {
         switch (lang) {
             case 'en':
-                return 17;
             case 'sv':
             default:
                 return 15;
