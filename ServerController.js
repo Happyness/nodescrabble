@@ -203,10 +203,9 @@ var ServerController = function()
             message = check.message;
         } else {
             session = check.session;
+            var player = session.getRememberPlayer();
 
-            if (session.getPlayers().length < 2) {
-                var player = session.getRememberPlayer();
-
+            if (session.getPlayers().length < 2 || player) {
                 if (!player) {
                     player = new RemotePlayer(noPlayers + 1);
                     broadcastToSession(session, 'message', {message: 'Player is now reconnected'});
