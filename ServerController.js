@@ -297,7 +297,7 @@ var ServerController = function()
 
     var getGameInfo = function(data)
     {
-        var games = (data.playerid) ? getSessionsByPlayerId(data.playerid) : getAllSessions();
+        var games = (data && data.playerid) ? getSessionsByPlayerId(data.playerid) : getAllSessions();
         return {type: 'gameinfo', games: games, languages: getLanguages()};
     }
 
