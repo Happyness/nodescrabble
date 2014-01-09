@@ -9,16 +9,25 @@ var Dictionary = function(l)
     var words = [];
     var letterScores;
 
+    var readDictionaryFile = function(file)
+    {
+        return fs.readFileSync(file).toString().split("\n");
+    }
+
     var createDictionary = function(layout)
     {
-        switch (layout) {
-            case 'default' :
+        var data;
+        switch (language) {
+            case 'en':
+                data = readDictionaryFile('./model/en.txt');
+            case 'sv' :
             default :
-                var data = fs.readFileSync('./model/sv.txt').toString().split("\n");
-                for(i in data) {
-                    words.push(data[i].trim());
-                }
+                data = readDictionaryFile('./model/sv.txt');
                 break;
+        }
+
+        for(i in data) {
+            words.push(data[i].trim().toLowerCase());
         }
     }
 
