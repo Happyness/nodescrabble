@@ -19,6 +19,21 @@ var ServerController = function()
         return list;
     }
 
+    var getSessionsByPlayerId = function(playerid)
+    {
+        var list = [], players;
+
+        for (var i = 0; i < sessions.length; i++) {
+            players = sessions[i].getPlayers();
+
+            for (var j in players) {
+               if (players[j].getId() == playerid) list.push({sessionid: sessions[i].getId()});
+            }
+        }
+
+        return list;
+    }
+
     var getLanguages = function()
     {
         return languages;
@@ -280,14 +295,15 @@ var ServerController = function()
         }
     }
 
-    var getGameInfo = function()
+    var getGameInfo = function(data)
     {
-        return {type: 'gameinfo', games: getAllSessions(), languages: getLanguages()};
+        var games = (data.playerid) ? getSessionsByPlayerId(data.playerid) : getAllSessions();
+        return {type: 'gameinfo', games: games, languages: getLanguages()};
     }
 
-    var sendGameInfo = function(client)
+    var sendGameInfo = function(client, data)
     {
-        sendMessage(client, 'update', getGameInfo());
+        sendMessage(client, 'update', getGameInfo(data));
     }
 
     var swapTiles = function(session, oldTiles)

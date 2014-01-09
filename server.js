@@ -115,7 +115,7 @@ io.sockets.on('connection', function (client) {
 
     client.on('gameinfo', function (data) {
         console.log('Try to send game info');
-        controller.sendGameInfo(client);
+        controller.sendGameInfo(client, data);
     });
 
     client.on('initgame', function(data) {
