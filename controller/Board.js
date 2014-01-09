@@ -25,7 +25,7 @@ var Board = function(language, dictionary) {
     var getTile = function(y, x)
     {
         if (!isOnBoard(y, x)) {
-            return false;
+            return "";
         }
         return board[y-1][x-1];
     }
@@ -170,21 +170,21 @@ var Board = function(language, dictionary) {
 
     var calculateScores = function(tile, deep)
     {
-        var result;
+        var result1, result2;
         var valid = new Array();
-        result = validWord(tile.letter, tile.x, tile.y, true, deep) // Horisontal check
+        result1 = validWord(tile.letter, tile.x, tile.y, true, deep) // Horisontal check
 
-        if (result != false) {
-            valid.push(result);
-        } else {
-            return false;
+        if (result1 != false) {
+            valid.push(result1);
         }
 
-        result = validWord(tile.letter, tile.x, tile.y, false, deep); // Vertical check
+        result2 = validWord(tile.letter, tile.x, tile.y, false, deep); // Vertical check
 
-        if (result != false) {
-            valid.push(result);
-        } else {
+        if (result2 != false) {
+            valid.push(result2);
+        }
+
+        if (result1 == false || result2 == false) {
             return false;
         }
 
@@ -307,7 +307,7 @@ var Board = function(language, dictionary) {
     {
         if (isOnBoard(row, col)) {
             var tile = getTile(row, col);
-            return (tile == null || tile == "" || typeof(tile) == 'undefined' || tile == false);
+            return (tile == "");
         }
         return true;
     }
@@ -330,7 +330,7 @@ var Board = function(language, dictionary) {
             x = tiles[i].x;
             y = tiles[i].y;
 
-            setTile(y, x, null);
+            setTile(y, x, "");
         }
     }
 
@@ -345,11 +345,49 @@ var Board = function(language, dictionary) {
         console.log(output);
     }
 
-    var putTiles = function(tiles)
+    var isEmptyAround = function(y, x)
     {
-        checkedPos = new Array();
-        var x, y, valid = true, values = new Array(), counter = 0;
-        var tmptiles = tiles.slice(0);
+        var top = y - 1, bottom = y + 1, left = x - 1, right = x + 1;
+
+        if (!isEmpty(y, right)) return false;
+        if (!isEmpty(y, left)) return false;
+        if (!isEmpty(bottom, x)) return false;
+        if (!isEmpty(top, x)) return false;
+
+        return true;
+    }
+
+    var isValidPositions = function(tiles)
+    {
+        var horisontalPos, verticalPos, x, y;
+
+        for (var i in tiles) {
+            x = parseInt(tiles[i].x);
+            y = parseInt(tiles[i].y);
+
+            if (i == 0) {
+                horisontalPos = x;
+                verticalPos = y;
+            }
+
+            if (!(x == horisontalPos || y == verticalPos)) {
+                //console.log("Tile is not on row: " + horisontalPos + " or " + verticalPos);
+                return false;
+            }
+            //console.log("Check if empty around: " + x + ", " + y);
+            if (isEmptyAround(y, x)) {
+                //printBoard();
+                //console.log("empty around tile: " + x + ", " + y);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    var countEmptyTilePlaces = function(tiles)
+    {
+        var counter = 0, x, y;
 
         for (var i in tiles) {
             x = tiles[i].x;
@@ -359,28 +397,44 @@ var Board = function(language, dictionary) {
                 counter++;
             }
         }
+        return counter;
+    }
 
-        if (counter == tiles.length) {
+    var putTiles = function(tiles)
+    {
+        checkedPos = new Array();
+        var valid = true, values = new Array();
+        var tmptiles = tiles.slice(0);
+        var emptyTiles = countEmptyTilePlaces(tiles);
+
+        if (emptyTiles == tiles.length) {
+            console.log("Place the tiles");
             addTiles(tmptiles);
         } else {
             return false;
         }
 
-        for (var i in tiles) {
-            var data = calculateScores(tiles[i], 0);
+        if (isValidPositions(tiles)) {
+            for (var i in tiles) {
+                var data = calculateScores(tiles[i], 0);
 
-            if (data == false) {
-                console.log("Invalid word in playTiles");
-                removeTiles(tmptiles);
-                printBoard();
+                if (data == false) {
+                    console.log("Invalid word in playTiles");
+                    removeTiles(tmptiles);
+                    printBoard();
 
-                return false;
-            } else {
-                values.push(data);
+                    return false;
+                } else {
+                    values.push(data);
+                }
             }
-        }
 
-        return values;
+            return values;
+        } else {
+            removeTiles(tmptiles);
+            console.log("Invalid placement of tiles, must put horizontal OR vertical");
+            return false;
+        }
     }
 
     var createBoard = function(lang)

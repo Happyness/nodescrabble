@@ -305,6 +305,7 @@ var gamesession = function(i, lang, player) {
         if (Array.isArray(data)) {
             for (var i in data) {
                 result = scanScoreAndWords(data[i]);
+
                 score += result.score;
                 words = Util.merge(words, result.words);
             }
