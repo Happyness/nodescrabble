@@ -4,7 +4,7 @@ var ServerController = function()
 {
     var sessions = new Array();
     var noPlayers = 0, noSessions = 0, maxPlayers = 2, maxSessions = 5;
-    var languages = ['sv', 'dev', 'en'];
+    var languages = ['sv', 'en', 'dev'];
 
     var getAllSessions = function()
     {

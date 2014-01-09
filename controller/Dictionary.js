@@ -14,7 +14,7 @@ var Dictionary = function(l)
         return fs.readFileSync(file).toString().split("\n");
     }
 
-    var createDictionary = function(layout)
+    var createDictionary = function(language)
     {
         var data;
         switch (language) {
