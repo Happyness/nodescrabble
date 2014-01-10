@@ -203,7 +203,7 @@ var ServerController = function()
             message = check.message;
         } else {
             session    = check.session;
-            var player = data.playerid > 0 ? session.getPlayerById(data.playerid) : session.getRememberPlayer();
+            var player = check.player ? check.player : session.getRememberPlayer();
 
             if (session.getPlayers().length < 2 || player) {
                 if (!player) {
@@ -213,7 +213,7 @@ var ServerController = function()
 
                 player.setClient(client);
 
-                if (data.playerid > 0) {
+                if (!check.player) {
                     session.addPlayer(player);
                     noPlayers++;
                 }
