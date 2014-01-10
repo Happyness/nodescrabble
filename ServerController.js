@@ -202,8 +202,8 @@ var ServerController = function()
         if (!check.session) {
             message = check.message;
         } else {
-            session = check.session;
-            var player = session.getRememberPlayer();
+            session    = check.session;
+            var player = data.playerid > 0 ? session.getPlayerById(data.playerid) : session.getRememberPlayer();
 
             if (session.getPlayers().length < 2 || player) {
                 if (!player) {
@@ -212,8 +212,11 @@ var ServerController = function()
                 }
 
                 player.setClient(client);
-                session.addPlayer(player);
-                noPlayers++;
+
+                if (data.playerid > 0) {
+                    session.addPlayer(player);
+                    noPlayers++;
+                }
 
                 message = createResponseMessage({
                     language: session.language,
