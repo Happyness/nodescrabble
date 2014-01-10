@@ -390,7 +390,7 @@ var ServerController = function()
             } else if (session.getTurn() != player.getId()) {
                 response = createResponseMessage("It is not your turn", true);
             } else if (player.isLocked()) {
-                response = createResponseMessage("You cannot make move multiple times in a row");
+                response = createResponseMessage("You cannot make move multiple times in a row", true);
             } else {
                 player.setLocked(true);
                 if (Array.isArray(data.move)) {
