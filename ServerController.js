@@ -391,6 +391,7 @@ var ServerController = function()
                 response = createResponseMessage("It is not your turn", true);
             } else if (player.isLocked()) {
                 response = createResponseMessage("You cannot make move multiple times in a row", true);
+                player.setLocked(false);
             } else {
                 player.setLocked(true);
                 if (Array.isArray(data.move)) {
