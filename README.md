@@ -1,4 +1,4 @@
 nodescrabble
 ============
 
-NodeJS, ExpressJS, MongoDB, REST, Web service, Anroid, HTML5
+NodeJS, ExpressJS, MongoDB, REST API, Web Services, Android, HTML5
